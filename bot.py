@@ -25,31 +25,6 @@ async def ping(ctx): #no arguments
     channel = client.get_channel(769410662081495090) # replace id with the welcome channel's id
     await channel.send("pong has arrived!") 
 
-@client.command()
-async def msg(ctx): #no arguments
-    await ctx.channel.send("msg")
-
-
-@bot.command()
-async def modrole(ctx):
-    if get(ctx.guild.roles, name="BotMod"):
-        await ctx.send("Role already exists")
-    else:
-        await ctx.guild.create_role(name="BotMod", colour=discord.Colour(0x0062ff))
-
-@client.command()
-@commands.has_permissions(kick_members = True)
-async def mute(ctx, member: discord.Member):
-    muted = ctx.guild.get_role(786686482738839553) #don't really like this, see if you can get her to find bot role herself
-    await member.add_roles(muted)
-
-@client.command()
-@commands.has_permissions(kick_members = True)
-async def unmute(ctx, member: discord.Member):
-    muted = ctx.guild.get_role(786686482738839553) #don't really like this, see if you can get her to find bot role herself
-    await member.remove_roles(muted)
-
-
 # tempban (experimental)
 @client.command()
 async def tempban(ctx, member: discord.Member, duration:int, *, reason=None):

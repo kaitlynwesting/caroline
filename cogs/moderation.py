@@ -14,8 +14,41 @@ class Moderation(commands.Cog):
         self.bot = bot
 
     # TEXT MUTE COMMAND
+    @commands.command()
+    @commands.has_permissions(kick_members = True)
+    async def mute(self, ctx, member: discord.Member):
+        channel = discord.utils.get(ctx.guild.channels, name="logs") # god channel.id can be useful
     
+        if get(ctx.guild.roles, name="Muted"):
+            muted = get(ctx.guild.roles, name="Muted")
+            await member.add_roles(muted)
 
+            creator = get(ctx.guild.roles, name="Creator")
+            await member.remove_roles(creator)
+            await channel.send(f"{ctx.author.name} muted {member.mention}.") 
+        else:
+            await ctx.guild.create_role(name="Muted", colour=discord.Colour(0x2C2F33)) # make new role if not existing
+            muted = get(ctx.guild.roles, name="Muted")
+            await member.add_roles(muted)
+
+            creator = get(ctx.guild.roles, name="Creator")
+            await member.remove_roles(creator)
+            await channel.send(f"A new muted role was created. {ctx.author.name} has muted {member.mention}.") # finally!
+
+    # TEXT UNMUTE COMMAND
+    @commands.command()
+    @commands.has_permissions(kick_members = True)
+    async def unmute(self, ctx, member: discord.Member):
+        get(ctx.guild.roles, name="Muted")
+        muted = get(ctx.guild.roles, name="Muted")
+        await member.remove_roles(muted)
+
+        creator = get(ctx.guild.roles, name="Creator")
+        await member.add_roles(creator)
+
+        channel = discord.utils.get(ctx.guild.channels, name="logs") # god channel.id can be useful
+        await channel.send(f"{ctx.author.name} unmuted {member.mention}.") 
+    
     # KICK COMMAND
     @commands.command(name="kick")
     @commands.has_permissions(kick_members = True)
