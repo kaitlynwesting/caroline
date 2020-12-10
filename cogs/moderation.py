@@ -13,7 +13,10 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    #KICK COMMAND
+    # TEXT MUTE COMMAND
+    
+
+    # KICK COMMAND
     @commands.command(name="kick")
     @commands.has_permissions(kick_members = True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
@@ -28,7 +31,6 @@ class Moderation(commands.Cog):
         # dm the offending member the reason
         await member.send(f"You were kicked from {ctx.guild.name} for the following reason: {reason}.")
         await member.kick(reason=reason)
-        await ctx.send("Someone got kicked, woops")
         for channel in member.guild.channels:
             if str(channel) == "logs":
                 print(f"{realreason}")
@@ -50,7 +52,6 @@ class Moderation(commands.Cog):
         # dm the offending member the reason
         await member.send(f"You were banned from {ctx.guild.name} for the following reason: {reason}.")
         await member.ban(reason=reason)
-        await ctx.send("Someone got banned, woops")
         for channel in member.guild.channels:
             if str(channel) == "logs":
                 print(f"{realreason}")

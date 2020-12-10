@@ -11,6 +11,7 @@ class Handler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # INSUFFICIENT PARAMETERS
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         num = str((random.randint(2, 10)))
@@ -19,7 +20,12 @@ class Handler(commands.Cog):
                     "Insufficient arguments, pal.",
                     f"{ctx.message.author.display_name}, mate, you need more parameters."]
             await ctx.send(random.choice(mra))
-            # await ctx.send(f"Think you're missing an argument or two, {ctx.message.author.display_name}. Mind checking that over?")
+
+    # INSUFFICIENT PERMISSIONS
+    @commands.Cog.listener()
+    async def kick_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("You just have less value.")
 
 def setup(bot):
     bot.add_cog(Handler(bot))
