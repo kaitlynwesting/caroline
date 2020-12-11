@@ -15,10 +15,11 @@ print("Loading discord.py version", discord.__version__, ", starting...")
 
 @client.event # this is a listener that listens for messages
 async def on_message(message):
-	if message.content == "hello":
-		await message.channel.send("pies are better than cakes. change my mind.")
+    if message.content == "hello":
+        await message.delete()
+        await message.channel.send("pies are better than cakes. change my mind.")
 
-	await client.process_commands(message) #WAIT FOR BOT TO PROCESS COMMANDS BEFORE LISTENER
+    await client.process_commands(message) #WAIT FOR BOT TO PROCESS COMMANDS BEFORE LISTENER
 
 @client.command()
 async def ping(ctx): #no arguments
