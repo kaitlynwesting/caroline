@@ -14,13 +14,18 @@ class Moderation(commands.Cog):
         self.bot = bot
 
     # WARN COMMAND
-    @commands.command()
+    @commands.command(name="warn")
     @commands.has_permissions(kick_members = True)
     async def warn(self, ctx, member: discord.Member, *, reason): # reason is not None as warnings must be meaningful
+        
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
         await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
         await channel.send(f"{ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
+
+        await ctx.send("No.")
+
+    
 
 
     # TEXT MUTE COMMAND

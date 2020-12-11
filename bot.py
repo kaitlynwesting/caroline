@@ -49,7 +49,7 @@ async def on_ready():
     if settings.nowplaying:
             print("Setting now playing game...", flush= True)
             await client.change_presence(activity=discord.Game(name=settings.nowplaying))
-    
+            print("-----")
     # loader for cogs
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
