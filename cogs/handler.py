@@ -24,7 +24,8 @@ class Handler(commands.Cog):
         
         # INSUFFICIENT PERMISSIONS
         if isinstance(error, commands.MissingPermissions):
-            await ctx.send("You simply have less value.")
+            #await ctx.send("You simply have less value.")
+            await ctx.send("You can't. Why?", file=discord.File("./media/image1.jpg"))
 
     
 

@@ -6,10 +6,13 @@ import traceback
 import sys
 import random
 
+# COG TO MANAGE SERVER SUBSCRIPTIONS
+
 class Subscription(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
 
     # SUBSCRIBE ALL
     @commands.command()
@@ -47,11 +50,7 @@ class Subscription(commands.Cog):
         else:
             await ctx.send("Hmm, we don't offer that subscription yet. Perhaps you meant something else?")
 
-    @commands.command()
-    async def accept(self, ctx, message=None):
-        print("Oh noes!")
-        await ctx.message.delete()
-        print("Oh noes!")
+    
 
 def setup(bot):
     bot.add_cog(Subscription(bot))

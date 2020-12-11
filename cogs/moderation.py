@@ -23,11 +23,6 @@ class Moderation(commands.Cog):
         await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
         await channel.send(f"{ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
 
-        await ctx.send("No.")
-
-    
-
-
     # TEXT MUTE COMMAND
     @commands.command()
     @commands.has_permissions(kick_members = True)
@@ -129,6 +124,20 @@ class Moderation(commands.Cog):
 
                 channel = discord.utils.get(ctx.guild.channels, name="logs") # god channel.id can be useful
                 await channel.send(f"{ctx.author.name} unbanned {user.mention}.") # finally!
+
+
+    # TEMPBAN (WIP)
+    """ @client.command()
+    async def tempban(ctx, member: discord.Member, duration:int, *, reason=None):
+        with open('tempbans.txt','a') as file:
+            file.write(f"{member.name}#{member.discriminator}#{duration}")
+            file.write("\n")
+            print("Logged a tempban.")
+        
+        await member.send(f"You were banned from {ctx.guild.name} for the following reason: {reason}.")
+        await member.ban(reason=reason)
+        print(reason)
+        await ctx.send(f"{ctx.author.name} tempbanned {member.mention} for a duration of {duration} minutes, for the following cause:  {realreason}")   """
         
 def setup(bot):
     bot.add_cog(Moderation(bot))

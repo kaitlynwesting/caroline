@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 
+import asyncio
 import os
 import settings
 
@@ -13,31 +14,18 @@ print("Loading discord.py version", discord.__version__, ", starting...")
 
 # base test commands
 
-@client.event # this is a listener that listens for messages
+""" @client.event # this is a listener that listens for messages
 async def on_message(message):
     if message.content == "hello":
         await message.delete()
         await message.channel.send("pies are better than cakes. change my mind.")
 
-    await client.process_commands(message) #WAIT FOR BOT TO PROCESS COMMANDS BEFORE LISTENER
+    await client.process_commands(message) #WAIT FOR BOT TO PROCESS COMMANDS BEFORE LISTENER """
 
 @client.command()
 async def ping(ctx): #no arguments
     channel = client.get_channel(769410662081495090) # replace id with the welcome channel's id
     await channel.send("pong has arrived!") 
-
-# tempban (experimental)
-@client.command()
-async def tempban(ctx, member: discord.Member, duration:int, *, reason=None):
-    with open('tempbans.txt','a') as file:
-        file.write(f"{member.name}#{member.discriminator}#{duration}")
-        file.write("\n")
-        print("Logged a tempban.")
-    
-    await member.send(f"You were banned from {ctx.guild.name} for the following reason: {reason}.")
-    await member.ban(reason=reason)
-    print(reason)
-    await ctx.send(f"{ctx.author.name} tempbanned {member.mention} for a duration of {duration} minutes, for the following cause:  {realreason}")  
 
 
 # bot loading messages on ready
