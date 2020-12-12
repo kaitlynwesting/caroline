@@ -20,16 +20,19 @@ class Arrival(commands.Cog):
         if ctx.channel.name == "rules":
             if get(ctx.guild.roles, name="Creator"):
                 creator = get(ctx.guild.roles, name="Creator")
+                muted = get(ctx.guild.roles, name="Muted")
 
                 if creator in ctx.author.roles: # already has role
                     await ctx.message.delete()
                     message = await ctx.send(f"You have already accepted the rules!", delete_after=5)
-                    
+                elif muted in ctx.author.roles: # to catch people who are trying to bypass muted
+                    await ctx.message.delete()
+                    await ctx.send(f"Trying to bypass your mute, {ctx.author.mention}? That wasn't very smart of you, was it?", delete_after=5) 
                 else:
                     await ctx.author.add_roles(creator) # add creator role
                     # await asyncio.sleep(1)
                     await ctx.message.delete()
-                    message = await ctx.send(f"{ctx.author.name}, thanks for accepting our rules! Welcome to Photoshop Discord!", delete_after=5)
+                    await ctx.send(f"{ctx.author.name}, thanks for accepting our rules! Welcome to Photoshop Discord!", delete_after=5)
 
                     channel = discord.utils.get(ctx.guild.channels, name="lobby") 
                     welcome = [f"{ctx.author.mention} just joined the server - glhf!",

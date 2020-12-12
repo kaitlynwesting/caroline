@@ -23,7 +23,8 @@ class Moderation(commands.Cog):
         if member.top_role < ctx.author.top_role:
             await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
             await channel.send(f"{ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
-        
+        elif member.id == 785298572047417374:
+            await ctx.send("You're not very bright, are you?")
         else:
             await ctx.send("How desperately you wish you could warn someone above or equal to your rank. But you can't. Boo, hoo.")
 
@@ -57,6 +58,8 @@ class Moderation(commands.Cog):
 
                 await member.send(f"You have been muted in the {ctx.guild.name} Discord.") # dm user
                 await channel.send(f"A new muted role was created. {ctx.author.name} has muted {member.mention}.")
+        elif member.id == 785298572047417374:
+            await ctx.send("You're not very bright, are you?")
         else:
             await ctx.send("How desperately you wish you could mute someone above or equal to your rank. But you can't. Boo, hoo.")
 
@@ -96,6 +99,8 @@ class Moderation(commands.Cog):
                 # dm the offending member the reason
                 await member.send(f"You were kicked from {ctx.guild.name} Discord for the following reason: {reason}")
                 await member.kick(reason=reason)
+        elif member.id == 785298572047417374:
+            await ctx.send("You're not very bright, are you?")
         else:
             await ctx.send("How desperately you wish you could kick someone above or equal to your rank. But you can't. Boo, hoo.")
             
@@ -120,6 +125,8 @@ class Moderation(commands.Cog):
             # dm the offending member the reason
             await member.send(f"You were banned from {ctx.guild.name} Discord for the following reason: {reason}")
             await member.ban(reason=reason)
+        elif member.id == 785298572047417374:
+            await ctx.send("You're not very bright, are you?")
         else:
             await ctx.send("How desperately you wish you could ban someone above or equal to your rank. But you can't. Boo, hoo.")
          
