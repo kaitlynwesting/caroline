@@ -6,6 +6,7 @@ from discord.utils import get
 import asyncio
 import os
 import settings
+import datetime
 
 intents = discord.Intents(messages = True, guilds = True, reactions = True, members = True, presences = True)
 client = discord.ext.commands.Bot(command_prefix = settings.prefix, intents = intents)
@@ -55,5 +56,6 @@ async def on_ready():
     print('-----')
 
 # client.load_extension("cogs.greetings")
+# heroku ps -a secret-eyrie-81800
 
 client.run(settings.token)
