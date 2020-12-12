@@ -6,6 +6,9 @@ import traceback
 import sys
 import random
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # COG TO MANAGE SERVER SUBSCRIPTIONS
 
 class Subscription(commands.Cog):
