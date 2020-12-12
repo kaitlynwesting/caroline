@@ -9,12 +9,8 @@ soup = BeautifulSoup(content.text, 'html.parser')
 headings = soup.find_all('h2')
 headings.pop(0); headings.pop(-1)
 
-while pageNumber <7:
-    print(pageNumber)
-    pageNumber = pageNumber + 1
-
-    for heading in headings:
-        paragraph = heading.next_element.next_element
-        if paragraph.name == "p":
-            print(paragraph.getText())
-            print("=======")
+for heading in headings:
+    paragraph = heading.next_element.next_element
+    if paragraph.name == "p":
+      print(paragraph.getText())
+      print("=======")

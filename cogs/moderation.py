@@ -20,8 +20,12 @@ class Moderation(commands.Cog):
         
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
-        await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
-        await channel.send(f"{ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
+        if member.top_role < ctx.author.top_role:
+            await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
+            await channel.send(f"{ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
+        
+        else:
+            await ctx.send("How desperately you wish you could warn someone above or equal to your rank. But you can't. Boo, hoo.")
 
     # TEXT MUTE COMMAND
     @commands.command()
@@ -29,29 +33,32 @@ class Moderation(commands.Cog):
     async def mute(self, ctx, member: discord.Member):
         channel = discord.utils.get(ctx.guild.channels, name="logs") # god channel.id can be useful
         
-        if get(ctx.guild.roles, name="Muted"): # if such a role exists in the server
+        if member.top_role < ctx.author.top_role:
+            if get(ctx.guild.roles, name="Muted"): # if such a role exists in the server
 
-            muted = get(ctx.guild.roles, name="Muted")
-            creator = get(ctx.guild.roles, name="Creator")
+                muted = get(ctx.guild.roles, name="Muted")
+                creator = get(ctx.guild.roles, name="Creator")
 
-            if muted in member.roles: # check if they already have muted role
-                await channel.send(f"{member.mention} is already muted.")
+                if muted in member.roles: # check if they already have muted role
+                    await channel.send(f"{member.mention} is already muted.")
+                else:
+                    await member.add_roles(muted)
+                    await member.remove_roles(creator)
+
+                    await member.send(f"You have been muted in the {ctx.guild.name} server.") # dm user
+                    await channel.send(f"{ctx.author.name} muted {member.mention}.") 
             else:
+                await ctx.guild.create_role(name="Muted", colour=discord.Colour(0x2C2F33)) # make new role if not existing
+                muted = get(ctx.guild.roles, name="Muted")
+                creator = get(ctx.guild.roles, name="Creator")
+                
                 await member.add_roles(muted)
                 await member.remove_roles(creator)
 
-                await member.send(f"You have been muted in the {ctx.guild.name} server.") # dm user
-                await channel.send(f"{ctx.author.name} muted {member.mention}.") 
+                await member.send(f"You have been muted in the {ctx.guild.name} Discord.") # dm user
+                await channel.send(f"A new muted role was created. {ctx.author.name} has muted {member.mention}.")
         else:
-            await ctx.guild.create_role(name="Muted", colour=discord.Colour(0x2C2F33)) # make new role if not existing
-            muted = get(ctx.guild.roles, name="Muted")
-            creator = get(ctx.guild.roles, name="Creator")
-            
-            await member.add_roles(muted)
-            await member.remove_roles(creator)
-
-            await member.send(f"You have been muted in the {ctx.guild.name} Discord.") # dm user
-            await channel.send(f"A new muted role was created. {ctx.author.name} has muted {member.mention}.") 
+            await ctx.send("How desperately you wish you could mute someone above or equal to your rank. But you can't. Boo, hoo.")
 
     # TEXT UNMUTE COMMAND
     @commands.command()
@@ -77,17 +84,21 @@ class Moderation(commands.Cog):
         if member == ctx.message.author:
             await ctx.channel.send("Are you daft? You can't kick yourself.")
             return
-        if reason == None:
-            reason = "Being an asshat."
-            await channel.send(f"{ctx.author.name} kicked {member.mention} for the following reason: No rationale provided (defaulted to preset message).")
-        else:
-            print(channel)
-            await channel.send(f"{ctx.author.name} kicked {member.mention} for the following reason: {reason}")
-
-        # dm the offending member the reason
-        await member.send(f"You were kicked from {ctx.guild.name} Discord for the following reason: {reason}")
-        await member.kick(reason=reason)
         
+        if member.top_role < ctx.author.top_role:
+            if reason == None:
+                reason = "Being an asshat."
+                await channel.send(f"{ctx.author.name} kicked {member.mention} for the following reason: No rationale provided (defaulted to preset message).")
+            else: # successful kick.
+                print(channel)
+                await channel.send(f"{ctx.author.name} kicked {member.mention} for the following reason: {reason}")
+
+                # dm the offending member the reason
+                await member.send(f"You were kicked from {ctx.guild.name} Discord for the following reason: {reason}")
+                await member.kick(reason=reason)
+        else:
+            await ctx.send("How desperately you wish you could kick someone above or equal to your rank. But you can't. Boo, hoo.")
+            
     
     # BAN COMMAND
     @commands.command(name="ban")
@@ -98,16 +109,19 @@ class Moderation(commands.Cog):
         if member == ctx.message.author:
             await ctx.channel.send("Are you daft? You can't ban yourself.")
             return
-        if reason == None:
-            reason = "Being an asshat."
-            await channel.send(f"{ctx.author.name} banned {member.mention} for the following reason: No rationale provided (defaulted to preset message)")
-        else:
-            await channel.send(f"{ctx.author.name} banned {member.mention} for the following reason: {reason}")
+        
+        if member.top_role < ctx.author.top_role:
+            if reason == None:
+                reason = "Being an asshat."
+                await channel.send(f"{ctx.author.name} banned {member.mention} for the following reason: No rationale provided (defaulted to preset message)")
+            else:
+                await channel.send(f"{ctx.author.name} banned {member.mention} for the following reason: {reason}")
 
-        # dm the offending member the reason
-        await member.send(f"You were banned from {ctx.guild.name} Discord for the following reason: {reason}")
-        await member.ban(reason=reason)
-         
+            # dm the offending member the reason
+            await member.send(f"You were banned from {ctx.guild.name} Discord for the following reason: {reason}")
+            await member.ban(reason=reason)
+        else:
+            await ctx.send("How desperately you wish you could ban someone above or equal to your rank. But you can't. Boo, hoo.")
          
     # UNBAN COMMAND
     @commands.command(name="unban")
@@ -124,6 +138,8 @@ class Moderation(commands.Cog):
 
                 channel = discord.utils.get(ctx.guild.channels, name="logs") # god channel.id can be useful
                 await channel.send(f"{ctx.author.name} unbanned {user.mention}.") # finally!
+            else:
+                await ctx.send("Are you sure they're on the banlist?")
 
 
     # TEMPBAN (WIP)
@@ -138,6 +154,6 @@ class Moderation(commands.Cog):
         await member.ban(reason=reason)
         print(reason)
         await ctx.send(f"{ctx.author.name} tempbanned {member.mention} for a duration of {duration} minutes, for the following cause:  {realreason}")   """
-        
+
 def setup(bot):
     bot.add_cog(Moderation(bot))

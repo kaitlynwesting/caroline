@@ -13,7 +13,7 @@ print("Loading discord.py version", discord.__version__, ", starting...")
 async def wake(ctx, member:discord.Member):
     for channel in member.guild.channels:
         if str(channel) == "logs": # channel check here
-            await channel.send(f"Underneath.") 
+            await channel.send(f"Test.") 
 
 # if member:discord.Member is not a parameter, you must manually obtain the channel id.
 # otherwise you can use member.guilds.channel to look for a matching channel string

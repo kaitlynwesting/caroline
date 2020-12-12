@@ -1,4 +1,4 @@
-# Work with Python 3.6
+
 import discord
 from discord.ext import commands
 from discord.utils import get
