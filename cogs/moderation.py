@@ -152,10 +152,7 @@ class Moderation(commands.Cog):
     # TEMPBAN (WIP)
     """ @client.command()
     async def tempban(ctx, member: discord.Member, duration:int, *, reason=None):
-        with open('tempbans.txt','a') as file:
-            file.write(f"{member.name}#{member.discriminator}#{duration}")
-            file.write("\n")
-            print("Logged a tempban.")
+        
         
         await member.send(f"You were banned from {ctx.guild.name} for the following reason: {reason}.")
         await member.ban(reason=reason)
