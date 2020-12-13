@@ -23,10 +23,19 @@ async def on_message(message):
 
     await client.process_commands(message) #WAIT FOR BOT TO PROCESS COMMANDS BEFORE LISTENER """
 
-@client.command()
-async def ping(ctx): #no arguments
-    channel = client.get_channel(769410662081495090) # replace id with the welcome channel's id
-    await channel.send("pong has arrived!") 
+@client.event
+async def on_message(message):
+    if message.content.startswith('$greet'):
+        channel = message.channel
+        await channel.send('Say hello!')
+
+        def check(m):
+            return m.content == 'hello' and m.channel == channel
+
+        msg = await client.wait_for('message', check=check)
+        await channel.send('Hello {.author}!'.format(msg))
+    
+    await client.process_commands(message)
 
 
 # bot loading messages on ready
@@ -55,7 +64,7 @@ async def on_ready():
     print("My prefix is:", settings.prefix)
     print('-----')
 
-# client.load_extension("cogs.greetings")
+# client.load_extension("cogs.greetings") # write an unloader in a bit
 # heroku ps -a secret-eyrie-81800
 
 client.run(settings.token)
