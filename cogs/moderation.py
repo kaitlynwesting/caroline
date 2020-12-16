@@ -70,13 +70,16 @@ class Moderation(commands.Cog):
         get(ctx.guild.roles, name="Muted")
         muted = get(ctx.guild.roles, name="Muted")
         creator = get(ctx.guild.roles, name="Creator")
-
-        await member.remove_roles(muted)
-        await member.add_roles(creator)
-
         channel = discord.utils.get(ctx.guild.channels, name="logs") # specify logging channel
-        await member.send(f"You have been unmuted in the {ctx.guild.name} Discord.") # dm user
-        await channel.send(f"{ctx.author.name} unmuted {member.mention}.") 
+
+        if muted in member.roles: 
+            await member.remove_roles(muted)
+            await member.add_roles(creator)
+            
+            await member.send(f"You have been unmuted in the {ctx.guild.name} Discord.") # dm user
+            await channel.send(f"{ctx.author.name} unmuted {member.mention}.") 
+        else:
+            await ctx.send(f"{member.display_name} is not muted.")
     
     # KICK COMMAND
     @commands.command(name="kick")

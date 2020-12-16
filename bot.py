@@ -23,7 +23,7 @@ async def on_message(message):
 
     await client.process_commands(message) #WAIT FOR BOT TO PROCESS COMMANDS BEFORE LISTENER """
 
-@client.event
+""" @client.event
 async def on_message(message):
     if message.content.startswith('$greet'):
         channel = message.channel
@@ -35,7 +35,7 @@ async def on_message(message):
         msg = await client.wait_for('message', check=check)
         await channel.send('Hello {.author}!'.format(msg))
     
-    await client.process_commands(message)
+    await client.process_commands(message) """
 
 
 # bot loading messages on ready
