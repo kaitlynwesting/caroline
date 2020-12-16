@@ -139,17 +139,25 @@ class Moderation(commands.Cog):
     async def unban(self, ctx, *, member):
         banned_users = await ctx.guild.bans()
         member_name, member_discriminator = member.split("#")
-        
+        state = False
+
         for ban_entry in banned_users:
             user = ban_entry.user
+            
 
             if (user.name, user.discriminator) == (member_name, member_discriminator):
                 await ctx.guild.unban(user) #make the unban
 
                 channel = discord.utils.get(ctx.guild.channels, name="logs") # god channel.id can be useful
                 await channel.send(f"{ctx.author.name} unbanned {user.mention}.") # finally!
+                state = True
             else:
-                await ctx.send("Are you sure they're on the banlist?")
+                pass
+        
+        if state == False:
+            await ctx.send("Are you sure they're on the banlist? Couldn't find anyone matching that name.")
+        else:
+            pass
 
 
     # TEMPBAN (WIP)

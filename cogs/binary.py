@@ -31,12 +31,12 @@ class Binary(commands.Cog):
             await ctx.send(f"Your decoded binary is: {ascii_string}")
         
         elif (msg == "encode"):
-            test_str = str(code)
+            string = str(code)
   
             
             # using join() + ord() + format() 
             # Converting String to binary 
-            res = ' '.join(format(ord(i), 'b') for i in test_str) 
+            res = ' '.join(format(ord(i), 'b') for i in string) 
             
             # printing result  
             await ctx.send(f"Your encoded binary is: {str(res)}") 
