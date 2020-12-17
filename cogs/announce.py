@@ -33,7 +33,7 @@ class Announce(commands.Cog):
         embed=discord.Embed()
 
         embed.add_field(name=str(title), value=body.content, inline=False)
-        embed.set_thumbnail(url=ctx.author.avatar_url) 
+        # embed.set_thumbnail(url=ctx.author.avatar_url) 
         await channel.send(embed=embed)
 
         #embed.set_thumbnail(url=ctx.author.avatar_url) medium image no
