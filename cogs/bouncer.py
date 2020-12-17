@@ -132,7 +132,7 @@ class Bouncer(commands.Cog):
                     else:
                         pass
             else:
-                await ctx.send("Coolio, okay.")
+                await ctx.send("Coolio, okay. Action has been terminated.")
 
         print("Bouncing complete!")
     
