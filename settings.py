@@ -5,4 +5,4 @@ load_dotenv()
 
 prefix = os.getenv("prefix")
 token = os.getenv("token")
-nowplaying = os.getenv("status")
+nowplaying = os.getenv("nowplaying")
