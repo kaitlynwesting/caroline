@@ -12,13 +12,16 @@ class Cleaner(commands.Cog):
 
     
     @commands.command()
+    @commands.has_permissions(kick_members = True)
     async def clean(self, ctx, amount=2):
+
         await ctx.channel.purge(limit=amount + 1, check=None, before=None, after=None, around=None, oldest_first=False, bulk=True)
 
 
-    @commands.command()
+    """ @commands.command()
+    @commands.has_permissions(kick_members = True)
     async def wipe(self, ctx, amount=2, before=datetime.datetime.now(), after = datetime.datetime(2020, 5, 17)):
-        await ctx.channel.purge(limit=amount + 1, check=None, before=None, after=None, around=None, oldest_first=False, bulk=True)
+        await ctx.channel.purge(limit=amount + 1, check=None, before=None, after=None, around=None, oldest_first=False, bulk=True) """
         
 
     
