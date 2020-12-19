@@ -65,6 +65,6 @@ async def on_ready():
     print('-----')
 
 # client.load_extension("cogs.greetings") # write an unloader in a bit
-# heroku ps -a secret-eyrie-81800
+# heroku ps -a secret-eyrie-81800 #(twd)tie city 206
 
 client.run(settings.token)
