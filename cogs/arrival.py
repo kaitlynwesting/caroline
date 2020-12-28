@@ -6,6 +6,7 @@ from discord.utils import get
 import traceback
 import sys
 import random
+import emoji
 
 # COG FOR NEW ARRIVALS AND DEPARTS
 
@@ -14,7 +15,7 @@ class Arrival(commands.Cog):
     def __init__ (self, bot):
         self.bot = bot 
 
-    # ACCEPT RULES
+    """ # ACCEPT RULES
     @commands.command()
     async def accept(self, ctx):
         if ctx.channel.name == "rules":
@@ -78,8 +79,79 @@ class Arrival(commands.Cog):
                     await channel.send(random.choice(welcome))
                     
         else:
-            await ctx.send("Why are you accepting again?")
+            await ctx.send("Why are you accepting again?") """
 
+
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        
+        guild = self.bot.get_guild(payload.guild_id)
+        channel = await self.bot.fetch_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        member = guild.get_member(payload.user_id)
+        emoji = payload.emoji
+
+        print(member)
+
+        lobby = discord.utils.get(guild.channels, name="lobby")
+        creator = get(guild.roles, name="Creator")
+        muted = get(guild.roles, name="Muted")
+
+        if channel.name == "rules":
+            if muted in member.roles:
+                await channel.send(f"Uhh, {member.mention}, you're muted.", delete_after = 3)
+            elif creator in member.roles:
+                await channel.send(f"{member.mention}, you're already a creator!", delete_after = 3)
+            else:
+                print(emoji)
+                await member.add_roles(creator) # add creator role
+                await channel.send(f"{member.name}, thanks for accepting our rules! Welcome to Photoshop Discord!", delete_after = 4)
+                
+                welcome = [f"{member.mention} just joined the server - glhf!",
+                    f"{member.mention} just joined. Everyone, look busy!",
+                    f"{member.mention} just joined. Can I get a heal?",
+                    f"{member.mention} joined your party.",
+                    f"{member.mention} joined. You must construct additional pylons.",
+                    f"Ermagherd. {member.mention} is here.",
+                    f"Welcome, {member.mention}. Stay awhile and listen.",
+                    f"Welcome, {member.mention}. We were expecting you ( ͡° ͜ʖ ͡°)",
+                    f"Welcome, {member.mention}. We hope you brought pizza.",
+                    f"Welcome {member.mention}. Leave your weapons by the door.",
+                    f"A wild {member.mention} appeared.",
+                    f"Swoooosh. {member.mention} just landed.",
+                    f"Brace yourselves. {member.mention} just joined the server.",
+                    f"{member.mention} just joined. Hide your bananas.",
+                    f"{member.mention} just arrived. Seems OP - please nerf.",
+                    f"{member.mention} just slid into the server.",
+                    f"A {member.mention} has spawned in the server.",
+                    f"Big {member.mention} showed up!",
+                    f"Where’s {member.mention}? In the server!",
+                    f"{member.mention} hopped into the server. Kangaroo!!",
+                    f"{member.mention} just showed up. Hold my beer.",
+                    f"Challenger approaching - {member.mention} has appeared!",
+                    f"It's a bird! It's a plane! Nevermind, it's just {member.mention}.",
+                    f"It's {member.mention}! Praise the sun! [T]/",
+                    f"Never gonna give {member.mention} up. Never gonna let {member.mention} down.",
+                    f"Ha! {member.mention} has joined! You activated my trap card!",
+                    f"Cheers, love! {member.mention}'s here!",
+                    f"Hey! Listen! {member.mention} has joined!",
+                    f"We've been expecting you, {member.mention}",
+                    f"It's dangerous to go alone, take {member.mention}!",
+                    f"{member.mention} has joined the server! It's super effective!",
+                    f"Cheers, love! {member.mention} is here!",
+                    f"{member.mention} is here, as the prophecy foretold.",
+                    f"{member.mention} has arrived. Party's over.",
+                    f"Ready player {member.mention}",
+                    f"{member.mention} is here to kick butt and chew bubblegum. And {member.mention} is all out of gum.",
+                    f"Hello. Is it {member.mention} you're looking for?",
+                    f"{member.mention} has joined. Stay a while and listen!",
+                    f"Roses are red, violets are blue, {member.mention} joined this server with you"]
+                
+                embed=discord.Embed()
+
+                embed.add_field(name=str("Welkom!"), value=f"{random.choice(welcome)}\n What brings you here?", inline=False)
+                embed.set_author(name=f"{member.display_name} joined the server!", icon_url=member.avatar_url)
+                await lobby.send(embed=embed)
 
     # DELETE IRRELEVANT CONTENT IN RULES CHANNEL
     @commands.Cog.listener()
