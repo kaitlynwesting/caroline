@@ -24,3 +24,7 @@ for binary_value in binary_values:
 
 print(ascii_string)
 
+num = 100000
+num = str(num)
+print(f"{num:,}")
+
