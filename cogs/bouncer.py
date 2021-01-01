@@ -73,6 +73,7 @@ class Bouncer(commands.Cog):
         namearray = []
         memberarray = []
         dormant = 0
+        lazy = []
         
         for member in ctx.guild.members:
             x = datetime.datetime.now()
@@ -81,8 +82,6 @@ class Bouncer(commands.Cog):
 
             zday = z.days + 1
             zhour = round(z.seconds/3600, 2)
-            print(member)
-            print(zday)
             
             if (zday > 7):
                 if creator in member.roles or muted in member.roles or bots in member.roles:
@@ -117,20 +116,22 @@ class Bouncer(commands.Cog):
 
                     zday = z.days + 1
                     zhour = round(z.seconds/3600, 2)
-                    print(member)
-                    print(z)
-
+                    
                     # actual kicking area
                     if (zday > 7):
                         if creator in member.roles or muted in member.roles or bots in member.roles:
-                            pass
+                            print(member, "can stay")
                         else:
-                            await member.kick(reason="Not accepting rules within one week")
-                            await member.send(f"""You were kicked automatically from {ctx.guild.name} Discord, due to not accepting our rules for our verification period of one week. 
-    If you'd like to join back, we welcome you! Use discord.gg/sx2P2KpU6G and type .accept.""")
-                            i = i + 1
-                    else:
-                        pass
+                            print(member, "will be kicked!")
+                            lazy.append(member)
+                
+                for member in lazy:
+                    
+                    print(member)
+                    await member.send(f"""You were kicked automatically from {ctx.guild.name} Discord, due to not accepting our rules for our verification period of one week. If you'd like to join back, we welcome you! Use discord.gg/sx2P2KpU6G.""")
+                    await member.kick(reason="Not accepting rules within one week")
+                            
+                   
             else:
                 await ctx.send("Coolio, okay. Action has been terminated.")
 

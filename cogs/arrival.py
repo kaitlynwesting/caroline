@@ -85,6 +85,11 @@ class Arrival(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         
+        fin = open("cogs/start.txt", "r")
+        lines = fin.readlines()
+
+        question = random.choice(lines)
+
         guild = self.bot.get_guild(payload.guild_id)
         channel = await self.bot.fetch_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
@@ -149,7 +154,7 @@ class Arrival(commands.Cog):
                 
                 embed=discord.Embed()
 
-                embed.add_field(name=str("Welkom!"), value=f"{random.choice(welcome)}\n What brings you here?", inline=False)
+                embed.add_field(name=str("Welkom!"), value=f"{random.choice(welcome)}\n {question}", inline=False)
                 embed.set_author(name=f"{member.display_name} joined the server!", icon_url=member.avatar_url)
                 await lobby.send(embed=embed)
 
