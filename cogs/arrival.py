@@ -154,7 +154,7 @@ class Arrival(commands.Cog):
                 
                 embed=discord.Embed()
 
-                embed.add_field(name=str("Welkom!"), value=f"{random.choice(welcome)}\nHere's an icebreaker for you: {question} 🍬", inline=False)
+                embed.add_field(name=f"{random.choice(welcome)}", value="Here's an icebreaker for you: {question} 🍬", inline=False)
                 embed.set_author(name=f"{member.display_name} joined the server!", icon_url=member.avatar_url)
                 await lobby.send(embed=embed)
 
