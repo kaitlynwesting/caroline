@@ -28,56 +28,56 @@ class Moderation(commands.Cog):
         else:
             await ctx.send("How desperately you wish you could warn someone above or equal to your rank. But you can't. Boo, hoo.")
 
+
     # TEXT MUTE COMMAND
     @commands.command()
     @commands.has_permissions(kick_members = True)
     async def mute(self, ctx, member: discord.Member):
-        channel = discord.utils.get(ctx.guild.channels, name="logs") # god channel.id can be useful
-        
-        if member.top_role < ctx.author.top_role:
-            if get(ctx.guild.roles, name="Muted"): # if such a role exists in the server
+        muted = get(ctx.guild.roles, name="Muted")
+        channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
-                muted = get(ctx.guild.roles, name="Muted")
-                creator = get(ctx.guild.roles, name="Creator")
+        if member.id == 785298572047417374: #Lydia id lol
+            await ctx.send("You're not very bright, are you?")
 
-                if muted in member.roles: # check if they already have muted role
-                    await channel.send(f"{member.mention} is already muted.")
-                else:
-                    await member.add_roles(muted)
-                    await member.remove_roles(creator)
+        elif member == ctx.message.author:
+            await ctx.channel.send("Are you daft? You can't mute yourself.")
 
-                    await member.send(f"You have been muted in the {ctx.guild.name} server.") # dm user
-                    await channel.send(f"{ctx.author.name} muted {member.mention}.") 
+        elif member.top_role > ctx.author.top_role:
+            await ctx.send("How desperately you wish you could mute someone above or equal to your rank. But you can't. Boo, hoo.")
+
+        else:
+
+            if muted in member.roles: # check if they already have muted role
+                await ctx.send(f"{member.mention} is already muted.")
+
             else:
-                await ctx.guild.create_role(name="Muted", colour=discord.Colour(0x2C2F33)) # make new role if not existing
-                muted = get(ctx.guild.roles, name="Muted")
-                creator = get(ctx.guild.roles, name="Creator")
+                for role in member.roles:
+                    try:
+                        await member.remove_roles(role)
+                    except:
+                        pass 
                 
                 await member.add_roles(muted)
-                await member.remove_roles(creator)
 
+                await ctx.send(f"Gotcha, {member.mention}'s muted now.")
                 await member.send(f"You have been muted in the {ctx.guild.name} Discord.") # dm user
-                await channel.send(f"A new muted role was created. {ctx.author.name} has muted {member.mention}.")
-        elif member.id == 785298572047417374:
-            await ctx.send("You're not very bright, are you?")
-        else:
-            await ctx.send("How desperately you wish you could mute someone above or equal to your rank. But you can't. Boo, hoo.")
+                await channel.send(f"**[MODERATION]** {ctx.author.name} muted {member.mention}.") 
 
     # TEXT UNMUTE COMMAND
     @commands.command()
     @commands.has_permissions(kick_members = True)
     async def unmute(self, ctx, member: discord.Member):
-        get(ctx.guild.roles, name="Muted")
         muted = get(ctx.guild.roles, name="Muted")
         creator = get(ctx.guild.roles, name="Creator")
-        channel = discord.utils.get(ctx.guild.channels, name="logs") # specify logging channel
+        channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
         if muted in member.roles: 
             await member.remove_roles(muted)
             await member.add_roles(creator)
             
             await member.send(f"You have been unmuted in the {ctx.guild.name} Discord.") # dm user
-            await channel.send(f"{ctx.author.name} unmuted {member.mention}.") 
+            await channel.send(f"**[MODERATION]** {ctx.author.name} unmuted {member.mention}.") 
+
         else:
             await ctx.send(f"{member.display_name} is not muted.")
     
@@ -86,10 +86,6 @@ class Moderation(commands.Cog):
     @commands.has_permissions(kick_members = True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
-
-        if member == ctx.message.author:
-            await ctx.channel.send("Are you daft? You can't kick yourself.")
-            return
         
         if member.top_role < ctx.author.top_role:
             if reason == None:
@@ -104,6 +100,9 @@ class Moderation(commands.Cog):
                 await member.kick(reason=reason)
         elif member.id == 785298572047417374:
             await ctx.send("You're not very bright, are you?")
+        elif member == ctx.message.author:
+            await ctx.channel.send("Are you daft? You can't kick yourself.")
+            return
         else:
             await ctx.send("How desperately you wish you could kick someone above or equal to your rank. But you can't. Boo, hoo.")
             
@@ -113,10 +112,6 @@ class Moderation(commands.Cog):
     @commands.has_permissions(ban_members = True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
         channel = discord.utils.get(ctx.guild.channels, name="logs")
-
-        if member == ctx.message.author:
-            await ctx.channel.send("Are you daft? You can't ban yourself.")
-            return
         
         if member.top_role < ctx.author.top_role:
             if reason == None:

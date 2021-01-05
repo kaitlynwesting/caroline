@@ -18,7 +18,7 @@ class Interest(commands.Cog):
     @commands.command()
     async def topic(self, ctx):
 
-        fin = open("cogs/start.txt", "r")
+        fin = open("cogs/texts/prompts.txt", "r")
         lines = fin.readlines()
 
         question = random.choice(lines)
