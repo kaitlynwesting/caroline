@@ -14,19 +14,24 @@ class Moderation(commands.Cog):
         self.bot = bot
 
     # WARN COMMAND
-    @commands.command(name="warn")
+    @commands.command
     @commands.has_permissions(kick_members = True)
     async def warn(self, ctx, member: discord.Member, *, reason): # reason is not None as warnings must be meaningful
         
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
-        if member.top_role < ctx.author.top_role:
+        if member.id == 785298572047417374:
+            await ctx.send("You're not very bright, are you?")
+
+        elif member == ctx.message.author: # Stop muting yourself
+            await ctx.channel.send("Are you daft? You can't mute yourself.")
+
+        elif member.top_role > ctx.author.top_role:
+            await ctx.send("How desperately you wish you could mute someone above or equal to your rank. But you can't. Boo, hoo.")
+
+        else:
             await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
             await channel.send(f"{ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
-        elif member.id == 785298572047417374:
-            await ctx.send("You're not very bright, are you?")
-        else:
-            await ctx.send("How desperately you wish you could warn someone above or equal to your rank. But you can't. Boo, hoo.")
 
 
     # TEXT MUTE COMMAND
@@ -36,20 +41,18 @@ class Moderation(commands.Cog):
         muted = get(ctx.guild.roles, name="Muted")
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
-        if member.id == 785298572047417374: #Lydia id lol
+        if member.id == 785298572047417374: # Lydia id lol
             await ctx.send("You're not very bright, are you?")
 
-        elif member == ctx.message.author:
+        elif member == ctx.message.author: # Stop muting yourself
             await ctx.channel.send("Are you daft? You can't mute yourself.")
 
-        elif member.top_role > ctx.author.top_role:
+        elif member.top_role > ctx.author.top_role: # Why would you try this
             await ctx.send("How desperately you wish you could mute someone above or equal to your rank. But you can't. Boo, hoo.")
 
         else:
-
-            if muted in member.roles: # check if they already have muted role
+            if muted in member.roles: # Do you already have muted role
                 await ctx.send(f"{member.mention} is already muted.")
-
             else:
                 for role in member.roles:
                     try:

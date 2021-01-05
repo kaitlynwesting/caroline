@@ -5,11 +5,12 @@ import random
 from discord.ext import commands
 from discord.utils import get
 
-class Misc(commands.Cog):
+class Notification(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
+    # POLL FOR LIVESTREAMING NOTIFICATION
     @commands.Cog.listener()
     async def on_message(self, message):
         channel = discord.utils.get(message.guild.channels, name="moderator-chat")
@@ -45,4 +46,4 @@ class Misc(commands.Cog):
         
 
 def setup(bot):
-    bot.add_cog(Misc(bot))
+    bot.add_cog(Notification(bot))
