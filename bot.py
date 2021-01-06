@@ -48,6 +48,7 @@ async def on_ready():
             print("Setting now playing game...", flush= True)
             await client.change_presence(activity=discord.Game(name=settings.nowplaying))
             print("-----")
+
     # loader for cogs
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
@@ -65,6 +66,6 @@ async def on_ready():
     print('-----')
 
 # client.load_extension("cogs.greetings") # write an unloader in a bit
-# heroku ps -a secret-eyrie-81800 #(twd)tie city 206
+# heroku ps -a robolydia #(twd) tie city 206
 
 client.run(settings.token)
