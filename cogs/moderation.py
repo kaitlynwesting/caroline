@@ -14,10 +14,9 @@ class Moderation(commands.Cog):
         self.bot = bot
 
     # WARN COMMAND
-    @commands.command
+    @commands.command()
     @commands.has_permissions(kick_members = True)
-    async def warn(self, ctx, member: discord.Member, *, reason): # reason is not None as warnings must be meaningful
-        
+    async def warn(self, ctx, member: discord.Member): # reason is not None as warnings must be meaningful
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
         if member.id == 785298572047417374:
@@ -27,11 +26,11 @@ class Moderation(commands.Cog):
             await ctx.channel.send("Are you daft? You can't mute yourself.")
 
         elif member.top_role > ctx.author.top_role:
-            await ctx.send("How desperately you wish you could mute someone above or equal to your rank. But you can't. Boo, hoo.")
+            await ctx.send("How desperately you wish you could warn someone above or equal to your rank. But you can't. Boo, hoo.")
 
         else:
             await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
-            await channel.send(f"{ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
+            await channel.send(f"**[MODERATION]** {ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
 
 
     # TEXT MUTE COMMAND
@@ -78,6 +77,7 @@ class Moderation(commands.Cog):
             await member.remove_roles(muted)
             await member.add_roles(creator)
             
+            await ctx.send(f"Unfortunately, {member.mention}'s unmuted now.")
             await member.send(f"You have been unmuted in the {ctx.guild.name} Discord.") # dm user
             await channel.send(f"**[MODERATION]** {ctx.author.name} unmuted {member.mention}.") 
 

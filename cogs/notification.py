@@ -13,7 +13,6 @@ class Notification(commands.Cog):
     # POLL FOR LIVESTREAMING NOTIFICATION
     @commands.Cog.listener()
     async def on_message(self, message):
-        channel = discord.utils.get(message.guild.channels, name="moderator-chat")
         a = discord.utils.get(message.guild.channels, name="announcements")
 
         fin = open("cogs/texts/voters.txt", "r")
@@ -40,6 +39,14 @@ class Notification(commands.Cog):
             fout.write(f"{message.author}\n") 
             return
     
+    """ # POLL FOR LIVESTREAMING NOTIFICATION
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        
+        print(message.author)
+        if str(message.author) == "Gad#6202":
+            await message.channel.send("**START WORKING**") """
+        
     @commands.command()
     async def ping(self, ctx):
         await ctx.send(f"Pong! The latency is {round(self.bot.latency, 3)} milliseconds.")
