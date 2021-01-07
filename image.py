@@ -1,30 +1,47 @@
-import requests
-from urllib import parse
-from bs4 import BeautifulSoup
-from selenium import webdriver 
-from selenium.webdriver.common.by import By 
-from selenium.webdriver.support.ui import WebDriverWait 
-from selenium.webdriver.support import expected_conditions as EC 
-from selenium.common.exceptions import TimeoutException
+from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-options = Options()
-options.add_argument('--headless')
-options.add_argument('--disable-gpu')  # Last I checked this was necessary.
-driver = webdriver.Chrome("C:/Users/exces/Downloads/chromedriver.exe", chrome_options=options)
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.expected_conditions import presence_of_element_located
+import time
+import sys
+
+url = 'https://www.brainyquote.com/'
+chrome_driver_path = 'C:/Users/exces/Downloads/chromedriver.exe'
+
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+
+webdriver = webdriver.Chrome(executable_path=chrome_driver_path, options=chrome_options)
+
+# default search query
+search_query = "drug"
+
+if (len(sys.argv) >= 2):
+  search_query = sys.argv[1]
+  print(search_query)
 
 
-url = 'https://media.discordapp.net/attachments/777207889424941116/796157629364830218/ba051517170b2463660981ce3ea1767d71-lorde.png'
-r = requests.get(url, allow_redirects=True)
+with webdriver as driver:
+    # Set timeout time 
+    wait = WebDriverWait(driver, 10)
 
-# open('lorde.jpg', 'wb').write(r.content)
+    # retrive url in headless browser
+    driver.get(url)
+    
+    # find search box
+    search = driver.find_element_by_id("hmSearch")
+    search.send_keys(search_query + Keys.RETURN)
+    
+    wait.until(presence_of_element_located((By.ID, "quotesList")))
+    # time.sleep(3)
+    results = driver.find_elements_by_class_name('m-brick')
 
-def tin(url: str):
-        return "https://www.tineye.com/search?url={}".format(parse.quote_plus(url))
+    for quote in results:
+      quoteArr = quote.text.split('\n')
+      print(quoteArr)
+      print()
 
-titles_element = driver.find_elements_by_xpath("//h4")
-
-print(tin(url))
-print(titles_element)
-
-
-
+    # must close the driver after task finished
+    driver.close()

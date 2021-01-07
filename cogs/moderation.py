@@ -25,7 +25,7 @@ class Moderation(commands.Cog):
         elif member == ctx.message.author: # Stop muting yourself
             await ctx.channel.send("Are you daft? You can't mute yourself.")
 
-        elif member.top_role > ctx.author.top_role:
+        elif member.top_role >= ctx.author.top_role:
             await ctx.send("How desperately you wish you could warn someone above or equal to your rank. But you can't. Boo, hoo.")
 
         else:
@@ -46,7 +46,7 @@ class Moderation(commands.Cog):
         elif member == ctx.message.author: # Stop muting yourself
             await ctx.channel.send("Are you daft? You can't mute yourself.")
 
-        elif member.top_role > ctx.author.top_role: # Why would you try this
+        elif member.top_role >= ctx.author.top_role: # Why would you try this
             await ctx.send("How desperately you wish you could mute someone above or equal to your rank. But you can't. Boo, hoo.")
 
         else:
