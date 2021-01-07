@@ -9,7 +9,7 @@ import sys
 import random
 import emoji
 
-class Interest(commands.Cog):
+class Fun(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -58,4 +58,4 @@ class Interest(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Interest(bot))
+    bot.add_cog(Fun(bot))
