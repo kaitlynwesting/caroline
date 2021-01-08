@@ -141,9 +141,9 @@ which can be found in the <#777237462904209429> channel."""),
             await ctx.send(embed=embed)
 
         else:
-            number = int(number)
+            number = str(number)
 
-            if number == 1:
+            if number == '1':
 
                 embed=discord.Embed(
                 title = "Rules of Photoshop Discord", 
@@ -159,26 +159,37 @@ which can be found in the <#777237462904209429> channel."""),
                 await ctx.send(embed=embed)
 
                 return
-            elif number == 2:
+            elif number == '2':
                 myStr = (cutString("""Behave maturely and respectfully towards other members of the community."""))
             
-            elif number == 3:
+            elif number == '3':
                 myStr = (cutString("""Listen to and respect staff members and their directions."""))
             
-            elif number == 4:
+            elif number == '4':
                 myStr = (cutString("""This is an English-speaking server. Please speak English to the best of your ability."""))
                 
-            elif number == 5:
+            elif number == '5':
                 myStr = (cutString("""Do not request help with or post projects that may be considered illicit,
 breach terms of services, malicious or inappropriate (such as NSFW). Use common sense and judgement."""))
 
-            elif number == 6:
+            elif number == '6':
                 myStr = (cutString("""No spamming or advertising, including requests or commissions. 
 **We are not a charity case; we will not create anything for you.**"""))
+            
+            else:
+                embed=discord.Embed(
+                title = "Rules of Photoshop Discord",
+                description = "No such rule exists.",
+                color = 0x349feb
+                )
+                await ctx.send(embed=embed)
+
+                return
 
             embed=discord.Embed(
             title = "Rules of Photoshop Discord", 
-            color=0x349feb)
+            color=0x349feb
+            )
 
             embed.add_field(name=f"Rule {number}: ", value=f'{myStr}', inline=False)
             
