@@ -10,10 +10,11 @@ import emoji
 
 # COG FOR NEW ARRIVALS AND DEPARTS
 
-class Arrival(commands.Cog):
+class Rules(commands.Cog):
 
     def __init__ (self, bot):
         self.bot = bot 
+
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
@@ -116,10 +117,46 @@ class Arrival(commands.Cog):
     async def on_member_remove(self, member):
         channel = discord.utils.get(member.guild.text_channels, name="logs") # THIS IS TERRIFIC <---
         await channel.send(f"{member.mention} has left.")
+    
+    # TOGGLE RULES FOR DUMMIES
+    @commands.command()
+    async def rule(self, ctx, *, number=None):
+
+        def cutString(bigString):
+            bigString = bigString.replace('\n', ' ')
+            return bigString
+        
+        global myStr
+        
+
+
+        if number == None:
+            await ctx.send("rules")
+        else:
+            number = int(number)
+
+            if number == 1:
+                return
+            elif number == 2:
+                myStr = (cutString("""Behave maturely and respectfully towards other members of the community."""))
+                
+            elif number == 5:
+                myStr = (cutString("""Do not request help with or post projects that may be considered illicit,
+breach terms of services, malicious or inappropriate (such as NSFW). Use common sense and judgement."""))
+                
+            
+
+            embed=discord.Embed(title = "Rules of Photoshop Discord", color=0x349feb)
+
+            embed.add_field(name=f"Rule {number}: ", value=f'{myStr}', inline=False)
+            
+            await ctx.send(embed=embed) 
+
+            
 
 # binds the cog to the client file
 def setup(bot):
-    bot.add_cog(Arrival(bot)) 
+    bot.add_cog(Rules(bot)) 
 
 
 

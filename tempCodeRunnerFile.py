@@ -1,0 +1,1 @@
+headings = soup.find_all('h2')

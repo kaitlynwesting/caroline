@@ -10,8 +10,8 @@ class Notification(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # POLL FOR LIVESTREAMING NOTIFICATION
-    @commands.Cog.listener()
+    # POLL FOR LIVESTREAMING NOTIFICATION - DEFUNCT
+    """ @commands.Cog.listener()
     async def on_message(self, message):
         a = discord.utils.get(message.guild.channels, name="announcements")
 
@@ -31,13 +31,13 @@ class Notification(commands.Cog):
 
             embed=discord.Embed(color=0x349feb)
 
-            embed.set_author(name=f"Hi there, {message.author.display_name}!", icon_url=message.author.avatar_url)
-            embed.add_field(name="The friendly neighbourhood bot (and the community) seeks your opinion:", value=f"""We don't know if you've seen our latest {a.mention}, but we have an exciting poll for you. If you haven't voted yet, we entreat you!""", inline=False)
-            embed.set_footer(text="Alright, alright, I'll stop pestering you. If you've been a dutiful voter, thanks ;)")
-            await message.channel.send(embed=embed)
+            #embed.set_author(name=f"Hi there, {message.author.display_name}!", icon_url=message.author.avatar_url)
+            #embed.add_field(name="The friendly neighbourhood bot (and the community) seeks your opinion:", value=f'', inline=False)
+            #embed.set_footer(text="Alright, alright, I'll stop pestering you. If you've been a dutiful voter, thanks ;)")
+            #await message.channel.send(embed=embed)
 
             fout.write(f"{message.author}\n") 
-            return
+            return  """
     
     """ # POLL FOR LIVESTREAMING NOTIFICATION
     @commands.Cog.listener()

@@ -10,15 +10,18 @@ import sys
 
 url = 'https://www.tineye.com'
 chrome_driver_path = 'C:/Users/exces/Downloads/chromedriver.exe'
+#CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+#GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google-chrome'
 
 chrome_options = Options()
-#chrome_options.add_argument('--headless')
-chrome_options.add_argument("--window-size=1920,1080")
-chrome_options.add_argument('--start-maximized')
+chrome_options.add_argument('--headless')
+chrome_options.add_argument("--window-size=1260, 600")
 chrome_options.add_argument('--disable-gpu')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument("--disable-extensions")
-chrome_options.add_argument('disable-infobars')
+chrome_options.add_argument('--ignore-certificate-errors')
+chrome_options.add_argument('--allow-running-insecure-content')
+
 
 webdriver = webdriver.Chrome(executable_path=chrome_driver_path, options=chrome_options)
 
@@ -40,7 +43,7 @@ with webdriver as driver:
 
     # find search box
 
-    wait.until(EC.visibility_of_element_located((By.XPATH, "//input [@id='url_box']")))
+    wait.until(EC.presence_of_element_located((By.XPATH, "//input [@id='url_box']")))
     
     search = driver.find_element_by_xpath("//input [@id='url_box']") 
     search.send_keys(search_query + Keys.RETURN)

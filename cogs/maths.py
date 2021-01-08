@@ -5,7 +5,7 @@ import random
 import datetime
 from discord.ext import commands
 
-class Binary(commands.Cog):
+class Maths(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -44,4 +44,4 @@ class Binary(commands.Cog):
     
 
 def setup(bot):
-    bot.add_cog(Binary(bot))
+    bot.add_cog(Maths(bot))
