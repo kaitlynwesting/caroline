@@ -119,7 +119,7 @@ class Rules(commands.Cog):
         await channel.send(f"{member.mention} has left.")
     
     # TOGGLE RULES FOR DUMMIES
-    @commands.command()
+    @commands.command(aliases=["rules"])
     async def rule(self, ctx, *, number=None):
 
         def cutString(bigString):
@@ -129,7 +129,17 @@ class Rules(commands.Cog):
         global myStr
 
         if number == None:
-            await ctx.send("rules")
+
+            embed=discord.Embed(
+            title = "Rules of Photoshop Discord",
+            color=0x349feb,
+            description = cutString("""We expect all members of our community to understand and abide by our rules, 
+which can be found in the <#777237462904209429> channel."""), 
+            inline=False
+            )
+            
+            await ctx.send(embed=embed)
+
         else:
             number = int(number)
 
