@@ -127,8 +127,6 @@ class Rules(commands.Cog):
             return bigString
         
         global myStr
-        
-
 
         if number == None:
             await ctx.send("rules")
@@ -136,17 +134,41 @@ class Rules(commands.Cog):
             number = int(number)
 
             if number == 1:
+
+                embed=discord.Embed(
+                title = "Rules of Photoshop Discord", 
+                # url = "https://canary.discord.com/channels/777207888846389270/777237462904209429/791682685515857920",
+                color=0x349feb
+                )
+
+                embed.add_field(
+                name=f"Rule {number}: ", 
+                value=f"Follow the [Discord Community Guidelines](https://discord.com/guidelines) and [Terms of Service](https://discord.com/terms).", 
+                inline=False)
+            
+                await ctx.send(embed=embed)
+
                 return
             elif number == 2:
                 myStr = (cutString("""Behave maturely and respectfully towards other members of the community."""))
+            
+            elif number == 3:
+                myStr = (cutString("""Listen to and respect staff members and their directions."""))
+            
+            elif number == 4:
+                myStr = (cutString("""This is an English-speaking server. Please speak English to the best of your ability."""))
                 
             elif number == 5:
                 myStr = (cutString("""Do not request help with or post projects that may be considered illicit,
 breach terms of services, malicious or inappropriate (such as NSFW). Use common sense and judgement."""))
-                
-            
 
-            embed=discord.Embed(title = "Rules of Photoshop Discord", color=0x349feb)
+            elif number == 6:
+                myStr = (cutString("""No spamming or advertising, including requests or commissions. 
+**We are not a charity case; we will not create anything for you.**"""))
+
+            embed=discord.Embed(
+            title = "Rules of Photoshop Discord", 
+            color=0x349feb)
 
             embed.add_field(name=f"Rule {number}: ", value=f'{myStr}', inline=False)
             
