@@ -195,6 +195,8 @@ breach terms of services, malicious or inappropriate (such as NSFW). Use common 
             
             await ctx.send(embed=embed) 
 
+            
+
 # binds the cog to the client file
 def setup(bot):
     bot.add_cog(Rules(bot)) 
