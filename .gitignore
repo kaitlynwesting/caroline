@@ -1,6 +1,7 @@
 #Temp
 test
 Dockerfile
+.devcontainer
 
 # Caches
 __pycache__/
