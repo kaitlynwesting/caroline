@@ -25,10 +25,11 @@ class Moderation(commands.Cog):
         elif member == ctx.message.author: # Stop muting yourself
             await ctx.channel.send("Are you daft? You can't mute yourself.")
 
-        elif member.top_role >= ctx.author.top_role:
+        elif member.top_role >= ctx.author.top_role and member.id != 669977303584866365:
             await ctx.send("How desperately you wish you could warn someone above or equal to your rank. But you can't. Boo, hoo.")
 
         else:
+            await ctx.send(f"Gotcha, {member.mention} has been delivered a warning.")
             await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
             await channel.send(f"**[MODERATION]** {ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
 

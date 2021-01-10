@@ -59,7 +59,7 @@ class Fun(commands.Cog):
 
     # SPECIAL "MOCK" COMMAND TO COMMEMORATE CODE BASH ONE (THONKS TO CHILD!)
     @commands.command()
-    @commands.has_permissions(manage_emojis = True)
+    @commands.has_permissions(kick_members = True)
     async def mock(self, ctx, message):
 
         newStr = ""
