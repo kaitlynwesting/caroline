@@ -33,7 +33,6 @@ class Moderation(commands.Cog):
             await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
             await channel.send(f"**[MODERATION]** {ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
 
-
     # TEXT MUTE COMMAND
     @commands.command()
     @commands.has_permissions(kick_members = True)
@@ -105,11 +104,11 @@ class Moderation(commands.Cog):
         else:
             if reason == None:
                 reason = "Being an asshat."
-                await channel.send(f"{ctx.author.name} kicked {member.mention} for the following reason: No rationale provided (defaulted to preset message).")
+                await channel.send(f"**[MODERATION]** {ctx.author.name} kicked {member.mention} for the following reason: No rationale provided (defaulted to preset message).")
 
             else: # successful kick.
                 print(channel)
-                await channel.send(f"{ctx.author.name} kicked {member.mention} for the following reason: {reason}")
+                await channel.send(f"**[MODERATION]** {ctx.author.name} kicked {member.mention} for the following reason: {reason}")
 
             await member.kick(reason=reason)
     
@@ -131,11 +130,11 @@ class Moderation(commands.Cog):
         else:
             if reason == None:
                 reason = "Being an asshat."
-                await channel.send(f"{ctx.author.name} banned {member.mention} for the following reason: No rationale provided (defaulted to preset message).")
+                await channel.send(f"**[MODERATION]** {ctx.author.name} banned {member.mention} for the following reason: No rationale provided (defaulted to preset message).")
 
             else: 
                 print(channel)
-                await channel.send(f"{ctx.author.name} banned {member.mention} for the following reason: {reason}")
+                await channel.send(f"**[MODERATION]** {ctx.author.name} banned {member.mention} for the following reason: {reason}")
 
             await member.ban(reason=reason)
          
