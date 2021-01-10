@@ -14,7 +14,7 @@ chrome_driver_path = 'C:/Users/exces/Downloads/chromedriver.exe'
 #GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google-chrome'
 
 chrome_options = Options()
-chrome_options.add_argument('--headless')
+#chrome_options.add_argument('--headless')
 chrome_options.add_argument("--window-size=1260, 600")
 chrome_options.add_argument('--disable-gpu')
 chrome_options.add_argument('--no-sandbox')
@@ -51,10 +51,12 @@ with webdriver as driver:
     wait.until(presence_of_element_located((By.XPATH, "//div[@id='results-div']")))
     time.sleep(3)
     results = driver.find_elements_by_xpath("//h4")
+    links = driver.find_elements_by_xpath("//a[@class='truncate']")
 
     for item in results:
     
       print(f"{results[i].text}")
+      print(f"{links[i].text}")
       # print(rating[i])
 
       i = i + 1

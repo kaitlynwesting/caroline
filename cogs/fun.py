@@ -5,7 +5,7 @@ from discord.ext import commands
 from discord.utils import get
 
 import traceback
-import sys
+import sys, string
 import random
 import emoji
 
@@ -55,7 +55,23 @@ class Fun(commands.Cog):
 
         await embedio.add_reaction(emoji="🅰️")
         await embedio.add_reaction(emoji="🅱️")
+    
 
+    # SPECIAL "MOCK" COMMAND TO COMMEMORATE CODE BASH ONE (THONKS TO CHILD!)
+    @commands.command()
+    @commands.has_permissions(manage_emojis = True)
+    async def mock(self, ctx):
+
+        newStr = ""
+        lastCase = True
+
+        for char in str(ctx.message.content).strip('\n'):
+            newChar = char if char in string.punctuation or char == " " else char.lower() if lastCase else char.upper() 
+            if (not char in string.punctuation) and (not char == " "): lastCase = not lastCase
+            newStr += newChar
+
+        await ctx.channel.purge(limit=1, check=None, before=None, after=None, around=None, oldest_first=False, bulk=True)
+        await ctx.send (newStr[5:])
 
 def setup(bot):
     bot.add_cog(Fun(bot))
