@@ -16,7 +16,7 @@ class Moderation(commands.Cog):
     # WARN COMMAND
     @commands.command()
     @commands.has_permissions(kick_members = True)
-    async def warn(self, ctx, member: discord.Member): # reason is not None as warnings must be meaningful
+    async def warn(self, ctx, member: discord.Member, reason): # reason is not None as warnings must be meaningful
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
         if member.id == 785298572047417374:
