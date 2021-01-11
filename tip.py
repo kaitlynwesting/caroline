@@ -5,7 +5,7 @@ import requests
 tips = []
 count = input("Current number: (Number to be displayed)")
 tip = int(input("Tip number: "))
-URL = 'https://www.creativebloq.com/photo-editing/photoshop-tips-and-fixes-612316/' + str(3)
+URL = 'https://www.creativebloq.com/photo-editing/photoshop-tips-and-fixes-612316/' + str(4)
 content = requests.get(URL)
 soup = BeautifulSoup(content.text, 'html.parser')
 headings = soup.find_all('h2')

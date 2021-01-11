@@ -62,11 +62,11 @@ class Bouncer(commands.Cog):
     # BOUNCES DORMANT ROLELESS USERS
     @commands.command()
     @commands.has_permissions(administrator = True)
-    async def bounce(self, ctx): # reason is not None as warnings must be meaningful
-        
+    async def bounce(self, ctx): 
+
+        channel = discord.utils.get(ctx.guild.channels, name="logs") 
         creator = get(ctx.guild.roles, name="Creator")
         muted = get(ctx.guild.roles, name="Muted")
-        channel = discord.utils.get(ctx.guild.channels, name="logs") 
         bots = get(ctx.guild.roles, name="Bots")
 
         i = 0
@@ -88,7 +88,6 @@ class Bouncer(commands.Cog):
                     pass
                 else:
                     namearray.append(f"{i+1}. {member.mention}")
-                    # await message.edit(content=f"{message.content} \n {namearray[i]}")
                     memberarray.append(f"{member.id}")
                     i = i + 1
                     dormant = dormant + 1
@@ -107,7 +106,6 @@ class Bouncer(commands.Cog):
             msg = await self.bot.wait_for('message', check=check)
             
             if "yes" in msg.content.lower():
-                await ctx.send("As you wish. Dormant members have been kicked and invites sent.") # actually
 
                 for member in ctx.guild.members:
                     x = datetime.datetime.now()
@@ -120,22 +118,21 @@ class Bouncer(commands.Cog):
                     # actual kicking area
                     if (zday > 7):
                         if creator in member.roles or muted in member.roles or bots in member.roles:
-                            print(member, "can stay")
+                            pass
                         else:
-                            print(member, "will be kicked!")
                             lazy.append(member)
                 
+                await channel.send(f"**[BOUNCER]** The below {dormant} members have not accepted our rules within one week:") 
+
                 for member in lazy:
-                    
-                    print(member)
                     await member.send(f"""You were kicked automatically from {ctx.guild.name} Discord, due to not accepting our rules for our verification period of one week. If you'd like to join back, we welcome you! Use discord.gg/sx2P2KpU6G.""")
                     await member.kick(reason="Not accepting rules within one week")
-                            
-                   
+                
+                await channel.send(f"**[BOUNCER]** The above members have been ejected, and invites sent.") 
+                await ctx.send("As you wish. Dormant members have been kicked and invites sent.") 
+                                
             else:
-                await ctx.send("Coolio, okay. Action has been terminated.")
-
-        print("Bouncing complete!")
+                await ctx.send("Coolio, okay. Action has been terminated.") 
     
 
 def setup(bot):

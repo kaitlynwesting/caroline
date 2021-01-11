@@ -37,5 +37,6 @@ async def on_ready():
     print("My id is:", client.user.id)
     print("My prefix is:", settings.prefix)
     print('-----')
+    # heroku ps -a robolydia #(twd) tie city 206
 
 client.run(settings.token)

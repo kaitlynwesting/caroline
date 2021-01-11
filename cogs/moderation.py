@@ -29,16 +29,16 @@ class Moderation(commands.Cog):
             await ctx.send("How desperately you wish you could warn someone above or equal to your rank. But you can't. Boo, hoo.")
 
         else:
-            await ctx.send(f"Gotcha, {member.mention} has been delivered a warning.")
-            await member.send(f"You have received a warning from {ctx.guild.name} Discord for the following: {reason}")
+            await ctx.send(f"📨 Delivered **warning** to {member.mention} ({reason}).")
+            await member.send(f"You have received a **warning** from {ctx.guild.name} Discord for the following: {reason}")
             await channel.send(f"**[MODERATION]** {ctx.author.name} issued a warning to {member.mention} for the following: {reason}")
 
     # TEXT MUTE COMMAND
     @commands.command()
     @commands.has_permissions(kick_members = True)
     async def mute(self, ctx, member: discord.Member):
+        channel = discord.utils.get(ctx.guild.channels, name="logs")
         muted = get(ctx.guild.roles, name="Muted")
-        channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
         if member.id == 785298572047417374: # Lydia id lol
             await ctx.send("You're not very bright, are you?")
@@ -61,8 +61,8 @@ class Moderation(commands.Cog):
                 
                 await member.add_roles(muted)
 
-                await ctx.send(f"Gotcha, {member.mention}'s muted now.")
-                await member.send(f"You have been muted in the {ctx.guild.name} Discord.") # dm user
+                await ctx.send(f"📨 Applied **mute** to {member.mention}.")
+                await member.send(f"You have been **muted** indefinitely in the {ctx.guild.name} Discord.") # dm user
                 await channel.send(f"**[MODERATION]** {ctx.author.name} muted {member.mention}.") 
 
 
@@ -78,7 +78,7 @@ class Moderation(commands.Cog):
             await member.remove_roles(muted)
             await member.add_roles(creator)
             
-            await ctx.send(f"That's done, {member.mention}'s unmuted now.")
+            await ctx.send(f"Done! {member.mention} has been **unmuted** now.")
             await member.send(f"You have been unmuted in the {ctx.guild.name} Discord.") # dm user
             await channel.send(f"**[MODERATION]** {ctx.author.name} unmuted {member.mention}.") 
 
@@ -107,9 +107,10 @@ class Moderation(commands.Cog):
                 await channel.send(f"**[MODERATION]** {ctx.author.name} kicked {member.mention} for the following reason: No rationale provided (defaulted to preset message).")
 
             else: # successful kick.
-                print(channel)
                 await channel.send(f"**[MODERATION]** {ctx.author.name} kicked {member.mention} for the following reason: {reason}")
 
+            await ctx.send(f"📨 **Kicked** {member.mention} ({reason}).")
+            await message.author.send(f"You have been **kicked** from {message.guild.name} Discord for the following: {reason}")
             await member.kick(reason=reason)
     
     # BAN COMMAND
@@ -136,6 +137,8 @@ class Moderation(commands.Cog):
                 print(channel)
                 await channel.send(f"**[MODERATION]** {ctx.author.name} banned {member.mention} for the following reason: {reason}")
 
+            await ctx.send(f"📨 Permanently **banned** {member.mention} ({reason}).")
+            await message.author.send(f"You have been **banned** permanently from {message.guild.name} Discord for the following: {reason}")
             await member.ban(reason=reason)
          
     
