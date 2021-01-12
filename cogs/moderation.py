@@ -36,7 +36,7 @@ class Moderation(commands.Cog):
     # TEXT MUTE COMMAND
     @commands.command()
     @commands.has_permissions(kick_members = True)
-    async def mute(self, ctx, member: discord.Member):
+    async def mute(self, ctx, member: discord.Member, *, reason=None):
         channel = discord.utils.get(ctx.guild.channels, name="logs")
         muted = get(ctx.guild.roles, name="Muted")
 
@@ -60,10 +60,17 @@ class Moderation(commands.Cog):
                         pass 
                 
                 await member.add_roles(muted)
+                
+                if reason == None:
+                    reason = "Being an asshat."
+                    await channel.send(f"**[MODERATION]** {ctx.author.name} muted {member.mention} for the following reason: No rationale provided (defaulted to preset message).")
 
-                await ctx.send(f"📨 Applied **mute** to {member.mention}.")
-                await member.send(f"You have been **muted** indefinitely in the {ctx.guild.name} Discord.") # dm user
-                await channel.send(f"**[MODERATION]** {ctx.author.name} muted {member.mention}.") 
+                else: # successful kick.
+                    await channel.send(f"**[MODERATION]** {ctx.author.name} muted {member.mention} for the following reason: {reason}")
+
+                await ctx.send(f"📨 Applied **mute** to {member.mention} indefinitely.")
+                await message.author.send(f"You have been **muted** indefinitely in {message.guild.name} Discord for the following: {reason}")
+                await member.kick(reason=reason)
 
 
     # TEXT UNMUTE COMMAND
@@ -78,7 +85,7 @@ class Moderation(commands.Cog):
             await member.remove_roles(muted)
             await member.add_roles(creator)
             
-            await ctx.send(f"Done! {member.mention} has been **unmuted** now.")
+            await ctx.send(f"📨 Done! {member.mention} has been **unmuted** now.")
             await member.send(f"You have been unmuted in the {ctx.guild.name} Discord.") # dm user
             await channel.send(f"**[MODERATION]** {ctx.author.name} unmuted {member.mention}.") 
 
