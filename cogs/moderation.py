@@ -65,13 +65,11 @@ class Moderation(commands.Cog):
                     reason = "Being an asshat."
                     await channel.send(f"**[MODERATION]** {ctx.author.name} muted {member.mention} for the following reason: No rationale provided (defaulted to preset message).")
 
-                else: # successful kick.
+                else: 
                     await channel.send(f"**[MODERATION]** {ctx.author.name} muted {member.mention} for the following reason: {reason}")
 
                 await ctx.send(f"📨 Applied **mute** to {member.mention} indefinitely.")
-                await message.author.send(f"You have been **muted** indefinitely in {message.guild.name} Discord for the following: {reason}")
-                await member.kick(reason=reason)
-
+                await member.send(f"You have been **muted** indefinitely in {ctx.guild.name} Discord for the following: {reason}")
 
     # TEXT UNMUTE COMMAND
     @commands.command()
@@ -86,7 +84,7 @@ class Moderation(commands.Cog):
             await member.add_roles(creator)
             
             await ctx.send(f"📨 Done! {member.mention} has been **unmuted** now.")
-            await member.send(f"You have been unmuted in the {ctx.guild.name} Discord.") # dm user
+            await member.send(f"You have been **unmuted** in {ctx.guild.name} Discord.") # dm user
             await channel.send(f"**[MODERATION]** {ctx.author.name} unmuted {member.mention}.") 
 
         else:
