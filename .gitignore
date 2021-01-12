@@ -1,5 +1,6 @@
+*.code-workspace
+
 #Temp
-.code-workspace
 test
 Dockerfile
 .devcontainer
