@@ -12,7 +12,7 @@ class Announce(commands.Cog):
 
     
     @commands.command()
-    @commands.has_permissions(administrator = True)
+    @commands.has_permissions(kick_members = True)
     async def announce(self, ctx, channel, *, title):
  
         chars = "<#>"

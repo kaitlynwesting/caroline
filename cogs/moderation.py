@@ -78,6 +78,7 @@ class Moderation(commands.Cog):
 
     # TEMPMUTE (WIP)
     @commands.command(aliases=["tempm", "tm"])
+    @commands.has_permissions(kick_members = True)
     async def tempmute(self, ctx, member: discord.Member, duration, *, reason=None):
         channel = discord.utils.get(ctx.guild.channels, name="logs")
         muted = get(ctx.guild.roles, name="Muted")
