@@ -33,7 +33,7 @@ class Announce(commands.Cog):
         if "cancel" in body.content.lower():
             await ctx.send("Announcement has been cancelled.")
         else:
-            embed=discord.Embed()
+            embed=discord.Embed(color=0x349feb)
 
             embed.add_field(name=str(title), value=body.content, inline=False)
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
