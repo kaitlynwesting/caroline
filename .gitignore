@@ -1,5 +1,6 @@
 #Temp
 .code-workspace
+.vscode
 test
 Dockerfile
 .devcontainer
