@@ -49,8 +49,7 @@ class Filter(commands.Cog):
                 channel = get(message.guild.channels, name="logs")
                 await channel.send(f"**[MODERATION]** {message.author.mention} was muted (tried to pull a mass ping).")
                 await message.channel.send(f"📨 Applied **auto-mute** to {message.author.mention} (infraction: `attempting mass ping`).")
-                await message.author.send(f"You have been **auto-muted** in {message.guild.name} Discord, for thinking you're important enough to disturb everyone's peace.")
-                #await channel.send(f"**[MODERATION]** {message.author.mention} was muted (tried to pull an everyone ping).") 
+                await message.author.send(f"You have been **auto-muted** in {message.guild.name} Discord, for thinking you're important enough to disturb everyone's peace.") 
 
 def setup(bot):
     bot.add_cog(Filter(bot))
