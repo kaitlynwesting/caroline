@@ -17,7 +17,7 @@ class Moderation(commands.Cog):
         self.bot = bot
 
     # WARN COMMAND
-    @commands.command()
+    @commands.command(aliases=["w"])
     @commands.has_permissions(kick_members = True)
     async def warn(self, ctx, member: discord.Member, *, reason): # reason is not None as warnings must be meaningful
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
@@ -38,7 +38,7 @@ class Moderation(commands.Cog):
 
 
     # TEXT MUTE COMMAND
-    @commands.command()
+    @commands.command(aliases=["m"])
     @commands.has_permissions(kick_members = True)
     async def mute(self, ctx, member: discord.Member, *, reason=None):
         channel = discord.utils.get(ctx.guild.channels, name="logs")
@@ -157,7 +157,6 @@ class Moderation(commands.Cog):
                     await channel.send(f"**[MODERATION]** 📨 {member.mention} has been automatically **unmuted** now.") 
         
 
-
     # TEXT UNMUTE COMMAND
     @commands.command(aliases=["um"])
     @commands.has_permissions(kick_members = True)
@@ -179,7 +178,7 @@ class Moderation(commands.Cog):
     
 
     # KICK COMMAND
-    @commands.command(name="kick")
+    @commands.command(aliases=["k"])
     @commands.has_permissions(kick_members = True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
@@ -206,7 +205,7 @@ class Moderation(commands.Cog):
             await member.kick(reason=reason)
     
     # BAN COMMAND
-    @commands.command(name="ban")
+    @commands.command(aliases=["b"])
     @commands.has_permissions(ban_members = True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
