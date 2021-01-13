@@ -98,12 +98,12 @@ class Moderation(commands.Cog):
                 try:
                     return str(f"{time[:-1]} {timeStringSingular[time[-1]]}") # in seconds
                 except:
-                    await ctx.send("You okay?")
+                    return
             else:
                 try:
                     return str(f"{time[:-1]} {timeStringPlural[time[-1]]}") # in seconds
                 except:
-                    await ctx.send("You okay?")
+                    return
         
         sleepTime = convert(duration) # convert everything to seconds!
         displayTime = timeToString(str(duration))
@@ -153,7 +153,7 @@ class Moderation(commands.Cog):
                     await member.remove_roles(muted)
                     await member.add_roles(creator)
                     
-                    await member.send(f"You have been automatically **unmuted** in {ctx.guild.name} Discord.") # dm user
+                    await member.send(f"You have been **unmuted** automatically in {ctx.guild.name} Discord.") # dm user
                     await channel.send(f"**[MODERATION]** 📨 {member.mention} has been automatically **unmuted** now.") 
         
 
@@ -202,7 +202,7 @@ class Moderation(commands.Cog):
                 await channel.send(f"**[MODERATION]** {ctx.author.name} kicked {member.mention} for the following reason: {reason}")
 
             await ctx.send(f"📨 **Kicked** {member.mention} ({reason}).")
-            await message.author.send(f"You have been **kicked** from {message.guild.name} Discord for the following: {reason}")
+            await member.send(f"You have been **kicked** from {ctx.guild.name} Discord for the following: {reason}")
             await member.kick(reason=reason)
     
     # BAN COMMAND
@@ -230,7 +230,8 @@ class Moderation(commands.Cog):
                 await channel.send(f"**[MODERATION]** {ctx.author.name} banned {member.mention} for the following reason: {reason}")
 
             await ctx.send(f"📨 Permanently **banned** {member.mention} ({reason}).")
-            await message.author.send(f"You have been **banned** permanently from {message.guild.name} Discord for the following: {reason}")
+            print(member)
+            await member.send(f"You have been **banned** permanently from {ctx.guild.name} Discord for the following: {reason}")
             await member.ban(reason=reason)
          
     
@@ -248,7 +249,8 @@ class Moderation(commands.Cog):
             
             if (user.name, user.discriminator) == (memberName, memberDiscriminator):
                 await ctx.guild.unban(user) #make the unban
-
+                
+                await ctx.send(f"📨 Gotcha, {user.mention} has been **unbanned**.")
                 await channel.send(f"**[MODERATION]** {ctx.author.name} unbanned {user.mention}.") # finally!
                 state = True
             else:
