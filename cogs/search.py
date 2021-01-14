@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
-
+import os
 import time
 import discord
 import traceback
@@ -26,11 +26,11 @@ class Search(commands.Cog):
         print("Okay")   
         url = 'https://helpx.adobe.com/support.html'
         # chromedriver_path = 'C:/Users/exces/Downloads/chromedriver.exe'
-        chromedriver_path = '/app/.chromedriver/bin/chromedriver.'
-        google_chrome_bin = '/app/.apt/usr/bin/google-chrome'
+        #chromedriver_path = '/app/.chromedriver/bin/chromedriver.'
+        #google_chrome_bin = '/app/.apt/usr/bin/google-chrome'
         
         chrome_options = Options()
-        chrome_options.binary_location = google_chrome_bin
+        chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
         chrome_options.add_argument('--headless')
         chrome_options.add_argument("--window-size=1260, 600")
         chrome_options.add_argument('--disable-gpu')
@@ -39,7 +39,7 @@ class Search(commands.Cog):
         chrome_options.add_argument('--ignore-certificate-errors')
         chrome_options.add_argument('--allow-running-insecure-content')
 
-        driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
+        driver = webdriver.Chrome(executable_path=str(os.environ.get('CHROMEDRIVER_PATH')), chrome_options=chrome_options)
 
         print(query)
         search_query = str(query)
