@@ -29,6 +29,7 @@ async def on_ready():
                 client.load_extension(f"cogs.{filename[:-3]}")
                 print(f"Loaded: {filename}")
             except Exception as e:
+                print(e)
                 print(f"Failed to load {filename}")
     print("-----")
 
