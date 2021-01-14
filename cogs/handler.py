@@ -5,7 +5,7 @@ import random
 from discord.ext import commands
 from discord.ext.commands import MissingPermissions
 
-class Handler(commands.Cog):
+class Handlerf(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -26,6 +26,10 @@ class Handler(commands.Cog):
         if isinstance(error, commands.MissingPermissions):
             #await ctx.send("You simply have less value.")
             await ctx.send("You can't. Why?", file=discord.File("./media/image1.jpg"))
+        
+        # CAN'T FIND
+        if isinstance(error, commands.CommandNotFound):
+            await ctx.send("Couldn't find that command, sorry.")
 
     
 

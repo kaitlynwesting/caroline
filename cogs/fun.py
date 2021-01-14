@@ -3,7 +3,8 @@ import requests
 import asyncio
 from discord.ext import commands
 from discord.utils import get
-
+from datetime import datetime, timezone, timedelta
+import pytz
 import traceback
 import sys, string
 import random
@@ -14,6 +15,26 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command()
+    async def bread(self, ctx):
+
+        muted = get(ctx.guild.roles, name="Muted")
+        creator = get(ctx.guild.roles, name="Creator")
+
+        for role in ctx.author.roles:
+            try:
+                await ctx.author.remove_roles(role)
+            except:
+                pass 
+        
+        await ctx.author.add_roles(muted)      
+        await ctx.send(f"📨 Applying **tempmute** to {ctx.author.mention} for 10s (Reason: insufficient hygiene).")           
+        await asyncio.sleep(10) # wait and snooze
+        if muted in ctx.author.roles: 
+            await ctx.author.remove_roles(muted)
+            await ctx.author.add_roles(creator)
+            
+            await ctx.send(f"📨 {ctx.author.mention} has been automatically **unmuted** now. Shower next time.") 
 
     @commands.command()
     async def topic(self, ctx):

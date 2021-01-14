@@ -30,8 +30,6 @@ class Rules(commands.Cog):
         member = guild.get_member(payload.user_id)
         emoji = payload.emoji
 
-        print(member)
-
         lobby = discord.utils.get(guild.channels, name="lobby")
         creator = get(guild.roles, name="Creator")
         muted = get(guild.roles, name="Muted")

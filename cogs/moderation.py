@@ -205,6 +205,7 @@ class Moderation(commands.Cog):
             await member.send(f"You have been **kicked** from {ctx.guild.name} Discord for the following: {reason}")
             await member.kick(reason=reason)
     
+    
     # BAN COMMAND
     @commands.command(aliases=["b"])
     @commands.has_permissions(ban_members = True)
