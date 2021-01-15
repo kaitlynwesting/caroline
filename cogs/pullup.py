@@ -56,9 +56,32 @@ class Handler(commands.Cog):
                     else:
                         pass
             
-            
+    
+    # CLOSE HELP CHANNEL MANUALLY
+    @commands.command()
+    async def close(self, ctx):
+        channelList = [780519472444080158, 777207889277616192]
 
+        if ctx.channel.id in channelList:
+            embed=discord.Embed(
+                            color=0x349feb
+                            )
+
+            embed.set_author(name=f"Open help channel", icon_url="https://filebin.net/eqom39vn27int15t/image5.jpg?t=81mfvzfn")
+
+            embed.add_field(
+            name=f"Some tips to keep in mind before you ask:", 
+            value=f"""• Refrain from asking generic or vague questions, such as "Can I get help" or "Why isn't this working".
+• Explain what you're trying to do, what you have tried, and the outcome. This greatly facilitates the work of any potential helpers.
+• Include a screenshot or snip of your Photoshop workspace, if appropriate.""", 
+            inline=False)
+            embed.set_footer(text="Others will try to help you solve the problem, if they can. Sit tight!")
             
+            await ctx.send(embed=embed) 
+        
+        else:
+            await ctx.send("Please use that in the proper channels, i.e. our help channels.")
+
 
     # TOGGLE RULES FOR DUMMIES
     @commands.command(aliases=["rules"])

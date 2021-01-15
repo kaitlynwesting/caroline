@@ -4,8 +4,9 @@ import sys
 import random
 from discord.ext import commands
 from discord.ext.commands import MissingPermissions
+from discord.ext.commands import CommandNotFound
 
-class Handlerf(commands.Cog):
+class Handler(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot

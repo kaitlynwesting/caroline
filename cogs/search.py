@@ -22,15 +22,15 @@ class Search(commands.Cog):
     @commands.command(aliases=["doc", "d", "search"])
     async def docs(self, ctx, *, query):
 
-        await ctx.send("Fetching most relevant results from Adobe help centre, just for you. Please allow a few seconds...")
+        await ctx.send("📨 Fetching most relevant results from **Adobe help centre**, just for you. Please allow up to ten seconds...")
         print("Okay")   
         url = 'https://helpx.adobe.com/support.html'
-        # chromedriver_path = 'C:/Users/exces/Downloads/chromedriver.exe'
-        #chromedriver_path = '/app/.chromedriver/bin/chromedriver.'
-        #google_chrome_bin = '/app/.apt/usr/bin/google-chrome'
+        # chromedriver_path = 'C:/Users/exces/Downloads/chromedriver.exe' # for local
+        chromedriver_path = '/app/.chromedriver/bin/chromedriver.' # for heroku
+        google_chrome_bin = '/app/.apt/usr/bin/google-chrome' # for heroku
         
         chrome_options = Options()
-        chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
+        chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN') # for heroku
         chrome_options.add_argument('--headless')
         chrome_options.add_argument("--window-size=1260, 600")
         chrome_options.add_argument('--disable-gpu')
@@ -39,7 +39,8 @@ class Search(commands.Cog):
         chrome_options.add_argument('--ignore-certificate-errors')
         chrome_options.add_argument('--allow-running-insecure-content')
 
-        driver = webdriver.Chrome(executable_path=str(os.environ.get('CHROMEDRIVER_PATH')), chrome_options=chrome_options)
+        # driver = webdriver.Chrome(executable_path=chromedriver_path, chrome_options=chrome_options)# for local
+        driver = webdriver.Chrome(executable_path=str(os.environ.get('CHROMEDRIVER_PATH')), chrome_options=chrome_options) # for heroku
 
         print(query)
         search_query = str(query)
@@ -50,7 +51,6 @@ class Search(commands.Cog):
             # Set timeout time 
             wait = WebDriverWait(driver, 10)
 
-            # retrive url in headless browser
             driver.get(url)
 
             wait.until(EC.presence_of_element_located((By.XPATH, "//h1 [@class = 'page-title']")))
@@ -78,7 +78,7 @@ class Search(commands.Cog):
             
                 try:
                 
-                    overflow = len(str(tempStr)) + len(titles[1].text) + len(content.text)
+                    overflow = len(str(tempStr)) + len(titles[1].text) + len(links[i].text) + len(content.text) 
                     print(overflow)
 
                     if overflow < 1010:
@@ -103,7 +103,7 @@ class Search(commands.Cog):
             
             embed.add_field(
                 name=f"Displaying {resultNum} results from the quicksearch.", 
-                value=f"{tempStr[:1010]}... (continued)", # [:1000]
+                value=f"{tempStr}... (continued)", # [:1000]
                 inline=False)
             embed.set_thumbnail(url="https://filebin.net/i643ziupi21lvy9x/Ice-melting-experiment-1.jpg?t=2y35f7p1")
 
