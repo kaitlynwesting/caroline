@@ -1,6 +1,9 @@
 import discord
 import traceback
 import sys
+import asyncio
+from datetime import datetime, timezone, timedelta
+import pytz
 import random
 from discord.ext import commands
 from discord.utils import get
@@ -29,11 +32,11 @@ class Filter(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
 
-        #await channel.send(f"**[MODERATION]** {message.author.mention} was muted (tried to pull an everyone ping).")
         if "@everyone" in message.content or "@here" in message.content:
 
             mod = get(message.guild.roles, name="Moderator")
             muted = get(message.guild.roles, name="Muted")
+            creator = get(message.guild.roles, name="Creator")
             
             if mod in message.author.roles:
                 pass
@@ -47,9 +50,19 @@ class Filter(commands.Cog):
                 await message.author.add_roles(muted)
 
                 channel = get(message.guild.channels, name="logs")
-                await channel.send(f"**[MODERATION]** {message.author.mention} was muted (tried to pull a mass ping).")
-                await message.channel.send(f"📨 Applied **auto-mute** to {message.author.mention} (infraction: `attempting mass ping`).")
-                await message.author.send(f"You have been **auto-muted** in {message.guild.name} Discord, for thinking you're important enough to disturb everyone's peace.") 
+                await channel.send(f"**[MODERATION]** {message.author.mention} was **auto tempmuted** (infraction: `attempting mass ping`).")
+                await message.channel.send(f"📨 Applying **auto tempmute** to {message.author.mention} (infraction: `attempting mass ping`).")
+                await message.author.send(f"You have been **auto-muted** in {message.guild.name} Discord, for thinking you're apparently important enough to disturb everyone's peace. You will be unmuted in half an hour.")
+
+                await asyncio.sleep(60 * 30) # mutes for 30 minutes
+
+                if muted in message.author.roles: 
+                    await message.author.remove_roles(muted)
+                    await message.author.add_roles(creator)
+                    
+                    await channel.send(f"**[MODERATION]** 📨 {member.mention} has been automatically **unmuted** now.")
+                    await message.author.send(f"You have been **unmuted** automatically in {ctx.guild.name} Discord.") # dm user
+                    
 
 def setup(bot):
     bot.add_cog(Filter(bot))

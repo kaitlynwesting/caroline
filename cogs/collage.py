@@ -23,6 +23,7 @@ class Collage(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def collage(self, ctx, name, dimension):
 
         await ctx.send("📨 Creating your one-of-a-kind **rainbow collage**, please allow up to one minute.")
