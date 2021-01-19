@@ -31,6 +31,16 @@ class Handler(commands.Cog):
         # CAN'T FIND
         if isinstance(error, commands.CommandNotFound):
             await ctx.send("Couldn't find that command, sorry.")
+        
+        # ON COOLDOWN
+        if isinstance(error,commands.CommandOnCooldown):
+            mod = get(ctx.guild.roles, name="Moderator")
+
+            if mod in ctx.author.roles:
+                pass
+            
+            else:
+                await ctx.send("You're on cooldown.")
 
     
 
