@@ -7,7 +7,7 @@ from discord.ext.commands import MissingPermissions
 from discord.ext.commands import CommandNotFound
 from discord.utils import get
 
-class Handlerk(commands.Cog):
+class Handler(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -38,6 +38,7 @@ class Handlerk(commands.Cog):
             mod = get(ctx.guild.roles, name="Moderator")
 
             if mod in ctx.author.roles:
+                await ctx.send("You're on cooldown.")
                 pass
             
             else:
