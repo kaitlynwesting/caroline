@@ -38,7 +38,8 @@ class Handler(commands.Cog):
             mod = get(ctx.guild.roles, name="Moderator")
 
             if mod in ctx.author.roles:
-                await ctx.send("You're on cooldown.")
+                await ctx.send("Oh, no worries then!")
+                await ctx.reinvoke()
                 pass
             
             else:
