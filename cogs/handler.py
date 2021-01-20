@@ -7,7 +7,7 @@ from discord.ext.commands import MissingPermissions
 from discord.ext.commands import CommandNotFound
 from discord.utils import get
 
-class Handler(commands.Cog):
+class Handlerk(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
