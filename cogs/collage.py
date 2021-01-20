@@ -92,6 +92,7 @@ class Collage(commands.Cog):
                 img.save("temp.png")
 
                 await ctx.send(file=discord.File("temp.png"))
+                print("Process done!")
     
 def setup(bot):
     bot.add_cog(Collage(bot))  
