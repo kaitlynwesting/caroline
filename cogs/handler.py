@@ -29,7 +29,7 @@ class Handler(commands.Cog):
             #await ctx.send("You simply have less value.")
             await ctx.send("You can't. Why?", file=discord.File("./media/image1.jpg"))
         
-        # CAN'T FIND
+        # CAN'T FIND COMMAND
         if isinstance(error, commands.CommandNotFound):
             await ctx.send("Couldn't find that command, sorry.")
         
@@ -42,6 +42,10 @@ class Handler(commands.Cog):
             
             else:
                 await ctx.send("You're on cooldown.")
+        
+        # BAD ARGUMENTS
+        if isinstance(error,commands.ArgumentParsingError):
+            await ctx.send("Bleh, smelled a bad argument.")
 
     
 

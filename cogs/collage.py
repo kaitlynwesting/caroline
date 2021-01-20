@@ -26,6 +26,11 @@ class Collage(commands.Cog):
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def collage(self, ctx, name, dimension):
 
+        try:
+            dimension = int(dimension)
+        except:
+            raise commands.ArgumentParsingError()
+    
         await ctx.send("📨 Creating your one-of-a-kind **rainbow collage**, please allow up to one minute.")
         print("Okay")   
         url = 'https://thechurchofkoen.com/lastfm/rainbowcollage/'
