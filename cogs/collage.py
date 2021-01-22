@@ -13,6 +13,7 @@ import sys
 import random
 import urllib.request
 from discord.ext import commands
+from discord.ext.commands import ArgumentParsingError
 from PIL import Image
 import requests
 from io import BytesIO
@@ -22,13 +23,13 @@ class Collage(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(cooldown_after_parsing = True)
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def collage(self, ctx, name, dimension):
 
         try:
             dimension = int(dimension)
-        except:
+        except ValueError as e:
             raise commands.ArgumentParsingError()
     
         await ctx.send("📨 Creating your one-of-a-kind **rainbow collage**, please allow up to one minute.")

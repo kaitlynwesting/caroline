@@ -41,7 +41,6 @@ class Rules(commands.Cog):
                 await channel.send(f"{member.mention}, you're already a creator!", delete_after = 3)
 
             else:
-                print(emoji)
                 await member.add_roles(creator) # add creator role
                 await channel.send(f"{member.name}, thanks for accepting our rules! Welcome to Photoshop Discord!", delete_after = 4)
                 
