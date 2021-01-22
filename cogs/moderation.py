@@ -1,15 +1,19 @@
+import asyncio
+from datetime import datetime, timezone, timedelta
+
 import discord
 from discord.ext import commands
 from discord.utils import get
-from datetime import datetime, timezone, timedelta
+
+import os
 import pytz
-
-import asyncio
-import traceback
-import sys
 import random
+import requests
+import sys
+import time
+import traceback
 
-# COG FOR MODERATION PURPOSES.
+# COG FOR MODERATION PURPOSES
 
 class Moderation(commands.Cog):
 

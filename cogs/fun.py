@@ -1,41 +1,61 @@
-import discord
-import requests
 import asyncio
+from datetime import datetime, timezone, timedelta
+
+import discord
 from discord.ext import commands
 from discord.utils import get
-from datetime import datetime, timezone, timedelta
+
+import os
 import pytz
-import traceback
-import sys, string
 import random
-import emoji
+import requests
+import sys, string
+import time
+import traceback
+
+# COG FOR GENERAL "FUN" COMMANDS
 
 class Fun(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
+    # Bread command mutes the user for smelliness.
     @commands.command()
     async def bread(self, ctx):
 
-        muted = get(ctx.guild.roles, name="Muted")
-        creator = get(ctx.guild.roles, name="Creator")
+        announcements = get(ctx.guild.roles, name="Announcements")
+        totd = get(ctx.guild.roles, name="Tip of the Day")
 
+        creator = get(ctx.guild.roles, name="Creator")
+        muted = get(ctx.guild.roles, name="Muted")
+        
+        # Remove all roles, except for subscription roles.
         for role in ctx.author.roles:
             try:
-                await ctx.author.remove_roles(role)
+                if role == announcements or role == totd:
+                    pass
+                else:
+                    await ctx.author.remove_roles(role)
             except:
                 pass 
         
-        await ctx.author.add_roles(muted)      
-        await ctx.send(f"📨 Applying **tempmute** to {ctx.author.mention} for 10s (Reason: insufficient hygiene).")           
-        await asyncio.sleep(10) # wait and snooze
+        # Apply muted role to the bread user and send a small notification.
+        await ctx.author.add_roles(muted)  
+        await ctx.send(f"📨 Applying **tempmute** to {ctx.author.mention} for 10s (Reason: insufficient hygiene).")
+
+        # Wait for 10 seconds.           
+        await asyncio.sleep(10)
+
+        # If the user still has this role, then remove it and send a small notification.
         if muted in ctx.author.roles: 
             await ctx.author.remove_roles(muted)
             await ctx.author.add_roles(creator)
             
             await ctx.send(f"📨 {ctx.author.mention} has been automatically **unmuted** now. Shower next time.") 
 
+
+    # Generates a random topic for discussion.
     @commands.command()
     async def topic(self, ctx):
 
@@ -44,15 +64,15 @@ class Fun(commands.Cog):
 
         question = random.choice(lines)
 
+        # Generate a nice question embed, and send it.
         embed=discord.Embed()
 
         embed.add_field(name=str("A random topic..."), value=f"{question}", inline=False)
         embed.set_author(name=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
-        print(question)
 
-
+    # Generates a random would-you-rather for discussion.
     @commands.command()
     async def wyr(self, ctx):
 
@@ -78,7 +98,7 @@ class Fun(commands.Cog):
         await embedio.add_reaction(emoji="🅱️")
     
 
-    # SPECIAL "MOCK" COMMAND TO COMMEMORATE CODE BASH ONE (THONKS TO CHILD!)
+    # A special "mock" command to commemorate Child's mock case.
     @commands.command()
     @commands.has_permissions(kick_members = True)
     async def mock(self, ctx, message):
