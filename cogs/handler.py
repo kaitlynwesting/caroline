@@ -5,6 +5,7 @@ import random
 from discord.ext import commands
 from discord.ext.commands import MissingPermissions
 from discord.ext.commands import CommandNotFound
+from discord.ext.commands import ArgumentParsingError
 from discord.utils import get
 
 class Handler(commands.Cog):
@@ -38,10 +39,11 @@ class Handler(commands.Cog):
             mod = get(ctx.guild.roles, name="Moderator")
 
             if mod in ctx.author.roles:
-                await ctx.send("Oh, no worries then!")
-                await ctx.reinvoke()
-                pass
-            
+                try:
+                    await ctx.reinvoke()
+                except (ValueError, ArgumentParsingError) as e:
+                    await ctx.send("Bleh, smelled a bad argument.")
+
             else:
                 await ctx.send("You're on cooldown.")
         
