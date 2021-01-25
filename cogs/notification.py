@@ -67,7 +67,7 @@ class Notification(commands.Cog):
                             color=0x349feb
                             )
 
-            embed.set_author(name=f"Open help channel", icon_url="https://filebin.net/eqom39vn27int15t/image5.jpg?t=81mfvzfn")
+            embed.set_author(name=f"Open help channel", icon_url="https://i.postimg.cc/BZMpHQQV/image5.jpg")
 
             embed.add_field(
             name=f"Some tips to keep in mind before you ask:", 
