@@ -19,7 +19,7 @@ class Search(commands.Cog):
         self.bot = bot
 
     
-    @commands.command(aliases=["doc", "d", "search"])
+    @commands.command(aliases=["doc", "search"])
     async def docs(self, ctx, *, query):
 
         await ctx.send("📨 Fetching most relevant results from **Adobe help centre**, just for you. Please allow up to ten seconds...")
