@@ -27,15 +27,20 @@ class Handler(commands.Cog):
         
         # INSUFFICIENT PERMISSIONS
         if isinstance(error, commands.MissingPermissions):
-            #await ctx.send("You simply have less value.")
+            # await ctx.send("You simply have less value.")
+            # await ctx.send(error.missing_perms)
             await ctx.send("You can't. Why?", file=discord.File("./media/image1.jpg"))
         
         # CAN'T FIND COMMAND
         if isinstance(error, commands.CommandNotFound):
-            await ctx.send("Couldn't find that command, sorry.")
+
+            if ctx.message.content.startswith("!d"):
+                pass
+            else:
+                await ctx.send("Couldn't find that command, sorry.")
         
         # ON COOLDOWN
-        if isinstance(error,commands.CommandOnCooldown):
+        if isinstance(error, commands.CommandOnCooldown):
             mod = get(ctx.guild.roles, name="Moderator")
 
             if mod in ctx.author.roles:
@@ -48,7 +53,7 @@ class Handler(commands.Cog):
                 await ctx.send("You're on cooldown.")
         
         # BAD ARGUMENTS
-        if isinstance(error,commands.ArgumentParsingError):
+        if isinstance(error, commands.ArgumentParsingError):
             await ctx.send("Bleh, smelled a bad argument.")
 
     
