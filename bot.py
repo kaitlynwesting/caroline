@@ -17,10 +17,10 @@ async def on_ready():
     print("I am ready!")
 
     # set the now playing status
-    if settings.nowplaying:
-            print("Setting now playing game...", flush= True)
-            await client.change_presence(activity=discord.Game(name=settings.nowplaying))
-            print("-----")
+    
+    print("Setting now playing game...", flush=True)
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=settings.nowplaying))
+    print("-----")
 
     # loader for cogs
     for filename in os.listdir("./cogs"):
