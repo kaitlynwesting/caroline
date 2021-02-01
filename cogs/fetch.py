@@ -22,7 +22,7 @@ class Fetch(commands.Cog):
         await ctx.send("📨 Fetching most relevant results from **Adobe help centre**, just for you. Please allow up to five seconds...")
 
         browser = await launch(
-            headless=False,
+            headless=True,
             args=['--start-maximized', '--no-sandbox'],
             autoClose=True
         )
