@@ -22,7 +22,7 @@ class Fetch(commands.Cog):
         await ctx.send("📨 Fetching most relevant results from **Adobe help centre**, just for you. Please allow up to five seconds...")
 
         browser = await launch(
-            headless=True,
+            headless=False,
             args=['--start-maximized', '--no-sandbox'],
             autoClose=True
         )
@@ -50,23 +50,27 @@ class Fetch(commands.Cog):
         """ for country in (("US", "FR"), ("CA", "FR"), ("UK", "FR")):
             url = url.replace(*country) """
         
+        # Find no results found text, if applicable.
         bad = await page.querySelector('.EmptyState-suggestions')
-
         if bad is not None:
-            #badText = await page.evaluate('(element) => element.textContent', bad)
 
             embed=discord.Embed(
-                    title = f"Your search for \"{str(query)}\" returned the following:",
-                    url = url,
-                    color=0x349feb
-                    )
+                title = f"Your search for \"{str(query)}\" returned the following:",
+                url = url,
+                color=0x349feb
+            )
                 
             embed.add_field(
                 name=f"**🚫 OH NOES!** We were unable to find any matching results. ", 
                 value=f'• Ensure all search words are spelled correctly.\n• Try using quotes to search for an entire phrase, such as "crop an image".',
-                inline=False)
+                inline=False
+            )
+            
+            embed.set_thumbnail(url="https://i.postimg.cc/prG85X5G/Adobe2.jpg")
             
             await ctx.send(embed=embed)
+        
+        # If results were able to be found...
         else:
 
             titles = await page.querySelectorAll('.ResultsListItem-title--clamped')
@@ -113,17 +117,21 @@ class Fetch(commands.Cog):
             embed.add_field(
                 name=f"Displaying {resultNum} results from the quicksearch.", 
                 value=f"{contentMessage}... (continued)", # [:1000]
-                inline=False)
+                inline=False
+            )
             
-            logos = []
             embed.set_thumbnail(url="https://i.postimg.cc/mrB2Trx9/Adobe1.jpg")
             await ctx.send(embed=embed)
 
             print("All done!")
             
-            await browser.disconnect()
+            await page.close()
+            await browser.close()
 
     # asyncio.get_event_loop().run_until_complete(fetch())
 
+
 def setup(bot):
     bot.add_cog(Fetch(bot))
+    
+    
