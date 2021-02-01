@@ -64,7 +64,6 @@ pytz==2020.4
 requests==2.25.0
 six==1.15.0
 soupsieve==2.1
-SpeechRecognition==3.8.1
 sqlparse==0.4.1
 structlog==20.2.0
 tesseract==0.1.3
