@@ -21,7 +21,7 @@ class Fetch(commands.Cog):
 
         browser = await launch(
             headless=True,
-            args=['--start-maximized'],
+            args=['--start-maximized', '--no-sandbox'],
             autoClose=True
         )
 
