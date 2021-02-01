@@ -45,7 +45,9 @@ class Fetch(commands.Cog):
         # Grab the search results page url.
         url = await page.evaluate("() => window.location.href")
 
+        print("Test I'm here.")
         # Wait for the search results to load.
+        time.sleep(3)
         await page.waitForSelector("input[value = 'Adobe Photoshop']", timeout=60000),
         await page.click("input[value = 'Adobe Photoshop']")
 
