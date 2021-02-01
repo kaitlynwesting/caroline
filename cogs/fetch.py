@@ -8,6 +8,8 @@ from pyppeteer import input, launch, connect
 import random
 import time
 
+# COG USING ASYNC PYPPETEER LIBRARY TO 
+
 class Fetch(commands.Cog):
 
     def __init__(self, bot):
@@ -44,8 +46,9 @@ class Fetch(commands.Cog):
         # Wait for the search results to load.
         time.sleep(3)
         url = await page.evaluate("() => window.location.href")
-        url = str(url).replace("country=CA", "country=UK")
-
+        #url = str(url).replace("country=CA", "country=UK")
+        for country in (("US", "FR"), ("CA", "FR"), ("UK", "FR"))):
+            url = url.replace(*r)
         
         bad = await page.querySelector('.EmptyState-suggestions')
 
