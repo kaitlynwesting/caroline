@@ -48,7 +48,7 @@ class Fetch(commands.Cog):
         url = await page.evaluate("() => window.location.href")
 
         for country in (("US", "FR"), ("CA", "FR"), ("UK", "FR")):
-            url = url.replace(*r)
+            url = url.replace(*country)
         
         bad = await page.querySelector('.EmptyState-suggestions')
 
