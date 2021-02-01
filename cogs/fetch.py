@@ -19,7 +19,7 @@ class Fetch(commands.Cog):
     async def helpcentre(self, ctx, *, query):
         
         print(f"Currently searching for: {query}")
-        await ctx.send("📨 Fetching most relevant results from **Adobe help centre**, just for you. Please allow up to five seconds...")
+        await ctx.send("📨 Fetching most relevant results from **Adobe help centre**, just for you. Please allow up to 10 seconds...")
 
         browser = await launch(
             headless=True,
@@ -62,7 +62,7 @@ class Fetch(commands.Cog):
                 
             embed.add_field(
                 name=f"**🚫 OH NOES!** We were unable to find any matching results. ", 
-                value=f'• Ensure all search words are spelled correctly.\n• Try using quotes to search for an entire phrase, such as "crop an image".',
+                value=f'• Ensure all search words are spelled correctly.\n• Try using quotes to search for an entire phrase, such as "crop an   image".',
                 inline=False
             )
             
