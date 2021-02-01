@@ -23,6 +23,7 @@ import time
 import traceback
 import urllib.request
 
+# COG FOR GENERATING COOL COLLAGES.
 
 class Collage(commands.Cog):
 
