@@ -15,6 +15,7 @@ class Fetch(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # COMMAND FOR FETCHING POSTS FROM ADOBE HELP CENTRE.
     @commands.command(aliases=["helpcenter", "docs", "doc"])
     async def helpcentre(self, ctx, *, query):
         
@@ -115,7 +116,7 @@ class Fetch(commands.Cog):
                     )
                 
             embed.add_field(
-                name=f"Displaying {resultNum} results from the quicksearch.", 
+                name=f"<a:LoadingBlu:805988933456101376> Displaying {resultNum} results from the quicksearch.", 
                 value=f"{contentMessage}... (continued)", # [:1000]
                 inline=False
             )
