@@ -85,84 +85,49 @@ class Notification(commands.Cog):
 
     # TOGGLE RULES FOR DUMMIES
     @commands.command(aliases=["rules"])
-    async def rule(self, ctx, *, number=None):
+    async def rule(self, ctx, number=None):
 
-        def cutString(bigString):
-            bigString = bigString.replace('\n', ' ')
-            return bigString
-        
-        global myStr
+        ruleContent = ""
+        ruleNums = ['1', '2', '3', '4', '5', '6',]
+
+        with open('cogs/texts/rules.txt', 'r') as f:
+            rules = f.readlines()
 
         if number == None:
 
             embed=discord.Embed(
-            title = "Rules of Photoshop Discord",
+            title = "Photoshop Discord Rules",
             color=0x349feb,
-            description = cutString("""We expect all members of our community to understand and abide by our rules, 
-which can be found in the <#777237462904209429> channel."""), 
+            description = "We expect all members of our community to understand and abide by our rules, which can be found in the <#777237462904209429> channel.", 
             inline=False
             )
-            
             await ctx.send(embed=embed)
-
+            
         else:
-            number = str(number)
-
-            if number == '1':
-
+            
+            if number not in ruleNums:
+            
                 embed=discord.Embed(
-                title = "Rules of Photoshop Discord", 
-                # url = "https://canary.discord.com/channels/777207888846389270/777237462904209429/791682685515857920",
-                color=0x349feb
-                )
-
-                embed.add_field(
-                name=f"Rule {number}: ", 
-                value=f"Follow the [Discord Community Guidelines](https://discord.com/guidelines) and [Terms of Service](https://discord.com/terms).", 
-                inline=False)
-            
-                await ctx.send(embed=embed)
-
-                return
-            elif number == '2':
-                myStr = (cutString("""Behave maturely and respectfully towards other members of the community."""))
-            
-            elif number == '3':
-                myStr = (cutString("""Listen to and respect staff members and their directions."""))
-            
-            elif number == '4':
-                myStr = (cutString("""This is an English-speaking server. Please speak English to the best of your ability."""))
-                
-            elif number == '5':
-                myStr = (cutString("""Do not request help with or post projects that may be considered illicit,
-breach terms of services, malicious or inappropriate (such as NSFW). Use common sense and judgement."""))
-
-            elif number == '6':
-                myStr = (cutString("""No spamming or advertising, including requests or commissions. 
-**We are not a charity case; we will not create anything for you.**"""))
-            
-            else:
-                embed=discord.Embed(
-                title = "Rules of Photoshop Discord",
+                title = "Photoshop Discord Rules",
                 description = "No such rule exists.",
                 color = 0x349feb
                 )
                 await ctx.send(embed=embed)
-
-                return
-
-            embed=discord.Embed(
-            title = "Rules of Photoshop Discord", 
-            color=0x349feb
-            )
-
-            embed.add_field(name=f"Rule {number}: ", value=f'{myStr}', inline=False)
             
-            await ctx.send(embed=embed)
+            else:
+
+                embed=discord.Embed(
+                title = "Photoshop Discord Rules", 
+                color=0x349feb
+                )
+
+                embed.add_field(name=f"Rule {number}: ", value=f'{rules[(int(number) + 1) * 2]}', inline=False)
+                await ctx.send(embed=embed)
         
     # CHECC PING
     @commands.command()
     async def ping(self, ctx):
+
         await ctx.send(f"Pong! The latency is {round(self.bot.latency, 3)} milliseconds.")
 
 
