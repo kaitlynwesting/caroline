@@ -15,7 +15,7 @@ import string
 import time
 import traceback
 
-# COG TO FILTER CHAT FOR UNWANTED CONTENT
+# COG TO FILTER CHAT FOR ADVERTISEMENTS
 class Ad(commands.Cog):
 
     def __init__(self, bot):
@@ -64,6 +64,7 @@ class Ad(commands.Cog):
                     # Delete the advertisement.
                     await message.channel.purge(limit=1)
 
+                    await infraction.infraction_notification(message, "advertising", punishment_time)
                     await infraction.infraction_auto_embed(message, "advertising", infraction_description)
                     await infraction.infraction_tempmute(message, punishment_time)
 

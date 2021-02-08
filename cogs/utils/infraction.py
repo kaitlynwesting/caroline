@@ -3,6 +3,9 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 
+async def infraction_notification(message, rule, time: int):
+    await message.channel.send(f"📨 Applying **auto tempmute** to {message.author.mention} for {time} minutes (rule: `{rule}`).")
+
 # EMBED DM FOR AUTOMATIC TEMPMUTES.
 async def infraction_auto_embed(message, rule, description):
     
