@@ -3,6 +3,7 @@ from datetime import datetime, timezone, timedelta
 
 import discord
 from discord.ext import commands
+from discord.ext.commands import MissingPermissions
 from discord.utils import get
 
 import os
@@ -13,27 +14,27 @@ import sys
 import time
 import traceback
 
-# COG FOR MODERATION PURPOSES
+# COG FOR MODERATION PURPOSES.
 
 class Moderation(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
-    # WARN COMMAND
+    # Warn command.
     @commands.command(aliases=["w"])
     @commands.has_permissions(kick_members = True)
-    async def warn(self, ctx, member: discord.Member, *, reason): # reason is not None as warnings must be meaningful
-        channel = discord.utils.get(ctx.guild.channels, name="logs") 
+    async def warn(self, ctx, member: discord.Member, *, reason):  # Note: there must be content in the warning.
+        channel = discord.utils.get(ctx.guild.channels, name="logs")
 
-        if member.id == 785298572047417374:
+        if member.id == 785298572047417374:  # Stop the user from (well, attempting to?) mute Lydia bot.
             await ctx.send("You're not very bright, are you?")
 
-        elif member == ctx.message.author: # Stop muting yourself
+        elif member == ctx.message.author:  # Stops the user from muting themselves.
             await ctx.channel.send("Are you daft? You can't mute yourself.")
 
-        elif member.top_role >= ctx.author.top_role and ctx.author.id != 669977303584866365:
-            await ctx.send("How desperately you wish you could warn someone above or equal to your rank. But you can't. Boo, hoo.")
+        elif member.top_role >= ctx.author.top_role and ctx.author.id != ctx.guild.owner: 
+            raise commands.MissingPermissions("Kick Members")
 
         else:
             await ctx.send(f"📨 Delivered **warning** to {member.mention} ({reason}).")
@@ -208,14 +209,14 @@ class Moderation(commands.Cog):
             await ctx.send(f"📨 **Kicked** {member.mention} ({reason}).")
             await member.send(f"You have been **kicked** from {ctx.guild.name} Discord for the following: {reason}")
             await member.kick(reason=reason)
-    
-    
+
+
     # BAN COMMAND
     @commands.command(aliases=["b"])
     @commands.has_permissions(ban_members = True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
-        
+
         if member.id == 785298572047417374:
             await ctx.send("You're not very bright, are you?")
 
@@ -238,8 +239,8 @@ class Moderation(commands.Cog):
             print(member)
             await member.send(f"You have been **banned** permanently from {ctx.guild.name} Discord for the following: {reason}")
             await member.ban(reason=reason)
-         
-    
+
+
     # UNBAN COMMAND
     @commands.command(name="unban")
     @commands.has_permissions(ban_members = True)

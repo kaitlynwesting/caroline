@@ -1,14 +1,15 @@
+import asyncio
+
+import datetime
 import discord
 from discord.ext import commands
 from discord.utils import get
 
-import asyncio
 import os
 import settings
-import datetime
 
 intents = discord.Intents(messages = True, guilds = True, reactions = True, members = True, presences = True)
-client = discord.ext.commands.Bot(command_prefix = settings.prefix, intents = intents)
+client = discord.ext.commands.Bot(command_prefix = settings.prefix, intents = intents) # , help_command=None
 print("Loading discord.py version", discord.__version__, ", starting...")
 
 # bot loading messages on ready
@@ -23,15 +24,23 @@ async def on_ready():
     print("-----")
 
     # loader for cogs
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            try: 
-                client.load_extension(f"cogs.{filename[:-3]}")
-                print(f"Loaded: {filename}")
-            except Exception as e:
-                print(e)
-                print(f"Failed to load {filename}")
-    print("-----")
+    path = ["./cogs", "./cogs/filters"]
+    loading_path = ""
+    for f in path:
+        for filename in os.listdir(f):
+            if f == "./cogs":
+                loading_path = f"cogs.{filename[:-3]}"
+            elif f == "./cogs/filters":
+                loading_path = f"cogs.filters.{filename[:-3]}"
+
+            if filename.endswith(".py"):
+                try: 
+                    client.load_extension(loading_path)
+                    print(f"Loaded: {filename}")
+                except Exception as e:
+                    print(e)
+                    print(f"Failed to load {filename}")
+        print("-----")
 
     # vanity print messages
     print("Logged in as:", client.user.name)

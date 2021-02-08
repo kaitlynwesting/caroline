@@ -21,7 +21,7 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # Bread command mutes the user for smelliness.
+    # BREAD COMMAND WHICH MUTES THE USER FOR SMELLINESS.
     @commands.command()
     async def bread(self, ctx):
 
@@ -56,7 +56,7 @@ class Fun(commands.Cog):
             await ctx.send(f"📨 {ctx.author.mention} has been automatically **unmuted** now. Shower next time.") 
 
 
-    # Generates a random topic for discussion.
+    # TOPIC GENERATOR FOR DISCUSSION.
     @commands.command()
     async def topic(self, ctx):
 
@@ -73,7 +73,7 @@ class Fun(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    # Generates a random would-you-rather for discussion.
+    # RANDOM WOULD-YOU-RATHER GENERATOR.
     @commands.command()
     async def wyr(self, ctx):
 
@@ -100,7 +100,7 @@ class Fun(commands.Cog):
         await embedio.add_reaction(emoji="🅱️")
     
 
-    # A special "mock" command to commemorate Child's mock case.
+    # A SPECIAL "MOCK" COMMAND TO COMMEMORATE CHILD'S MOCKCASE.
     @commands.command()
     @commands.has_permissions(kick_members = True)
     async def mock(self, ctx, message):
@@ -115,6 +115,7 @@ class Fun(commands.Cog):
 
         await ctx.channel.purge(limit=1, check=None, before=None, after=None, around=None, oldest_first=False, bulk=True)
         await ctx.send (newStr[5:])
+    
 
 def setup(bot):
     bot.add_cog(Fun(bot))
