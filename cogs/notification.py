@@ -17,7 +17,7 @@ class Notification(commands.Cog):
     
     # LOOP TO CHECK FOR DORMANT HELP CHANNELS 
     @tasks.loop(seconds=1)
-    async def printer(self):
+    async def help_dormant(self):
         channelList = [780519472444080158, 777207889277616192] # hardcoded two help channels, unfortunately can't get channel by names, doesn't support it
 
         for channel in channelList:
@@ -123,7 +123,44 @@ class Notification(commands.Cog):
 
                 embed.add_field(name=f"Rule {number}: ", value=f'{rules[(int(number) + 1) * 2]}', inline=False)
                 await ctx.send(embed=embed)
+    
+
+    # LOOP TO CHECK FOR BUMPING TIMES 
+    @tasks.loop(seconds=10)
+    async def printer(self):
+        all_ready = []
+
+        botcommands = await self.bot.fetch_channel(787090740517273680) # bot-commands
+        lobby = await self.bot.fetch_channel(777207889277616191) # lobby
+
+        async for message in botcommands.history(limit=100):
+            if len(message.embeds) > 0:
+                    if message.author.id == 302050872383242240: # This is Disboard's profile ID.
+                        
+                        if "Bump done" in message.embeds[0].description:
+
+                            time_now = datetime.now(tz=timezone.utc)
+                            time_message = pytz.utc.localize(message.created_at)
+                            duration = time_now - time_message
+                            bump_threshold = timedelta(hours=2)                               
+                            all_ready.append(True if duration > bump_threshold else False)
         
+        async for message in lobby.history(limit=100):
+            if "Do `!d bump`" in message.content:
+
+                time_now = datetime.now(tz=timezone.utc)
+                time_message = pytz.utc.localize(message.created_at)
+                duration = time_now - time_message
+                reminder_threshold = timedelta(minutes=30)                               
+                all_ready.append(True if duration > reminder_threshold else False)
+                                
+        
+        send_reminder = False if False in all_ready else True
+        if send_reminder == True:
+            await lobby.send("It's time to bump! Do `!d bump` in our <#787090740517273680> channel!")
+            
+
+                
     # CHECC PING
     @commands.command()
     async def ping(self, ctx):
