@@ -151,7 +151,7 @@ class Notification(commands.Cog):
                 time_now = datetime.now(tz=timezone.utc)
                 time_message = pytz.utc.localize(message.created_at)
                 duration = time_now - time_message
-                reminder_threshold = timedelta(minutes=30)                               
+                reminder_threshold = timedelta(minutes=60)                               
                 all_ready.append(True if duration > reminder_threshold else False)
                                 
         
