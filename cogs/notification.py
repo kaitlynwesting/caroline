@@ -126,7 +126,7 @@ class Notification(commands.Cog):
     
 
     # LOOP TO CHECK FOR BUMPING TIMES 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=5)
     async def printer(self):
         all_ready = []
 
@@ -157,7 +157,8 @@ class Notification(commands.Cog):
         
         send_reminder = False if False in all_ready else True
         if send_reminder == True:
-            await lobby.send("It's time to bump! Do `!d bump` in our <#787090740517273680> channel!")
+            reminder = await lobby.send("It's time to bump! Do `!d bump` in our <#787090740517273680> channel!")
+            await reminder.add_reaction(emoji="🏁")
             
 
                 
