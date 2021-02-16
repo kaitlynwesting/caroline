@@ -146,13 +146,8 @@ class Notification(commands.Cog):
                             all_ready.append(True if duration > bump_threshold else False)
         
         async for message in lobby.history(limit=100):
-            if "Do `!d bump`" in message.content:
-
-                time_now = datetime.now(tz=timezone.utc)
-                time_message = pytz.utc.localize(message.created_at)
-                duration = time_now - time_message
-                reminder_threshold = timedelta(minutes=60)                               
-                all_ready.append(True if duration > reminder_threshold else False)
+            if "Do `!d bump`" in message.content:                        
+                all_ready.append(False)
                                 
         
         send_reminder = False if False in all_ready else True
