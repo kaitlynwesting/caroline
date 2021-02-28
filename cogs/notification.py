@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ext import tasks, commands
 from discord.utils import get
@@ -126,7 +127,7 @@ class Notification(commands.Cog):
     
 
     # LOOP TO CHECK FOR BUMPING TIMES 
-    @tasks.loop(seconds=5)
+    @tasks.loop(seconds=1)
     async def printer(self):
         all_ready = []
 
@@ -135,8 +136,7 @@ class Notification(commands.Cog):
 
         async for message in botcommands.history(limit=100):
             if len(message.embeds) > 0:
-                    if message.author.id == 302050872383242240: # This is Disboard's profile ID.
-                        
+                    if message.author.id == 302050872383242240: # This is Disboard's profile ID.          
                         if "Bump done" in message.embeds[0].description:
 
                             time_now = datetime.now(tz=timezone.utc)
@@ -149,13 +149,37 @@ class Notification(commands.Cog):
             if "Do `!d bump`" in message.content:                        
                 all_ready.append(False)
                                 
-        
-        send_reminder = False if False in all_ready else True
-        if send_reminder == True:
-            reminder = await lobby.send("It's time to bump! Do `!d bump` in our <#787090740517273680> channel!")
+        will_remind = False if False in all_ready else True
+        if will_remind == True:
+            reminder = await lobby.send("**It's time to bump!** Do `!d bump` in our <#787090740517273680> channel, then tap the 🏁 react!")
             await reminder.add_reaction(emoji="🏁")
             
+            def check(reaction, user):
+                return user == message.author and str(reaction.emoji) == '🏁'
 
+            try:
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await reminder.edit('👎')
+            else:
+                await reminder.send('🏁')
+            
+    
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.content.startswith('test'):
+            channel = message.channel
+            msg = await channel.send('Send me a 👍 reaction!')
+
+            def check(reaction, user):
+                return user == message.author and str(reaction.emoji) == '👍'
+
+            try:
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=5.0, check=check)
+            except asyncio.TimeoutError:
+                await msg.edit(content='👎')
+            else:
+                await msg.edit(content="Bump was complete! Thanks.")
                 
     # CHECC PING
     @commands.command()
