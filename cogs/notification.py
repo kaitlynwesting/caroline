@@ -158,7 +158,7 @@ class Notification(commands.Cog):
                 return user == message.author and str(reaction.emoji) == '🏁'
 
             reaction, user = await self.bot.wait_for('reaction_add', check=check)
-            await reminder.send(content="Thanks for bumping! Much appreciated.")
+            await reminder.edit(content="Thanks for bumping! Much appreciated.")
             
     
     @commands.Cog.listener()
