@@ -145,7 +145,7 @@ class Notification(commands.Cog):
                             bump_threshold = timedelta(hours=2)                               
                             all_ready.append(True if duration > bump_threshold else False)
         
-        async for message in lobby.history(limit=100):
+        async for message in lobby.history(limit=20):
             if "Do `!d bump`" in message.content:                        
                 all_ready.append(False)
                                 
@@ -157,12 +157,8 @@ class Notification(commands.Cog):
             def check(reaction, user):
                 return user == message.author and str(reaction.emoji) == '🏁'
 
-            try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
-            except asyncio.TimeoutError:
-                await reminder.edit('👎')
-            else:
-                await reminder.send('🏁')
+            reaction, user = await self.bot.wait_for('reaction_add', check=check)
+            await reminder.send(content="Thanks for bumping! Much appreciated.")
             
     
     @commands.Cog.listener()
