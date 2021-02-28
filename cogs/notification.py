@@ -146,19 +146,20 @@ class Notification(commands.Cog):
                             all_ready.append(True if duration > bump_threshold else False)
         
         async for message in lobby.history(limit=20):
-            if "Do `!d bump`" in message.content:                        
+            if "Do `!d bump`" in message.content or "Bump was complete" in message.content:                        
                 all_ready.append(False)
                                 
         will_remind = False if False in all_ready else True
+
         if will_remind == True:
             reminder = await lobby.send("**It's time to bump!** Do `!d bump` in our <#787090740517273680> channel, then tap the 🏁 react!")
             await reminder.add_reaction(emoji="🏁")
             
             def check(reaction, user):
-                return user == message.author and str(reaction.emoji) == '🏁'
+                return user == user and str(reaction.emoji) == '🏁'
 
             reaction, user = await self.bot.wait_for('reaction_add', check=check)
-            await reminder.edit(content="Thanks for bumping! Much appreciated.")
+            await reminder.edit(content="Bump was complete! Thanks.")
             
     
     @commands.Cog.listener()
