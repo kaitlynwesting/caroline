@@ -41,8 +41,8 @@ class Mass(commands.Cog):
             rule3 = ((rules[14])[0:-1]).replace("punishment", str(punishment_time))
             
             infraction_description = f"""__Violation of {rule1}: {rule2}__ 
-            Apparently, you deemed yourself important enough to disturb others.
-            {rule3}. {rules[13]} """
+Apparently, you deemed yourself important enough to disturb others.
+{rule3}. {rules[13]} """
             
             # The action parts.
             if not any(r in message.author.roles for r in omitted_roles):
