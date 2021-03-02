@@ -145,7 +145,7 @@ class Notification(commands.Cog):
                             bump_threshold = timedelta(hours=2)                               
                             all_ready.append(True if duration > bump_threshold else False)
         
-        async for message in lobby.history(limit=20):
+        async for message in lobby.history(limit=5):
             if "Do `!d bump`" in message.content or "Bump was complete" in message.content:                        
                 all_ready.append(False)
                                 
