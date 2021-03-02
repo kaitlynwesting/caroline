@@ -11,7 +11,7 @@ class Misc(commands.Cog):
         self.bot = bot
 
     # [INACTIVE] For editing the rule embed.
-    @commands.command()
+    """ @commands.command()
     @commands.has_permissions(administrator = True)
     async def edit(self, ctx):
         
@@ -30,7 +30,13 @@ class Misc(commands.Cog):
         # embed.add_field(name="HEEHEE", value="LOL", inline=False)
         #await channel.send(embed=embed)
 
-        await msg.edit(embed=embed)
+        await msg.edit(embed=embed) """
+    
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        print("Someone added a reaction.")
+        channel = get(reaction.guild.channels, name="testing-channel")
+        await channel.send(reaction, user)
         
 
 def setup(bot):
