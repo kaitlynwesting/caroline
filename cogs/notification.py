@@ -133,6 +133,7 @@ class Notification(commands.Cog):
 
         botcommands = await self.bot.fetch_channel(787090740517273680) # bot-commands
         lobby = await self.bot.fetch_channel(777207889277616191) # lobby
+        private = await self.bot.fetch_channel(800094965232435210) # testing channel
 
         async for message in botcommands.history(limit=100):
             if len(message.embeds) > 0:
@@ -160,6 +161,7 @@ class Notification(commands.Cog):
 
             reaction, user = await self.bot.wait_for('reaction_add', check=check)
             await reminder.edit(content="Bump was complete! Thanks.")
+            await private.send(f"{user} just reacted to the bump message with {reaction}.")
             
     
     @commands.Cog.listener()
