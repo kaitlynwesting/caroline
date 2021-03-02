@@ -13,11 +13,12 @@ class Notification(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.printer.start()
+        self.help_dormant.start()
+        self.bump_reminder.start()
 
     
     # LOOP TO CHECK FOR DORMANT HELP CHANNELS 
-    @tasks.loop(seconds=1)
+    @tasks.loop(seconds=5)
     async def help_dormant(self):
         channelList = [780519472444080158, 777207889277616192] # hardcoded two help channels, unfortunately can't get channel by names, doesn't support it
 
@@ -25,21 +26,18 @@ class Notification(commands.Cog):
             channel = self.bot.get_channel(channel)
 
             async for message in channel.history(limit=1):
-                
                 if message.author == self.bot.user:
                     pass
                 else:
-                    # print(message.content)
-
                     nowTime = datetime.now(tz=timezone.utc)
                     messageTime = pytz.utc.localize(message.created_at)
                     duration = nowTime - messageTime
-                    threshold = timedelta(hours=4) # how long before channel marked as inactive?
+                    threshold = timedelta(hours=1) # how long before channel marked as inactive?
+                    print(duration)
 
                     if duration >= threshold:
                         print("Hmm...")
                         embed=discord.Embed(
-                        # title = "This is a test", 
                         color=0x349feb
                         )
 
@@ -128,7 +126,7 @@ class Notification(commands.Cog):
 
     # LOOP TO CHECK FOR BUMPING TIMES 
     @tasks.loop(seconds=1)
-    async def printer(self):
+    async def bump_reminder(self):
         all_ready = []
 
         botcommands = await self.bot.fetch_channel(787090740517273680) # bot-commands
@@ -146,11 +144,12 @@ class Notification(commands.Cog):
                             bump_threshold = timedelta(hours=2)                               
                             all_ready.append(True if duration > bump_threshold else False)
         
-        async for message in lobby.history(limit=5):
-            if "Do `!d bump`" in message.content or "Bump was complete" in message.content:                        
+        async for message in lobby.history(limit=1):
+            if "Do `!d bump`" in message.content in message.content:                        
                 all_ready.append(False)
                                 
         will_remind = False if False in all_ready else True
+        print(all_ready)
 
         if will_remind == True:
             reminder = await lobby.send("**It's time to bump!** Do `!d bump` in our <#787090740517273680> channel, then tap the 🏁 react!")
