@@ -149,14 +149,13 @@ class Notification(commands.Cog):
                 all_ready.append(False)
                                 
         will_remind = False if False in all_ready else True
-        print(all_ready)
 
         if will_remind == True:
             reminder = await lobby.send("**It's time to bump!** Do `!d bump` in our <#787090740517273680> channel, then tap the 🏁 react!")
             await reminder.add_reaction(emoji="🏁")
             
             def check(reaction, user):
-                return user == user and str(reaction.emoji) == '🏁'
+                return user is not user.bot and str(reaction.emoji) == '🏁'
 
             reaction, user = await self.bot.wait_for('reaction_add', check=check)
             await reminder.edit(content="Bump was complete! Thanks.")
