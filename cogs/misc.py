@@ -31,12 +31,6 @@ class Misc(commands.Cog):
         #await channel.send(embed=embed)
 
         await msg.edit(embed=embed) """
-    
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
-        print("Someone added a reaction.")
-        channel = get(reaction.guild.channels, name="testing-channel")
-        await channel.send(reaction, user)
         
 
 def setup(bot):
