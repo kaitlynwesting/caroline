@@ -161,7 +161,7 @@ class Notification(commands.Cog):
             await reminder.add_reaction(emoji="🏁")
             
             def check(reaction, user):
-                return user is not user.bot and str(reaction.emoji) == '🏁'
+                return user.id != 785298572047417374 and str(reaction.emoji) == '🏁'
 
             reaction, user = await self.bot.wait_for('reaction_add', check=check)
             await reminder.edit(content="Bump was complete! Thanks.")
