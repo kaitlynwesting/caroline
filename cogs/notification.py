@@ -144,9 +144,15 @@ class Notification(commands.Cog):
                             bump_threshold = timedelta(hours=2)                               
                             all_ready.append(True if duration > bump_threshold else False)
         
-        async for message in lobby.history(limit=1):
-            if "Do `!d bump`" in message.content or "Bump was complete" in message.content:                        
-                all_ready.append(False)
+        async for message in lobby.history(limit=100):
+            if message.author.id == 785298572047417374:
+                if "Do `!d bump`" in message.content or "Bump was complete" in message.content:
+                    time_now = datetime.now(tz=timezone.utc)
+                    time_message = pytz.utc.localize(message.created_at)
+                    duration = time_now - time_message
+                    remind_threshold = timedelta(hours=1)
+
+                    all_ready.append(True if duration > bump_threshold else False)
                                 
         will_remind = False if False in all_ready else True
 
