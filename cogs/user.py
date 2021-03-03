@@ -19,11 +19,7 @@ class User(commands.Cog):
             member = ctx.author
 
         embed.set_image(url=member.avatar_url)
-
-        if str(member.display_name)[-1] == "s": 
-            embed.set_author(name=f"{member.display_name}' avatar:", icon_url=member.avatar_url)
-        else:
-            embed.set_author(name=f"{member.display_name}'s avatar:", icon_url=member.avatar_url)
+        embed.set_author(name=f"{member.display_name}'s avatar:", icon_url=member.avatar_url)
 
         await ctx.send(embed=embed) 
 
