@@ -10,7 +10,7 @@ import sys
 import random
 
 
-class Handler(commands.Cog):
+class Handle(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
