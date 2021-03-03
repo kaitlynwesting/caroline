@@ -165,24 +165,6 @@ class Notification(commands.Cog):
 
             reaction, user = await self.bot.wait_for('reaction_add', check=check)
             await reminder.edit(content="Bump was complete! Thanks.")
-            await private.send(f"{user} just reacted to the bump message with {reaction}.")
-            
-    
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.content.startswith('test'):
-            channel = message.channel
-            msg = await channel.send('Send me a 👍 reaction!')
-
-            def check(reaction, user):
-                return user == message.author and str(reaction.emoji) == '👍'
-
-            try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=5.0, check=check)
-            except asyncio.TimeoutError:
-                await msg.edit(content='👎')
-            else:
-                await msg.edit(content="Bump was complete! Thanks.")
                 
     # CHECC PING
     @commands.command()
