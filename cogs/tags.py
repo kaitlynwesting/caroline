@@ -34,6 +34,7 @@ class Tags(commands.Cog):
         else:
             await ctx.send("Sorry, no tag by that name...")
     
+    # Adding tag command.
     @commands.command()
     @commands.has_permissions(kick_members = True)
     async def addtag(self, ctx, tagname):
@@ -43,21 +44,45 @@ class Tags(commands.Cog):
         # This checks that the bot only responds to the author in the right channel
         def check(message):
                 return message.author.id == ctx.author.id and message.channel.id == ctx.channel.id
+
+        content = await self.bot.wait_for('message', check=check)
+        
+        if content.content.lower() is not "cancel":
+            post = {
+            "_id": max_id + 1, 
+            "name": tagname,
+            "author_id": ctx.author.id,
+            "content": content.content,
+            "created_at": datetime.now().astimezone(timezone.utc).strftime("%d/%m/%Y, %H:%M:%S"),
+            "uses": 0
+            }
+
+            collection.insert_one(post)
+
+            await ctx.send("Your tag has been successfully inserted into the system. Congratulations!")
+        else:
+            await ctx.send("New tag has been cancelled.")
+    
+    @commands.command()
+    @commands.has_permissions(kick_members = True)
+    async def updatetag(self, ctx, tagname):
+
+        await ctx.send("Tag ready for changing! Send your updated tag content below.")
+
+        # This checks that the bot only responds to the author in the right channel
+        def check(message):
+                return message.author.id == ctx.author.id and message.channel.id == ctx.channel.id
     
         content = await self.bot.wait_for('message', check=check)
 
-        post = {
-        "_id": max_id + 1, 
-        "name": tagname,
-        "author_id": ctx.author.id,
-        "content": content.content,
-        "created_at": datetime.now().astimezone(timezone.utc).strftime("%d/%m/%Y, %H:%M:%S"),
-        "uses": 0
-        }
+        collection.update_one(
+        {"name" : tagname},
+        {"$set":
+            {"content": content.content}
+        }, upsert=True
+        )
 
-        collection.insert_one(post)
-
-        await ctx.send("Your tag has been successfully inserted into the system. Congratulations!")
+        await ctx.send("Your tag has been successfully updated!")
         #collection.insert_many([post1, post2])
         #collection.delete_one({"name": "Kat"})
         #collection.delete_many([post3, post4])
