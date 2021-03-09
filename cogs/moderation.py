@@ -8,8 +8,6 @@ from discord.utils import get
 
 import os
 import pytz
-import random
-import requests
 import sys
 import time
 import traceback
@@ -20,6 +18,8 @@ class Moderation(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    channel = discord.utils.get(ctx.guild.channels, name="logs") 
 
     # Warn command.
     @commands.command(aliases=["w"])
@@ -87,7 +87,6 @@ class Moderation(commands.Cog):
     async def tempmute(self, ctx, member: discord.Member, duration, *, reason=None):
         channel = discord.utils.get(ctx.guild.channels, name="logs")
         muted = get(ctx.guild.roles, name="Muted")
-        creator = get(ctx.guild.roles, name="Creator")
         
         timeConvert = {"s": 1, "m": 60, "h": 3600, "d": 86400}
         timeStringSingular = {"s": "second", "m": "minute", "h": "hour", "d": "day"}
@@ -135,12 +134,6 @@ class Moderation(commands.Cog):
             if muted in member.roles: # Do you already have muted role
                 await ctx.send(f"{member.mention} is already muted.")
             else:
-                for role in member.roles:
-                    try:
-                        await member.remove_roles(role)
-                    except:
-                        pass 
-                
                 await member.add_roles(muted)
                 
                 if reason == None:
@@ -157,8 +150,7 @@ class Moderation(commands.Cog):
 
                 if muted in member.roles: 
                     await member.remove_roles(muted)
-                    await member.add_roles(creator)
-                    
+                   
                     await member.send(f"You have been **unmuted** automatically in {ctx.guild.name} Discord.") # dm user
                     await channel.send(f"**[MODERATION]** 📨 {member.mention} has been automatically **unmuted** now.") 
         
@@ -169,11 +161,9 @@ class Moderation(commands.Cog):
     async def unmute(self, ctx, member: discord.Member):
         channel = discord.utils.get(ctx.guild.channels, name="logs") 
         muted = get(ctx.guild.roles, name="Muted")
-        creator = get(ctx.guild.roles, name="Creator")
 
         if muted in member.roles: 
             await member.remove_roles(muted)
-            await member.add_roles(creator)
             
             await ctx.send(f"📨 Done! {member.mention} has been **unmuted** now.")
             await member.send(f"You have been **unmuted** in {ctx.guild.name} Discord.") # dm user
@@ -242,31 +232,12 @@ class Moderation(commands.Cog):
 
 
     # UNBAN COMMAND
-    @commands.command(name="unban")
+    @commands.command(aliases=["ub"])
     @commands.has_permissions(ban_members = True)
-    async def unban(self, ctx, *, member):
-        channel = discord.utils.get(ctx.guild.channels, name="logs")
-        bannedUsers = await ctx.guild.bans()
-        memberName, memberDiscriminator = member.split("#")
-        state = False
+    async def unban(self, ctx, member_id):
 
-        for banEntry in bannedUsers:
-            user = banEntry.user
-            
-            if (user.name, user.discriminator) == (memberName, memberDiscriminator):
-                await ctx.guild.unban(user) #make the unban
-                
-                await ctx.send(f"📨 Gotcha, {user.mention} has been **unbanned**.")
-                await channel.send(f"**[MODERATION]** {ctx.author.name} unbanned {user.mention}.") # finally!
-                state = True
-            else:
-                pass
-        
-        if state == False:
-            await ctx.send("Are you sure they're on the banlist? Couldn't find anyone matching that name.")
-        else:
-            pass
-
+        await ctx.guild.unban(discord.Object(id=member_id))
+        logs.send("Done")
         
 
 def setup(bot):
