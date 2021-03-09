@@ -9,7 +9,7 @@ import traceback
 
 # COG FOR NEW ARRIVALS AND DEPARTS
 
-class Rules(commands.Cog):
+class Joins(commands.Cog):
 
     def __init__ (self, bot):
         self.bot = bot 
@@ -28,7 +28,7 @@ class Rules(commands.Cog):
     
 # binds the cog to the client file
 def setup(bot):
-    bot.add_cog(Rules(bot)) 
+    bot.add_cog(Joins(bot)) 
 
 
 

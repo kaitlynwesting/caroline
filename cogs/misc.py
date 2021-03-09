@@ -13,7 +13,7 @@ class Misc(commands.Cog):
     # [INACTIVE] For editing the rule embed.
     """ @commands.command()
     @commands.has_permissions(administrator = True)
-    async def edit(self, ctx):
+    async def doit(self, ctx):
         
         msg = await ctx.fetch_message(791682685515857920)
         
