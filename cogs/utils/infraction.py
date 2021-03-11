@@ -41,22 +41,6 @@ async def infraction_auto_over_embed(message, infraction=None):
 
     await message.author.send(embed=embed)
 
-# A MUTE FUNCTION
-async def infraction_mute(message):
-    muted = get(message.guild.roles, name = "Muted")
-    announcements = get(message.guild.roles, name = "Announcements")
-
-    if muted in message.author.roles: 
-        await message.channel.send(f"{message.author.mention} is already muted.")
-    else:
-        for role in message.author.roles:
-            if role is not announcements:
-                try:    
-                    await message.author.remove_roles(role)
-                except:
-                    pass
-        await message.author.add_roles(muted)
-
 
 async def infraction_tempmute(message, time: int):
     creator = get(message.guild.roles, name = "Creator")

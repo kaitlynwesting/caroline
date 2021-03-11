@@ -19,8 +19,6 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    channel = discord.utils.get(ctx.guild.channels, name="logs") 
-
     # Warn command.
     @commands.command(aliases=["w"])
     @commands.has_permissions(kick_members = True)
@@ -235,6 +233,7 @@ class Moderation(commands.Cog):
     @commands.command(aliases=["ub"])
     @commands.has_permissions(ban_members = True)
     async def unban(self, ctx, member_id):
+        logs = discord.utils.get(ctx.guild.channels, name="logs")
 
         await ctx.guild.unban(discord.Object(id=member_id))
         logs.send("Done")
