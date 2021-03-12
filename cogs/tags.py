@@ -65,7 +65,7 @@ class Tags(commands.Cog):
     
     @commands.command()
     @commands.has_permissions(kick_members = True)
-    async def updatetag(self, ctx, tagname):
+    async def updatetag(self, ctx, *, tagname):
 
         await ctx.send("Tag ready for changing! Send your updated tag content below.")
 
