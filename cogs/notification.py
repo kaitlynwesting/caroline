@@ -18,7 +18,7 @@ class Notification(commands.Cog):
 
     
     # LOOP TO CHECK FOR DORMANT HELP CHANNELS 
-    @tasks.loop(seconds=5)
+    @tasks.loop(seconds=60)
     async def help_dormant(self):
         channelList = [780519472444080158, 777207889277616192] # hardcoded two help channels, unfortunately can't get channel by names, doesn't support it
 
@@ -33,7 +33,6 @@ class Notification(commands.Cog):
                     messageTime = pytz.utc.localize(message.created_at)
                     duration = nowTime - messageTime
                     threshold = timedelta(hours=1) # how long before channel marked as inactive?
-                    print(duration)
 
                     if duration >= threshold:
                         print("Hmm...")
