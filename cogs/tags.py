@@ -18,8 +18,6 @@ max_document = list(collection.find())
 # print(x(max_document[1]))
 
 someList = [d['_id'] for d in max_document]
-print(someList)
-
 
 # max_id = int(max_document["_id"])
 # print(max_id)
