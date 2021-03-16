@@ -1,16 +1,13 @@
-import asyncio
-
-import datetime
 import discord
 from discord.ext import commands
-from discord.utils import get
 
 import os
 import settings
 
-intents = discord.Intents(messages = True, guilds = True, reactions = True, members = True, presences = True)
-client = discord.ext.commands.Bot(command_prefix = settings.prefix, intents = intents) # , help_command=None
+intents = discord.Intents(messages=True, guilds=True, reactions=True, members=True, presences=True)
+client = discord.ext.commands.Bot(command_prefix=settings.prefix, intents=intents)  # help_command=None
 print("Loading discord.py version", discord.__version__, ", starting...")
+
 
 # bot loading messages on ready
 @client.event
@@ -18,9 +15,10 @@ async def on_ready():
     print("I am ready!")
 
     # set the now playing status
-    
+
     print("Setting now playing game...", flush=True)
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=settings.nowplaying))
+    await client.change_presence(
+        activity=discord.Activity(type=discord.ActivityType.listening, name=settings.nowplaying))
     print("-----")
 
     # loader for cogs
@@ -34,7 +32,7 @@ async def on_ready():
                 loading_path = f"cogs.filters.{filename[:-3]}"
 
             if filename.endswith(".py"):
-                try: 
+                try:
                     client.load_extension(loading_path)
                     print(f"Loaded: {filename}")
                 except Exception as e:
@@ -48,5 +46,6 @@ async def on_ready():
     print("My prefix is:", settings.prefix)
     print('-----')
     # heroku ps -a robolydia #(twd) tie city 206
+
 
 client.run(settings.token)
