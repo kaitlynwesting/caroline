@@ -1,26 +1,20 @@
 from datetime import datetime, timezone
-
-import discord
 from discord.ext import commands
-from discord.utils import get
-
-import pymongo
 from pymongo import MongoClient
 
 cluster = MongoClient(
-    "mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01.ilbju.mongodb.net:27017,buttercream-shard-00-02.ilbju.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-65nepc-shard-0&authSource=admin&retryWrites=true&w=majority")
+    """mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01.ilbju.mongodb.net:27017,buttercream-shard-00-02.ilbju.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-65nepc-shard-0&authSource=admin&retryWrites=true&w=majority"""
+)
+
 db = cluster["Discord"]
 collection = db["Tags"]
 
-max_document = list(collection.find())
-# max_document = (collection.find(key=lambda x:x['_id']) )
-# x = lambda a : a['_id']
-# print(x(max_document[1]))
+tags_dictionary = list(collection.find())
+max_id = 0
+for d in tags_dictionary:
+    if d['_id'] > max_id:
+        max_id = d['_id']
 
-someList = [d['_id'] for d in max_document]
-
-# max_id = int(max_document["_id"])
-# print(max_id)
 
 class Tags(commands.Cog):
 
@@ -45,7 +39,7 @@ class Tags(commands.Cog):
     # Adding tag command.
     @commands.command()
     @commands.has_permissions(kick_members=True)
-    async def addtag(self, ctx, tagname):
+    async def addtag(self, ctx, *, tagname):
 
         await ctx.send("Tag name set! Send your tag content below.")
 
@@ -73,7 +67,7 @@ class Tags(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
-    async def updatetag(self, ctx, *, tagname):
+    async def edittag(self, ctx, *, tagname):
 
         await ctx.send("Tag ready for changing! Send your updated tag content below.")
 
