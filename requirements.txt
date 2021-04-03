@@ -68,3 +68,7 @@ Werkzeug==1.0.1
 wrapt==1.12.1
 yarl==1.5.1
 zope.interface==5.2.0
+selenium~=3.141.0
+fuzzywuzzy~=0.18.0
+opencv-python~=4.4.0.46
+pytesseract~=0.3.7
