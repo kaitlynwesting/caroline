@@ -10,7 +10,7 @@ async def warn(
         infraction_reason
 ):
 
-    public_message = f"📨 Applying **warning** to {infraction_member.mention}"
+    public_message = f"📨 Applying **warning** to {infraction_member.mention}."
 
     private_message = f"**You were warned by {ctx.message.author}.**\n" \
                       f"{infraction_reason}\n " \

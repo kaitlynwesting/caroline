@@ -3,7 +3,7 @@
 #Temp
 .code-workspace
 .vscode
-test
+dusty_archive
 Dockerfile
 .devcontainer
 
@@ -45,7 +45,7 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# Unit dusty_archive / coverage reports
 htmlcov/
 .tox/
 .nox/
@@ -145,3 +145,4 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 Lydia.code-workspace
+/dusty_archive/

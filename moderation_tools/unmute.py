@@ -18,7 +18,7 @@ async def unmute(
     )
 
     private_message = (
-        f"**Your **mute** was pardoned by {ctx.message.author}.\n",
+        f"Your **mute** was pardoned by {ctx.message.author}.\n",
         f"You are free to continue talking in the server.",
     )
 
