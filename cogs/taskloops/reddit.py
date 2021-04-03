@@ -23,7 +23,6 @@ class Reddit(commands.Cog):
             message_time = pytz.utc.localize(message.created_at)
             time_now = datetime.now(pytz.utc)
             time_difference = time_now - message_time
-            print(time_difference)
 
             if time_difference > timedelta(hours=24):
 

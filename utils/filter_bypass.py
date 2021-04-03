@@ -1,14 +1,12 @@
-import discord
-from discord.ext import commands
 from discord.utils import get
+
 
 # A simple filter bypassing checker, which checks if some has bypassing roles
 
 
 async def bypass_check(message) -> bool:
-    
-    if message.guild is not None: # Do not want bot to check DMs
-        if message.author.bot == False: # Do not want bot to check webhooks or other bots
+    if message.guild is not None:  # Do not want bot to check DMs
+        if message.author.bot == False:  # Do not want bot to check webhooks or other bots
             mod = get(message.guild.roles, name="Moderator")
             admin = get(message.guild.roles, name="Admin")
             owner = get(message.guild.roles, name="Owner")
