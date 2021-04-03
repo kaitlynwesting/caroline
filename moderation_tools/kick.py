@@ -3,35 +3,32 @@ from utils import constants
 from utils import embed_template
 
 
-# A file for banning.
-# Action: permanently bans a user.
+# A file for kicking.
 
 
-async def ban(
+async def kick(
         ctx,
         infraction_member: discord.Member,
         infraction_reason="Being an asshat."
 ):
 
     public_message = \
-        f"📨 Permanently **banned** {infraction_member.mention} " \
+        f"📨 **Kicked** {infraction_member.mention} " \
         f"({infraction_reason})."
 
     private_message = \
-        f"**You were banned by {ctx.message.author}.**\n" \
+        f"**You were kicked by {ctx.message.author}.**\n" \
         f"{infraction_reason}\n"
 
-    # Public notification
     await ctx.channel.send(
         f"{public_message}"
     )
 
-    # Private notification
     await embed_template.dm_manual_embed(
         infraction_member,
         f"Infraction received from Photoshop Discord",
         f"{private_message}",
-        f"This ban is permanent and will not be revoked.",
+        f"If you believe that there has been an error, please DM our Modmail bot.",
         constants.trouble_red
     )
 

@@ -9,13 +9,12 @@ async def unban(
         pardoned_member: discord.Member
 ):
 
-    public_message = (
+    public_message = \
         f"📨 **Unbanned** {pardoned_member}."
-    )
 
     # Public notification of auto mute
     await ctx.channel.send(
-        f"{''.join(public_message)}"
+        f"{public_message}"
     )
 
     await ctx.guild.unban(discord.Object(id=pardoned_member))
