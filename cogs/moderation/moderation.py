@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from moderation_tools import warn, mute, unmute, ban, unban
+from moderation_tools import warn, mute, unmute, kick, ban, unban
 
 
 class Moderation(commands.Cog):
@@ -8,7 +8,7 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(aliases="w")
     @commands.has_permissions(kick_members=True)
     async def warn(
             self,
@@ -23,7 +23,7 @@ class Moderation(commands.Cog):
             infraction_reason
         )
 
-    @commands.command()
+    @commands.command(aliases="m")
     @commands.has_permissions(kick_members=True)
     async def mute(
             self,
@@ -48,7 +48,7 @@ class Moderation(commands.Cog):
             infraction_reason
         )
 
-    @commands.command()
+    @commands.command(aliases="um")
     @commands.has_permissions(kick_members=True)
     async def unmute(
             self,
@@ -61,7 +61,19 @@ class Moderation(commands.Cog):
             pardoned_member
         )
 
-    @commands.command()
+    @commands.command(aliases="k")
+    @commands.has_permissions(kick_members=True)
+    async def kick(
+            self,
+            ctx,
+            infraction_member: discord.Member,
+    ):
+        await kick.kick(
+            ctx,
+            infraction_member
+        )
+
+    @commands.command(aliases="b")
     @commands.has_permissions(kick_members=True)
     async def ban(
             self,
@@ -73,7 +85,7 @@ class Moderation(commands.Cog):
             infraction_member
         )
 
-    @commands.command()
+    @commands.command(aliases="ub")
     @commands.has_permissions(kick_members=True)
     async def unban(
             self,

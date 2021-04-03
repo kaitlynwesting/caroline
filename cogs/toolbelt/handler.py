@@ -2,17 +2,14 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 
-import random
 
-
-class Handlerk(commands.Cog):
+class Handler(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        num = str((random.randint(2, 10)))
 
         # INSUFFICIENT PARAMETERS
         if isinstance(error, commands.MissingRequiredArgument):
