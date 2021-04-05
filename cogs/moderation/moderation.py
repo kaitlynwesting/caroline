@@ -8,14 +8,22 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases="w")
+    @commands.command(aliases=["w"])
     @commands.has_permissions(kick_members=True)
     async def warn(
             self,
             ctx,
             infraction_member: discord.Member,
-            infraction_reason=None
+            infraction_reason: str = None
     ):
+        """
+            Distributes a warning to a member.
+
+            :param ctx: Context
+            :param infraction_member: The member receiving the infraction. Discord object or ID
+            :param infraction_reason: The infraction description and reason
+            :return: None
+        """
 
         await warn.warn(
             ctx,
@@ -23,7 +31,7 @@ class Moderation(commands.Cog):
             infraction_reason
         )
 
-    @commands.command(aliases="m")
+    @commands.command(aliases=["m"])
     @commands.has_permissions(kick_members=True)
     async def mute(
             self,
@@ -48,7 +56,7 @@ class Moderation(commands.Cog):
             infraction_reason
         )
 
-    @commands.command(aliases="um")
+    @commands.command(aliases=["um"])
     @commands.has_permissions(kick_members=True)
     async def unmute(
             self,
@@ -61,7 +69,7 @@ class Moderation(commands.Cog):
             pardoned_member
         )
 
-    @commands.command(aliases="k")
+    @commands.command(aliases=["k"])
     @commands.has_permissions(kick_members=True)
     async def kick(
             self,
@@ -73,7 +81,7 @@ class Moderation(commands.Cog):
             infraction_member
         )
 
-    @commands.command(aliases="b")
+    @commands.command(aliases=["b"])
     @commands.has_permissions(kick_members=True)
     async def ban(
             self,
@@ -85,7 +93,7 @@ class Moderation(commands.Cog):
             infraction_member
         )
 
-    @commands.command(aliases="ub")
+    @commands.command(aliases=["ub"])
     @commands.has_permissions(kick_members=True)
     async def unban(
             self,

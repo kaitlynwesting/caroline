@@ -1,9 +1,6 @@
 from utils import constants, embed_template
 
 
-# Warning function.
-
-
 async def warn(
         ctx,
         infraction_member,
