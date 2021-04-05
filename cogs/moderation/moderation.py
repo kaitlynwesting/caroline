@@ -14,6 +14,7 @@ class Moderation(commands.Cog):
             self,
             ctx,
             infraction_member: discord.Member,
+            *,
             infraction_reason: str = None
     ):
         """
