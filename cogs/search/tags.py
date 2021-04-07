@@ -1,9 +1,12 @@
 from datetime import datetime, timezone
 from discord.ext import commands
+
 from pymongo import MongoClient
 
 cluster = MongoClient(
-    """mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01.ilbju.mongodb.net:27017,buttercream-shard-00-02.ilbju.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-65nepc-shard-0&authSource=admin&retryWrites=true&w=majority"""
+    "mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01."
+    "ilbju.mongodb.net:27017,buttercream-shard-00-02.ilbju.mongodb.net:27017/myFirstDatabase?"
+    "ssl=true&replicaSet=atlas-65nepc-shard-0&authSource=admin&retryWrites=true&w=majority"
 )
 
 db = cluster["Discord"]
@@ -22,24 +25,38 @@ class Tags(commands.Cog):
         self.bot = bot
 
     # Fetching tag command.
-    @commands.command()
-    async def tag(self, ctx, *, tagname):
+    @commands.group(invoke_without_command=True)
+    async def tag(self, ctx, *, tag_name):
+        """
+        Fetches tags from a database.
 
-        tagname = tagname.lower()
-        collection.find({"name": tagname})
-        result_count = collection.count_documents({"name": tagname})
+        :param ctx:
+        :param tag_name:
+        :return:
+        """
+
+        tag_name = tag_name.lower()
+        collection.find({"name": tag_name})
+        result_count = collection.count_documents({"name": tag_name})
 
         if result_count > 0:
-            results = collection.find({"name": tagname})
+            results = collection.find({"name": tag_name})
             for result in results:
                 await ctx.send(result["content"])
         else:
             await ctx.send("Sorry, no tag by that name...")
 
     # Adding tag command.
-    @commands.command()
+    @tag.command()
     @commands.has_permissions(kick_members=True)
-    async def addtag(self, ctx, *, tagname):
+    async def create(self, ctx, *, tag_name):
+        """
+        Creates and stores new tags in a database.
+
+        :param ctx:
+        :param tag_name:
+        :return:
+        """
 
         await ctx.send("Tag name set! Send your tag content below.")
 
@@ -52,7 +69,7 @@ class Tags(commands.Cog):
         if content.content.lower() != "cancel":
             post = {
                 "_id": max_id + 1,
-                "name": tagname,
+                "name": tag_name,
                 "author_id": ctx.author.id,
                 "content": content.content,
                 "created_at": datetime.now().astimezone(timezone.utc).strftime("%d/%m/%Y, %H:%M:%S"),
@@ -65,9 +82,9 @@ class Tags(commands.Cog):
         else:
             await ctx.send("New tag has been cancelled.")
 
-    @commands.command()
+    @tag.command()
     @commands.has_permissions(kick_members=True)
-    async def edittag(self, ctx, *, tagname):
+    async def edit(self, ctx, *, tag_name):
 
         await ctx.send("Tag ready for changing! Send your updated tag content below.")
 
@@ -78,7 +95,7 @@ class Tags(commands.Cog):
         content = await self.bot.wait_for('message', check=check)
 
         collection.update_one(
-            {"name": tagname},
+            {"name": tag_name},
             {"$set":
                  {"content": content.content}
              }, upsert=True
