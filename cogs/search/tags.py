@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from discord.ext import commands
+from utils import constants
 
 from pymongo import MongoClient
 
@@ -48,7 +49,7 @@ class Tags(commands.Cog):
 
     # Adding tag command.
     @tag.command()
-    @commands.has_permissions(kick_members=True)
+    @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
     async def create(self, ctx, *, tag_name):
         """
         Creates and stores new tags in a database.
@@ -83,7 +84,7 @@ class Tags(commands.Cog):
             await ctx.send("New tag has been cancelled.")
 
     @tag.command()
-    @commands.has_permissions(kick_members=True)
+    @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
     async def edit(self, ctx, *, tag_name):
 
         await ctx.send("Tag ready for changing! Send your updated tag content below.")
