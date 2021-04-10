@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from moderation_tools import warn, mute, unmute, kick, ban, unban
+from utils import constants
 
 
 class Moderation(commands.Cog):
@@ -33,7 +34,7 @@ class Moderation(commands.Cog):
         )
 
     @commands.command(aliases=["m"])
-    @commands.has_permissions(kick_members=True)
+    @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
     async def mute(
             self,
             ctx,
@@ -42,6 +43,15 @@ class Moderation(commands.Cog):
             *,
             infraction_reason=None
     ):
+        """
+        Mutes a member for a specified amount of time. Time defaults to 7 days if not specified.
+
+        :param ctx: Context
+        :param infraction_member: discord.Member
+        :param infraction_time: str
+        :param infraction_reason: str
+        :return:
+        """
 
         # If there is no number in the infraction_time parameter, one can assume that no argument has been passed
         # to infraction_time. Therefore, the default infraction_time would then be 7d.
