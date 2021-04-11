@@ -41,7 +41,7 @@ class Moderation(commands.Cog):
             infraction_member: discord.Member,
             infraction_time="7d",
             *,
-            infraction_reason
+            infraction_reason="Being an idiot."
     ):
         """
         Mutes a member for a specified amount of time. Time defaults to 7 days if not specified.
@@ -85,10 +85,12 @@ class Moderation(commands.Cog):
             self,
             ctx,
             infraction_member: discord.Member,
+            infraction_reason="Your asshattery is not welcome here. Bye."
     ):
         await kick.kick(
             ctx,
-            infraction_member
+            infraction_member,
+            infraction_reason
         )
 
     @commands.command(aliases=["b"])
@@ -97,10 +99,12 @@ class Moderation(commands.Cog):
             self,
             ctx,
             infraction_member: discord.Member,
+            infraction_reason="Your asshattery is not welcome here. Bye."
     ):
         await ban.ban(
             ctx,
-            infraction_member
+            infraction_member,
+            infraction_reason
         )
 
     @commands.command(aliases=["ub"])
@@ -108,7 +112,7 @@ class Moderation(commands.Cog):
     async def unban(
             self,
             ctx,
-            pardoned_member: discord.Member,
+            pardoned_member,
     ):
         await unban.unban(
             ctx,

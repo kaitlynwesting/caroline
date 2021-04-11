@@ -6,7 +6,7 @@ import discord
 
 async def unban(
         ctx,
-        pardoned_member: discord.Member
+        pardoned_member
 ):
 
     public_message = \
@@ -17,7 +17,8 @@ async def unban(
         f"{public_message}"
     )
 
-    await ctx.guild.unban(discord.Object(id=pardoned_member))
+    pardoned_member = discord.Object(id=pardoned_member)
+    await ctx.guild.unban(pardoned_member)
 
     # Add a section in front in the future to prevent dumbasses from trying to ban themselves
     # Add a section here in the future for preparing the logging file for logging actions

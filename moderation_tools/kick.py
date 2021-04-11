@@ -9,7 +9,7 @@ from utils import embed_template
 async def kick(
         ctx,
         infraction_member: discord.Member,
-        infraction_reason="Being an asshat."
+        infraction_reason
 ):
 
     public_message = \
