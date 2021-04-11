@@ -1,18 +1,18 @@
 import discord
 from discord.ext import commands
+from utils import help
 
 import os
 import settings
 
 intents = discord.Intents(messages=True, guilds=True, reactions=True, members=True, presences=True)
-client = discord.ext.commands.Bot(command_prefix=settings.prefix, intents=intents)  # help_command=None
+client = commands.Bot(command_prefix=settings.prefix, intents=intents) # help_command=help.MyHelp()
 print("Loading discord.py version", discord.__version__, ", starting...")
 
 
 # bot loading messages on ready
 @client.event
 async def on_ready():
-
     print("I am ready!")
 
     print("Setting now playing game...", flush=True)
@@ -34,6 +34,7 @@ async def on_ready():
                         client.load_extension(loading_path)
                     except Exception as e:
                         print(f"Could not load {file} due to {e}")
+
 
 # heroku ps -a robolydia #(twd) tie city 206
 
