@@ -43,6 +43,8 @@ async def mute(
         constants.trouble_red
     )
 
+    await infraction_member.add_roles(muted)
+
     await asyncio.sleep(infraction_time_int)
 
     if muted in infraction_member.roles:

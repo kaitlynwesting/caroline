@@ -39,9 +39,9 @@ class Moderation(commands.Cog):
             self,
             ctx,
             infraction_member: discord.Member,
-            infraction_time,
+            infraction_time=None,
             *,
-            infraction_reason=None
+            infraction_reason: str = None
     ):
         """
         Mutes a member for a specified amount of time. Time defaults to 7 days if not specified.
@@ -56,7 +56,9 @@ class Moderation(commands.Cog):
         # If there is no number in the infraction_time parameter, one can assume that no argument has been passed
         # to infraction_time. Therefore, the default infraction_time would then be 7d.
 
-        if not any(char.isdigit() for char in infraction_time):
+        if infraction_time is None:
+            infraction_time = "7d"
+        elif not any(char.isdigit() for char in infraction_time):
             infraction_reason = f"{infraction_time} {infraction_reason}"
             infraction_time = "7d"
 
@@ -74,7 +76,6 @@ class Moderation(commands.Cog):
             ctx,
             pardoned_member: discord.Member,
     ):
-
         await unmute.unmute(
             ctx,
             pardoned_member
