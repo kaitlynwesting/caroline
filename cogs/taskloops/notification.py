@@ -7,7 +7,7 @@ class Notification(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.help_dormant.start()
+        # self.help_dormant.start()
 
     # LOOP TO CHECK FOR DORMANT HELP CHANNELS
 #     @tasks.loop(seconds=60)
