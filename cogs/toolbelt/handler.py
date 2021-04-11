@@ -5,7 +5,7 @@ from discord.utils import get
 import traceback
 
 
-class Handle(commands.Cog):
+class Handler(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
