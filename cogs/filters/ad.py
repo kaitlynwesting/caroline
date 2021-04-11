@@ -42,6 +42,8 @@ class Ad(commands.Cog):
                     can_bypass = await filter_bypass.bypass_check(message)
 
                     if not can_bypass:
+                        await message.channel.purge(limit=1)
+
                         infraction_filter = "advertising"
 
                         infraction_description = (
@@ -57,7 +59,7 @@ class Ad(commands.Cog):
                             30,
                         )
 
-                        await message.channel.purge(limit=1)
+
 
 
 
