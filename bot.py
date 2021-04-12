@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils import help
+# from utils import help
 
 import os
 import settings
