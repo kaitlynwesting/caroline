@@ -85,6 +85,7 @@ class Moderation(commands.Cog):
             self,
             ctx,
             infraction_member: discord.Member,
+            *,
             infraction_reason="Your asshattery is not welcome here. Bye."
     ):
         await kick.kick(
@@ -99,6 +100,7 @@ class Moderation(commands.Cog):
             self,
             ctx,
             infraction_member: discord.Member,
+            *,
             infraction_reason="Your asshattery is not welcome here. Bye."
     ):
         await ban.ban(
