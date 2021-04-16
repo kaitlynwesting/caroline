@@ -50,6 +50,6 @@ rule5 = f"Do not request, provide help with, or post work that may be considered
 
 rule6 = f"No spamming, advertising, or requesting work. We are neither an advertisement hub nor a freelancing portal." \
         f"\nThis also includes posting personal YouTube, Twitch, Instagram, or similar profiles. If you'd like to" \
-        f"your work, please do so by directly posting a picture or video file."
+        f"display your work, please do so by directly posting a picture or video file."
 
 rule7 = f"Use the appropriate help channels to receive suggestions. DO NOT SEND UNSOLICITED DMs to people."
