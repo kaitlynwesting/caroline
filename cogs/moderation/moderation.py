@@ -45,6 +45,7 @@ class Moderation(commands.Cog):
     ):
         """
         Mutes a member for a specified amount of time. Time defaults to 7 days if not specified.
+        Example: !mute Kat 10m Too cool
 
         :param ctx: Context
         :param infraction_member: discord.Member
@@ -68,12 +69,21 @@ class Moderation(commands.Cog):
         )
 
     @commands.command(aliases=["um"])
-    @commands.has_permissions(kick_members=True)
+    @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
     async def unmute(
             self,
             ctx,
             pardoned_member: discord.Member,
     ):
+        """
+        Unmutes a currently muted member.
+        Example: !unmute Kat
+
+        :param ctx: Context
+        :param pardoned_member: discord.Member
+        :return:
+        """
+
         await unmute.unmute(
             ctx,
             pardoned_member
