@@ -15,7 +15,7 @@ class Subscription(commands.Cog):
     async def subscribe(self, ctx, message):
         message = message.lower()
 
-        if ctx.channel.name == "bot-commands":
+        if ctx.channel.id == constants.bot_commands:
 
             if message == "announcements":
 
