@@ -61,10 +61,12 @@ class Handler(commands.Cog):
             await ctx.send("Bleh, smelled a bad argument.")
 
         else:
+            error_message = traceback.format_exception(type(error), error, error.__traceback__)
+
             await ctx.send(
                 f"Something just borked. Yup, it's an uncaught exception.\n"
                 f"You should probably scream at Kat now so she can fix me. (I kid, please don't shriek) \n\n"
-                f"```\n{traceback.format_exception(type(error), error, error.__traceback__)}\n```\n"
+                f"```{''.join([str(x) for x in error_message])}```"
                 f"If you're the first person to have seen this type of error, {ctx.author.name}, congratulations! "
                 f"Uncaught exceptions are rare, and you deserve to be rewarded for your contribution to bug hunting."
             )
