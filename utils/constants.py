@@ -1,3 +1,7 @@
+# Hardcoded IDs
+bot_id = 785298572047417374
+kat_id = 669977303584866365
+
 # Server colours
 trouble_red = 0xeb4034
 blurple = 0x7289da
@@ -31,6 +35,7 @@ alpha = 780519472444080158
 beta = 777207889277616192
 
 staff_bot = 777316504425332746
+deleted_message_log = 836351702444539952
 
 # Server constant texts, etc
 rule0 = f"We expect all members of our community to understand and abide by our rules, " \
