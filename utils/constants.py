@@ -50,12 +50,12 @@ rule3 = f"Listen to and respect staff members and their directions."
 
 rule4 = f"This is an English-speaking server. Please speak English to the best of your ability."
 
-rule5 = f"Do not request, provide help with, or post work that may be considered illicit, breach terms of services, " \
-        f"malicious, or inappropriate. Do not request or provide solutions to ongoing tests or assignments, " \
-        f"although guidance and advice is allowed."
+rule5 = f"Do not request, provide help with, or post content that may be considered illicit, " \
+        f"malicious, or inappropriate (NSFW). Do not request or provide solutions to ongoing tests or assignments, " \
+        f"although general guidance and advice is allowed."
 
-rule6 = f"No spamming, advertising, or requesting work. We are neither an advertisement hub nor a freelancing portal." \
-        f"\nThis also includes posting personal YouTube, Twitch, Instagram, or similar profiles. If you'd like to " \
-        f"display your work, please do so by directly posting a picture or video file."
+rule6 = f"No spamming, advertising, or requesting work. \n" \
+        f"This also includes posting personal YouTube, Twitch, Instagram, or similar profiles purely " \
+        f"for the purpose of self-promotion."
 
-rule7 = f"Use the appropriate help channels to receive suggestions. DO NOT SEND UNSOLICITED DMs to people."
+rule7 = f"Use the channels for their intended purposes. Only DM someone if they have agreed beforehand."
