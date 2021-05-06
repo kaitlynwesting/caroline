@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from moderation_tools import warn, mute, unmute, kick, ban, unban
+from moderation_tools import animalise, mute, unmute, kick, ban, unban
 from utils import constants
 
 
@@ -8,6 +8,22 @@ class Moderation(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(aliases=["animalize", "forcenick"])
+    @commands.has_permissions(kick_members=True)
+    async def animalise(
+            self,
+            ctx,
+            infraction_member: discord.Member,
+            infraction_time,
+            infraction_reason: str
+    ):
+        await animalise.animalise(
+            ctx,
+            infraction_member,
+            infraction_time,
+            infraction_reason,
+        )
 
     @commands.command(aliases=["w"])
     @commands.has_permissions(kick_members=True)
