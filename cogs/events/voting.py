@@ -48,6 +48,15 @@ class Voting(commands.Cog):
 
                                             return
 
+                                    if user == payload.member and user == submission.author:
+                                        await context_message.remove_reaction(reaction, user)
+                                        reminder_message = \
+                                            await context_channel.send(f"**Shame, {user.mention}, you tried to vote"
+                                                                       f"for yourself!** Self voting is not allowed.")
+                                        await reminder_message.delete(delay=3)
+
+                                        return
+
                         return
 
 

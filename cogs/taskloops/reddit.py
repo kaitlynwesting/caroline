@@ -8,6 +8,7 @@ from discord.utils import get
 import requests
 import pytz
 
+
 class Reddit(commands.Cog):
 
     def __init__(self, bot):
@@ -27,22 +28,22 @@ class Reddit(commands.Cog):
             if time_difference > timedelta(hours=24):
 
                 reddit = ap.Reddit(
-                    client_id='-EXpNodmhibB5Q', 
-                    client_secret='GXd8P6XRCavNalat37J1--5uVBIz_Q', 
+                    client_id='-EXpNodmhibB5Q',
+                    client_secret='GXd8P6XRCavNalat37J1--5uVBIz_Q',
                     user_agent='Mozilla/5.0',
                 )
-            
+
                 subreddit = await reddit.subreddit("Photoshop")
-                top_posts = subreddit.top("day", limit = 5)
+                top_posts = subreddit.top("day", limit=5)
                 content = ''
 
                 async for post in top_posts:
-                    
+
                     if post.selftext.strip() == "":
                         description = ''
                     else:
                         description = f"{post.selftext[0:600]}...\n"
-                    
+
                     activity = f"`{post.score} upvotes | {post.num_comments} comments | u/{post.author}` \n\n"
 
                     content = content + (f"**[{post.title}]({post.shortlink})**\n{description}{activity}")
@@ -53,12 +54,12 @@ class Reddit(commands.Cog):
                     "title": "Top posts today from r/Photoshop:",
                     "description": f"{content}",
                     "color": 0x349feb,
-                    }
+                }
 
                 data = {
                     "embeds": [
                         embed
-                        ],
+                    ],
                 }
 
                 result = requests.post(url, json=data)
@@ -69,6 +70,6 @@ class Reddit(commands.Cog):
 
                 await reddit.close()
 
-            
+
 def setup(bot):
     bot.add_cog(Reddit(bot))
