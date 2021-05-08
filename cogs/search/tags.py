@@ -16,7 +16,7 @@ collection = db["Tags"]
 tags_dictionary = list(collection.find())
 max_id = 0
 for d in tags_dictionary:
-    if d['_id'] > max_id:
+    if int(str(d['_id'])) > max_id:
         max_id = d['_id']
 
 
@@ -85,7 +85,15 @@ class Tags(commands.Cog):
 
     @tag.command()
     @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
-    async def edit(self, ctx, *, tag_name):
+    async def edit(self,
+                   ctx,
+                   *,
+                   tag_name):
+
+        tag_queries = collection.find({"name": tag_name})
+        await ctx.send(tag_queries)
+        for tag_query in tag_queries:
+            await ctx.send(tag_query['author_id'])
 
         await ctx.send("Tag ready for changing! Send your updated tag content below.")
 
@@ -98,7 +106,7 @@ class Tags(commands.Cog):
         collection.update_one(
             {"name": tag_name},
             {"$set":
-                 {"content": content.content}
+                {"content": content.content}
              }, upsert=True
         )
 
