@@ -1,8 +1,3 @@
-import discord
-import traceback
-import sys
-import random
-import datetime
 from discord.ext import commands
 
 class Maths(commands.Cog):

@@ -9,46 +9,39 @@ class Misc(commands.Cog):
         self.bot = bot
 
     # [INACTIVE] For editing the rule embed.
-    # @commands.command()
-    # @commands.has_permissions(administrator = True)
-    # async def doit(self, ctx):
-    #
-    #     msg = await ctx.fetch_message(791682685515857920)
-    #
-    #     with open('cogs/texts/rules.txt', 'r') as f:
-    #         rules = f.read()
-    #
-    #     embed=discord.Embed (
-    #     title = f"Photoshop Discord Rules",
-    #     color=0x349feb,
-    #     description=rules)
-    #
-    #     embed.set_thumbnail(url="https://i.postimg.cc/bJSGjhD5/IDEK.png")
-    #
-    #     # embed.add_field(name="HEEHEE", value="LOL", inline=False)
-    #     #await channel.send(embed=embed)
-    #
-    #     await msg.edit(embed=embed)
-
     @commands.command()
-    async def hi(self, ctx):
-        placeholder = None
+    @commands.has_permissions(administrator=True)
+    async def change(self, ctx):
+        rules = self.bot.get_channel(constants.rules)
+        msg = await rules.fetch_message(791682685515857920)
+
+        rule = f"We expect all members of our community to adhere by our rules below. " \
+               f"Please ensure that you understand what they mean. \n" \
+               f"If you would like to report an incident or have questions concerning our rules, " \
+               f"please message <@575252669443211264>. \n\n" \
+               f"**Rule 1**\n{constants.rule1}\n" \
+               f"**Rule 2**\n{constants.rule2}\n" \
+               f"**Rule 3**\n{constants.rule3}\n" \
+               f"**Rule 4**\n{constants.rule4}\n" \
+               f"**Rule 5**\n{constants.rule5}\n" \
+               f"**Rule 6**\n{constants.rule6}\n" \
+               f"**Rule 7**\n{constants.rule7}\n"
+
+        print(rule)
 
         embed = Embed(
-            title=f"Infraction received from Photoshop Discord",
-            color=0xeb4034,
-        )
+            title=f"Photoshop Discord Rules",
+            color=0x349feb,
+            description=rule)
 
-        embed.add_field(
-            name=f"test",
-            value="hoi",
-            inline=False
-        )
+        embed.set_thumbnail(url="https://i.postimg.cc/bJSGjhD5/IDEK.png")
 
-        embed.set_footer(text=f'{placeholder}')
+        await msg.edit(embed=embed)
 
-        await ctx.author.send(embed=embed)
-        
+    @commands.command()
+    async def say(self, ctx, *, args):
+        print(args)
+
 
 def setup(bot):
     bot.add_cog(Misc(bot))
