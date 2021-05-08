@@ -1,18 +1,14 @@
 import asyncio
-from datetime import datetime, timezone, timedelta
 
 import discord
 from discord.ext import commands
 from discord.utils import get
 
-import os
-import pytz
 import random
 import requests
 import sys
 import string
-import time
-import traceback
+
 
 # COG FOR GENERAL "FUN" COMMANDS
 

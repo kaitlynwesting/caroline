@@ -1,6 +1,7 @@
 from discord.ext import commands
 from moderation_tools import automute
 from utils import constants, filter_bypass
+from ..info import user
 
 
 # A server advertisements filter.
@@ -56,7 +57,7 @@ class Ad(commands.Cog):
                             message,
                             f"{infraction_filter}",
                             f"{''.join(infraction_description)}",
-                            30,
+                            10,
                         )
 
 
