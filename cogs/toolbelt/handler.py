@@ -25,7 +25,7 @@ class Handler(commands.Cog):
 
         # INSUFFICIENT PERMISSIONS
         elif isinstance(error, commands.MissingPermissions):
-            await ctx.send("You can't. Why?", file=discord.File("./media/image1.jpg"))
+            await ctx.send("You do not have permission to run this command.", file=discord.File("./media/image1.jpg"))
 
         # CAN'T FIND COMMAND
         elif isinstance(error, commands.CommandNotFound):
@@ -61,7 +61,8 @@ class Handler(commands.Cog):
             await ctx.send("Bleh, smelled a bad argument.")
 
         else:
-            await ctx.send(error[:1000])
+            print(error.errors)
+            await ctx.send(str(error)[:1000])
             # error_message = traceback.format_exception(type(error), error, error.__traceback__)
             #
             # await ctx.send(
