@@ -61,7 +61,7 @@ class Handler(commands.Cog):
             await ctx.send("Bleh, smelled a bad argument.")
 
         else:
-            print(error.errors)
+            print(error)
             await ctx.send(str(error)[:1000])
             # error_message = traceback.format_exception(type(error), error, error.__traceback__)
             #
