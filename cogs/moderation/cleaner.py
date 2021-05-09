@@ -7,7 +7,6 @@ class Cleaner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx, num: int, target: discord.User):
@@ -19,11 +18,13 @@ class Cleaner(commands.Cog):
                 return m.author.id == target.id
             return True
 
-        deleted = await ctx.channel.purge(limit=num, check=checker)
-        await ctx.channel.send(f'👌 Deleted {len(deleted)} message(s).')
+        try:
+            deleted = await ctx.channel.purge(limit=num, check=checker)
+            await ctx.channel.send(f'👌 Deleted {len(deleted)} message(s).')
+        except discord.errors.NotFound as e:
+            await ctx.channel.send(f'👌 Deleted message(s).')
 
-        # deleted = await ctx.channel.purge(limit=num, check=msgcheck)
-        # await ctx.send(f':thumbsup: Deleted **{len(deleted)}/{num}** possible messages for you.')
+
 
     """ @commands.command()
     @commands.has_permissions(kick_members = True)
