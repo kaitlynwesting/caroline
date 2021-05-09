@@ -9,20 +9,33 @@ class Cleaner(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_messages=True)
-    async def purge(self, ctx, num: int, target: discord.User):
-        if num > 500 or num < 0:
+    async def purge(self, ctx, limit: int, target_member: discord.User):
+        """
+        Clears messages.
+        Note: limit refers to HOW MANY messages the bot should scan. It does not refer to how many messages to delete
+        from a person.
+        Note: if target_member is not specified, the bot will delete messages from a channel regardless of the author.
+        Example: !purge 
+
+        :param ctx:
+        :param limit: int
+        :param target_member: discord.Member
+        :return:
+        """
+
+        if limit > 500 or limit < 0:
             return await ctx.send("Invalid amount. Maximum is 500.")
 
         def checker(m):
-            if target is not None:
-                return m.author.id == target.id
+            if target_member is not None:
+                return m.author.id == target_member.id
             return True
 
         try:
-            deleted = await ctx.channel.purge(limit=num, check=checker)
+            deleted = await ctx.channel.purge(limit=limit, check=checker)
             await ctx.channel.send(f'👌 Deleted {len(deleted)} message(s).')
         except discord.errors.NotFound as e:
-            await ctx.channel.send(f'👌 Deleted message(s).')
+            await ctx.channel.send(f'👌 Deleted messages. Caught {e} for you.')
 
 
 
