@@ -147,6 +147,16 @@ class Moderation(commands.Cog):
             pardoned_member
         )
 
+    @commands.command(aliases=["hb"])
+    @commands.has_permissions(kick_members=True)
+    async def hackban(
+            self,
+            ctx,
+            infraction_member_id,
+    ):
+        await(ctx.guild.ban(discord.Object(id=infraction_member_id)))
+        await ctx.send("Done.")
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
