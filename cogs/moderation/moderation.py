@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from moderation_tools import mute, unmute, kick, ban, unban
+from moderation_tools import warn, mute, unmute, kick, ban, unban
 from utils import constants
 
 
@@ -60,7 +60,8 @@ class Moderation(commands.Cog):
             infraction_reason="Being an idiot."
     ):
         """
-        Mutes a member for a specified amount of time. Time defaults to 7 days if not specified.
+        Mutes a member for a specified amount of time.
+        Notes: time defaults to 7 days if not specified.
         Example: !mute Kat 10m Too cool
 
         :param ctx: Context
@@ -114,6 +115,16 @@ class Moderation(commands.Cog):
             *,
             infraction_reason="Your asshattery is not welcome here. Bye."
     ):
+        """
+        Kicks a member in the server.
+        Example: !kick Kat Too cool
+
+        :param ctx:
+        :param infraction_member: discord.Member
+        :param infraction_reason: str
+        :return:
+        """
+
         await kick.kick(
             ctx,
             infraction_member,
@@ -129,6 +140,16 @@ class Moderation(commands.Cog):
             *,
             infraction_reason="Your asshattery is not welcome here. Bye."
     ):
+        """
+        Bans a member in the server.
+        Note: by default, this will also delete all of their messages.
+        Example: !ban Kat Too cool
+
+        :param ctx:
+        :param infraction_member: discord.Member
+        :param infraction_reason: str
+        :return:
+        """
         await ban.ban(
             ctx,
             infraction_member,
@@ -142,6 +163,15 @@ class Moderation(commands.Cog):
             ctx,
             pardoned_member,
     ):
+        """
+        Unbans a banned member.
+        Note: directly insert ONLY the member's ID, otherwise the bot cannot convert.
+        Example: !unban 669977303584866365
+
+        :param ctx:
+        :param pardoned_member:
+        :return:
+        """
         await unban.unban(
             ctx,
             pardoned_member
@@ -154,6 +184,16 @@ class Moderation(commands.Cog):
             ctx,
             infraction_member_id,
     ):
+        """
+        Bans a member not in the server.
+        Note: directly insert ONLY the member's ID, otherwise the bot cannot convert.
+        Example: !hackban 669977303584866365
+
+        :param ctx:
+        :param infraction_member_id: int
+        :return:
+        """
+
         await(ctx.guild.ban(discord.Object(id=infraction_member_id)))
         await ctx.send("Done.")
 
