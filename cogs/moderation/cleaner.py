@@ -15,7 +15,8 @@ class Cleaner(commands.Cog):
         Note: limit refers to HOW MANY messages the bot should scan. It does not refer to how many messages to delete
         from a person.
         Note: if target_member is not specified, the bot will delete messages from a channel regardless of the author.
-        Example: !purge 
+        Example: !purge 100 669977303584866365 # Scans last 100 messages in a channel, and delete any messages from
+        user with ID 669977303584866365
 
         :param ctx:
         :param limit: int
