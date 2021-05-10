@@ -66,7 +66,7 @@ class Tags(commands.Cog):
         :return:
         """
 
-        await ctx.send("Tag name set! Send your tag content below.")
+        await ctx.send("Tag name set! Send your tag content below. Send `cancel` to cancel.")
 
         # This checks that the bot only responds to the author in the right channel
         def check(message):
@@ -98,7 +98,6 @@ class Tags(commands.Cog):
                    tag_name):
 
         tag_query = collection.find_one({"name": tag_name})
-        await ctx.send(tag_query)
 
         if ctx.author.id == tag_query['author_id'] or ctx.author.id == constants.kat_id:
             await ctx.send("Tag ready for changing! Send your updated tag content below.")
