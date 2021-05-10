@@ -13,13 +13,6 @@ cluster = MongoClient(
 db = cluster["Discord"]
 collection = db["Tags"]
 
-tags_dictionary = list(collection.find())
-max_id = 0
-for d in tags_dictionary:
-    if int(str(d['_id'])) > max_id:
-        max_id = d['_id']
-
-
 class Tags(commands.Cog):
 
     def __init__(self, bot):
@@ -65,6 +58,11 @@ class Tags(commands.Cog):
         :param tag_name:
         :return:
         """
+        tags_dictionary = list(collection.find())
+        max_id = 0
+        for d in tags_dictionary:
+            if int(str(d['_id'])) > max_id:
+                max_id = d['_id']
 
         await ctx.send("Tag name set! Send your tag content below. Send `cancel` to cancel.")
 
