@@ -13,19 +13,21 @@ cluster = MongoClient(
 db = cluster["Discord"]
 collection = db["Tags"]
 
+
 class Tags(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
     # Fetching tag command.
+    @commands.guild_only()
     @commands.group(invoke_without_command=True)
     async def tag(self, ctx, *, tag_name):
         """
         Fetches tags from a database.
 
         :param ctx:
-        :param tag_name:
+        :param tag_name: str
         :return:
         """
 
@@ -41,7 +43,7 @@ class Tags(commands.Cog):
                 collection.update_one(
                     {"name": tag_name},
                     {"$set":
-                        {"uses": result["uses"] + 1}
+                         {"uses": result["uses"] + 1}
                      }, upsert=True
                 )
         else:
@@ -49,6 +51,7 @@ class Tags(commands.Cog):
 
     # Adding tag command.
     @tag.command()
+    @commands.guild_only()
     @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
     async def create(self, ctx, *, tag_name):
         """
@@ -89,6 +92,7 @@ class Tags(commands.Cog):
             await ctx.send("New tag has been cancelled.")
 
     @tag.command()
+    @commands.guild_only()
     @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
     async def edit(self,
                    ctx,

@@ -6,18 +6,20 @@ import os
 import settings
 
 intents = discord.Intents(messages=True, guilds=True, reactions=True, members=True, presences=True)
-client = commands.Bot(command_prefix=settings.prefix, intents=intents) # help_command=help.MyHelp()
+bot = commands.Bot(command_prefix=settings.prefix, intents=intents)  # help_command=help.MyHelp()
 print("Loading discord.py version", discord.__version__, ", starting...")
+
+bot.snipes = {}
 
 
 # bot loading messages on ready
-@client.event
+@bot.event
 async def on_ready():
     print("I am ready!")
 
     print("Setting now playing game...", flush=True)
 
-    await client.change_presence(
+    await bot.change_presence(
         activity=discord.Activity(type=discord.ActivityType.listening, name=settings.nowplaying)
     )
 
@@ -31,11 +33,11 @@ async def on_ready():
                 if not file.startswith("__init__"):
                     loading_path = f"cogs.{folder}.{file[:-3]}"
                     try:
-                        client.load_extension(loading_path)
+                        bot.load_extension(loading_path)
                     except Exception as e:
                         print(f"Could not load {file} due to {e}")
 
 
 # heroku ps -a robolydia #(twd) tie city 206
 
-client.run(settings.token)
+bot.run(settings.token)
