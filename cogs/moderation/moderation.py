@@ -25,6 +25,7 @@ class Moderation(commands.Cog):
     #         infraction_reason,
     #     )
 
+    @commands.guild_only()
     @commands.command(aliases=["w"])
     @commands.has_permissions(kick_members=True)
     async def warn(
@@ -49,6 +50,7 @@ class Moderation(commands.Cog):
             infraction_reason
         )
 
+    @commands.guild_only()
     @commands.command(aliases=["m"])
     @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
     async def mute(
@@ -85,6 +87,7 @@ class Moderation(commands.Cog):
             infraction_reason
         )
 
+    @commands.guild_only()
     @commands.command(aliases=["um"])
     @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
     async def unmute(
@@ -106,6 +109,7 @@ class Moderation(commands.Cog):
             pardoned_member
         )
 
+    @commands.guild_only()
     @commands.command(aliases=["k"])
     @commands.has_permissions(kick_members=True)
     async def kick(
@@ -131,6 +135,7 @@ class Moderation(commands.Cog):
             infraction_reason
         )
 
+    @commands.guild_only()
     @commands.command(aliases=["b"])
     @commands.has_permissions(kick_members=True)
     async def ban(
@@ -156,6 +161,7 @@ class Moderation(commands.Cog):
             infraction_reason
         )
 
+    @commands.guild_only()
     @commands.command(aliases=["ub"])
     @commands.has_permissions(kick_members=True)
     async def unban(
@@ -177,6 +183,7 @@ class Moderation(commands.Cog):
             pardoned_member
         )
 
+    @commands.guild_only()
     @commands.command(aliases=["hb"])
     @commands.has_permissions(kick_members=True)
     async def hackban(
