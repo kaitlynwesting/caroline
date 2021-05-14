@@ -7,6 +7,7 @@ class Snipe(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.bot.snipes = {}
 
     # @commands.Cog.listener()
     # async def on_message_delete(self, message):
@@ -31,7 +32,7 @@ class Snipe(commands.Cog):
         self.bot.snipes[message.channel.id] = message
 
     @commands.command(aliases=["deleted"])
-    @commands.has_permissions(manage_messages=True)
+    @commands.has_permissions(kick_members=True)
     async def snipe(self,
                     ctx,
                     *,
@@ -43,7 +44,7 @@ class Snipe(commands.Cog):
         try:
             message = self.bot.snipes[channel.id]
         except KeyError:
-            return await ctx.send("Nothing to snipe since most recent restart.")
+            return await ctx.send(f"Nothing to snipe from {channel} since most recent deployment.")
 
         await embed_template.server_embed_full(
             ctx.channel,

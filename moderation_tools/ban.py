@@ -37,6 +37,6 @@ async def ban(
 
     await infraction_member.ban(reason=infraction_reason)
 
-    # Add a section in front in the future to prevent dumbasses from trying to ban themselves
+    # Add a section in front in the future to prevent people from trying to ban themselves
     # Add a section here in the future for preparing the logging file for logging actions
     # Add a section here in the future for documenting user info in a database

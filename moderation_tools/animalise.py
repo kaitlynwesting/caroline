@@ -56,13 +56,17 @@ async def animalise(
         constants.blurple
     )
 
-    await embed_template.dm_manual_embed(
-        infraction_member,
-        f"Infraction received from Photoshop Discord",
-        f"{private_message}",
-        f"If you believe that there has been an error, please DM our Modmail bot.",
-        constants.blurple
-    )
+    try:
+        await embed_template.dm_manual_embed(
+            infraction_member,
+            f"Infraction received from Photoshop Discord",
+            f"{private_message}",
+            f"If you believe that there has been an error, please DM our Modmail bot.",
+            constants.blurple
+        )
+    except Exception as e:
+        await ctx.channel.send(f"Tried to send a DM, but failed. Moving on. Error {e}")
+        pass
 
     await infraction_member.edit(nick=new_nick, reason=None)
 

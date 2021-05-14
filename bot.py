@@ -9,8 +9,6 @@ intents = discord.Intents(messages=True, guilds=True, reactions=True, members=Tr
 bot = commands.Bot(command_prefix=settings.prefix, intents=intents)  # help_command=help.MyHelp()
 print("Loading discord.py version", discord.__version__, ", starting...")
 
-bot.snipes = {}
-
 
 # bot loading messages on ready
 @bot.event
