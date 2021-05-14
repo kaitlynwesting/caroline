@@ -22,7 +22,6 @@ async def animalise(
         infraction_time,
         infraction_reason='',
 ):
-
     if collection.find_one({'prisoner_id': infraction_member.id}) is None:
         pass
     else:
@@ -103,4 +102,4 @@ async def animalise(
         )
     except commands.MemberNotFound as e:
         await ctx.channel.send(f"Tried to release {infraction_member.mention} from nickname jail just now but failed. "
-                        f"Error: `{e}`")
+                               f"Error: `{e}`")
