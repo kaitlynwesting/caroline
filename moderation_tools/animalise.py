@@ -68,6 +68,7 @@ async def animalise(
         await ctx.channel.send(f"Tried to send a DM, but failed. Moving on. Error {e}")
         pass
 
+    print('tes')
     await infraction_member.edit(nick=new_nick, reason=None)
 
     tags_dictionary = list(collection.find())

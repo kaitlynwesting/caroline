@@ -37,6 +37,6 @@ async def unanimalise(
 
         await ctx.channel.send(f"👌")
 
-    except commands.MemberNotFound as e:
+    except Exception as e:
         await ctx.channel.send(f"Tried to release {pardoned_member.mention} from nickname jail just now but failed. "
                                f"Error: `{e}`")
