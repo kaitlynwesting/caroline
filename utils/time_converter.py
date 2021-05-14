@@ -36,4 +36,4 @@ def time_to_date(
 
     time_future = datetime.now(tz=timezone.utc) + time_increment
 
-    return time_future.strftime('%Y-%m-%d %H:%M:%S')
+    return time_future.strftime('%B %d, %Y at %H:%M:%S')

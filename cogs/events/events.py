@@ -2,6 +2,20 @@ from discord.ext import commands
 from utils import constants
 
 
+class Submitting(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.Cog.listener('on_message')
+    async def includes_image(self, message):
+
+        if message.guild is not None:
+            if message.channel.name == 'events':
+                if message.attachments != [] and message.author != self.bot.user:
+                    await message.add_reaction("<:blobFingerGuns:833076453050023987>")
+
+
 class Voting(commands.Cog):
 
     def __init__(self, bot):
@@ -61,4 +75,5 @@ class Voting(commands.Cog):
 
 
 def setup(bot):
+    bot.add_cog(Submitting(bot))
     bot.add_cog(Voting(bot))
