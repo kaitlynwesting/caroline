@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timezone
+from discord.ext import commands
 
 from utils import constants, embed_template, time_converter
 from pymongo import MongoClient
@@ -21,6 +22,8 @@ async def animalise(
         infraction_time,
         infraction_reason='',
 ):
+    logs = await ctx.guild.get_channel(constants.logs)
+
     if collection.find_one({'prisoner_id': infraction_member.id}) is None:
         pass
     else:
@@ -82,4 +85,22 @@ async def animalise(
 
     await asyncio.sleep(time_converter.time_to_int(infraction_time))
 
+    if collection.find_one({'prisoner_id': infraction_member.id}) is not None:
+        pass
+    else:
+        return
+
     collection.delete_one({'prisoner_id': infraction_member.id})
+
+    try:
+        await embed_template.dm_manual_embed(
+            infraction_member,
+            f"Released from Nickname Jail",
+            f"You have been released from Nickname Jail, and are able to change your nickname again. Ensure that it is"
+            f"something appropriate.",
+            f"",
+            constants.blurple
+        )
+    except commands.MemberNotFound as e:
+        await logs.send(f"Tried to release {infraction_member.mention} from nickname jail just now but failed. "
+                        f"Error: `{e}`")
