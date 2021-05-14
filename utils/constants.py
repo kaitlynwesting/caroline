@@ -4,7 +4,7 @@ kat_id = 669977303584866365
 
 # Server colours
 trouble_red = 0xeb4034
-blurple = 0x7289da
+blurple = 0x5865F2
 
 # Server roles - subscriptions
 announcements_sub = 787092272570171392
@@ -35,7 +35,7 @@ alpha = 780519472444080158
 beta = 777207889277616192
 
 staff_bot = 777316504425332746
-deleted_message_log = 836351702444539952
+logs = 777207889424941118
 
 # Server constant texts, etc
 rule0 = f"We expect all members of our community to understand and abide by our rules, " \

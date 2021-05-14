@@ -38,9 +38,7 @@ class Handler(commands.Cog):
         elif isinstance(error, commands.MemberNotFound):
 
             await ctx.send(
-                "Couldn't find anyone, sorry. \n"
-                "To successfully convert someone to a `discord.Member` object, "
-                "use their ID, mention, or name."
+                "Couldn't find a member. If you don't know why that happened, see `!tag membernotfound`."
             )
 
         # ON COOLDOWN

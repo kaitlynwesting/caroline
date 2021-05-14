@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from moderation_tools import warn, mute, unmute, kick, ban, unban
+from moderation_tools import animalise, mute, unmute, kick, ban, unban
 from utils import constants
 
 
@@ -9,21 +9,34 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # @commands.command(aliases=["animalize", "forcenick"])
-    # @commands.has_permissions(kick_members=True)
-    # async def animalise(
-    #         self,
-    #         ctx,
-    #         infraction_member: discord.Member,
-    #         infraction_time,
-    #         infraction_reason: str
-    # ):
-    #     await animalise.animalise(
-    #         ctx,
-    #         infraction_member,
-    #         infraction_time,
-    #         infraction_reason,
-    #     )
+    @commands.command(aliases=["animalize", "anim", "forcenick", "fnick", "randimal"])
+    @commands.has_permissions(kick_members=True)
+    async def animalise(
+            self,
+            ctx,
+            infraction_member: discord.Member,
+            infraction_time: str = '1d',
+            *,
+            infraction_reason: str = 'Your nickname was simply too terrible.'
+    ):
+        """
+        Forcefully nicknames a member and prevents them from changing it for a period of time.
+        Note: time defaults to 1 day if not specified.
+        Example: !animalise 842318867871039508 10m Your name is too inappropriate
+
+        :param ctx:
+        :param infraction_member:
+        :param infraction_time:
+        :param infraction_reason: str
+        :return:
+        """
+
+        await animalise.animalise(
+            ctx,
+            infraction_member,
+            infraction_time,
+            infraction_reason,
+        )
 
     @commands.guild_only()
     @commands.command(aliases=["w"])
@@ -63,7 +76,7 @@ class Moderation(commands.Cog):
     ):
         """
         Mutes a member for a specified amount of time.
-        Notes: time defaults to 7 days if not specified.
+        Note: time defaults to 7 days if not specified.
         Example: !mute Kat 10m Too cool
 
         :param ctx: Context
