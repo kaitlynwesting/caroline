@@ -9,7 +9,7 @@ class Cleaner(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_messages=True)
-    async def purge(self, ctx, limit: int, target_member: discord.User):
+    async def purge(self, ctx, limit: int, target_member: discord.User = None):
         """
         Clears messages.
         Note: limit refers to HOW MANY messages the bot should scan. It does not refer to how many messages to delete
