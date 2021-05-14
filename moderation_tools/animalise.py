@@ -41,7 +41,8 @@ async def animalise(
 
     public_message = f"Your previous name, **{infraction_member.name}**, was so terrible that we had to change it. " \
                      f"Your new nickname will be **{new_nick}**.\n\n " \
-                     f"**You will be muted until {infraction_time_date} UTC ({infraction_time_string})**."
+                     f"**You will able to change your nickname again at" \
+                     f" {infraction_time_date} UTC ({infraction_time_string})**."
 
     private_message = f"**Your nickname was changed by {ctx.message.author}.**\n" \
                       f"{infraction_reason}\n" \
