@@ -96,7 +96,7 @@ async def animalise(
         await embed_template.dm_manual_embed(
             infraction_member,
             f"Released from Nickname Jail",
-            f"You have been released from Nickname Jail, and are able to change your nickname again. Ensure that it is"
+            f"You have been released from Nickname Jail, and are able to change your nickname again. Ensure that it is "
             f"something appropriate.",
             f"",
             constants.blurple
