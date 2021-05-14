@@ -22,7 +22,6 @@ async def animalise(
         infraction_time,
         infraction_reason='',
 ):
-    logs = await ctx.guild.get_channel(constants.logs)
 
     if collection.find_one({'prisoner_id': infraction_member.id}) is None:
         pass
@@ -102,5 +101,5 @@ async def animalise(
             constants.blurple
         )
     except commands.MemberNotFound as e:
-        await logs.send(f"Tried to release {infraction_member.mention} from nickname jail just now but failed. "
+        await ctx.channel.send(f"Tried to release {infraction_member.mention} from nickname jail just now but failed. "
                         f"Error: `{e}`")
