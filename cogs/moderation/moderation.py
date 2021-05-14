@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from moderation_tools import animalise, mute, unmute, kick, ban, unban
+from moderation_tools import warn, animalise, unanimalise, mute, unmute, kick, ban, unban
 from utils import constants
 
 
@@ -9,7 +9,8 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["animalize", "anim", "forcenick", "fnick", "randimal"])
+    @commands.guild_only()
+    @commands.command(aliases=["animalize", "anim", "forcenick", "fnick", "randimal", "jail", "imprison"])
     @commands.has_permissions(kick_members=True)
     async def animalise(
             self,
@@ -22,7 +23,7 @@ class Moderation(commands.Cog):
         """
         Forcefully nicknames a member and prevents them from changing it for a period of time.
         Note: time defaults to 1 day if not specified.
-        Example: !animalise 842318867871039508 10m Your name is too inappropriate
+        Example: !animalise 678576419596402691 10m Your name is too inappropriate
 
         :param ctx:
         :param infraction_member:
@@ -36,6 +37,28 @@ class Moderation(commands.Cog):
             infraction_member,
             infraction_time,
             infraction_reason,
+        )
+
+    @commands.guild_only()
+    @commands.command(aliases=["unanimalize", "unanim", "unjail", "release"])
+    @commands.has_permissions(kick_members=True)
+    async def unanimalise(
+            self,
+            ctx,
+            pardoned_member: discord.Member,
+    ):
+        """
+        Releases a member from nickname jail.
+        Example: !unanimalise 678576419596402691
+
+        :param ctx:
+        :param pardoned_member: discord.Member
+        :return:
+        """
+
+        await unanimalise.unanimalise(
+            ctx,
+            pardoned_member
         )
 
     @commands.guild_only()
