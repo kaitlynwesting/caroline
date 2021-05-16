@@ -44,7 +44,7 @@ class Snipe(commands.Cog):
         try:
             message = self.bot.snipes[channel.id]
         except KeyError:
-            return await ctx.send(f"Nothing to snipe from {channel} since most recent deployment.")
+            return await ctx.send(f"Nothing to snipe from <#{channel.id}> since most recent deployment.")
 
         await embed_template.server_embed_full(
             ctx.channel,
@@ -53,6 +53,7 @@ class Snipe(commands.Cog):
             f'',
             f"Last message deleted from: #{message.channel}:",
             f"{message.content}",
+            f"{message.attachments[0]}",
             f"Deleted message was sent",
             message.created_at,
             constants.blurple,
