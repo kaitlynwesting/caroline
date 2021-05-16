@@ -68,6 +68,7 @@ async def server_embed_full(
         thumbnail,
         title,
         body,
+        image,
         footer,
         timestamp,
         colour
@@ -81,6 +82,7 @@ async def server_embed_full(
 
     embed.set_author(name=author, icon_url=avatar)
     embed.set_thumbnail(url=thumbnail)
+    embed.set_image(url=image)
     embed.set_footer(text=footer)
 
     await channel.send(embed=embed)
