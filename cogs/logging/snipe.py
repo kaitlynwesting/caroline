@@ -46,14 +46,21 @@ class Snipe(commands.Cog):
         except KeyError:
             return await ctx.send(f"Nothing to snipe from <#{channel.id}> since most recent deployment.")
 
+        if not message.attachments:  # if there are no attachments
+            attachments = ''
+            urls = ''
+        else:
+            attachments = message.attachments[0]
+            urls = message.attachments[0].url
+
         await embed_template.server_embed_full(
             ctx.channel,
             f"{message.author.avatar_url}",
             f"Message author: {message.author}",
             f'',
             f"Last message deleted from: #{message.channel}:",
-            f"{message.content}",
-            f"{message.attachments[0]}",
+            f"{message.content}\n\n**Urls of attachments found:**\n{urls}",
+            f"{attachments}",
             f"Deleted message was sent",
             message.created_at,
             constants.blurple,
