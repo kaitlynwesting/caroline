@@ -6,7 +6,7 @@ from pymongo import MongoClient
 
 cluster = MongoClient(
     "mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01."
-    "ilbju.mongodb.net:27017,buttercream-shard-00-02.ilbju.mongodb.net:27017/myFirstDatabase?"
+    "ilbju.mongodb.net:27017,buttercream-shard-00-02.ilbju.mongodb.net:27017/Discord?"
     "ssl=true&replicaSet=atlas-65nepc-shard-0&authSource=admin&retryWrites=true&w=majority"
 )
 
@@ -81,7 +81,7 @@ class Tags(commands.Cog):
                 "name": tag_name,
                 "author_id": ctx.author.id,
                 "content": content.content,
-                "created_at": datetime.now().astimezone(timezone.utc).strftime("%d/%m/%Y, %H:%M:%S"),
+                "created_at": datetime.now().astimezone(timezone.utc).strftime("%B %d, %Y at %H:%M:%S"),
                 "uses": 0
             }
 
