@@ -5,20 +5,20 @@ from discord.ext import commands
 import os
 import settings
 
+print("Running discord.py version", discord.__version__, ", starting...")
 intents = discord.Intents(messages=True, guilds=True, reactions=True, members=True, presences=True)
 bot = commands.Bot(command_prefix=settings.prefix, intents=intents)  # help_command=help.MyHelp()
-print("Loading discord.py version", discord.__version__, ", starting...")
 
 
-# bot loading messages on ready
 @bot.event
 async def on_ready():
-    print("I am ready!")
 
-    print("Setting now playing game...", flush=True)
+    print("Finished initialising bot, setting status...", flush=True)
 
     await bot.change_presence(
-        activity=discord.Activity(type=discord.ActivityType.listening, name=settings.nowplaying)
+        activity=discord.Activity(status=discord.Status.idle,
+                                  type=discord.ActivityType.listening,
+                                  name=settings.nowplaying)
     )
 
     print("-----")
@@ -26,6 +26,7 @@ async def on_ready():
     # The below is a loader of cogs.
     # It browses every folder in the /cogs folder, and load files with .py extension.
     for folder in (os.listdir('./cogs')):
+        print(folder)
         for file in os.listdir(f'./cogs/{folder}'):
             if file.endswith(".py"):
                 if not file.startswith("__init__"):
