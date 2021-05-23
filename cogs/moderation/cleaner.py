@@ -8,14 +8,14 @@ class Cleaner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def purge_limit(self, ctx, limit, standard_limit):
+    async def purge_limit(self, ctx, limit, standard_limit):
         if limit < 0:
             return await ctx.send(f"Invalid amount.")
         elif limit > standard_limit:
             return await ctx.send(f"Can't do that. Maximum limit set for this mode is {standard_limit}.\n"
                                   f"But check `!help purge` or its subcommands if you need.")
 
-    def purge_logger(self, ctx, limit):
+    async def purge_logger(self, ctx, limit):
         logs = self.bot.get_channel(constants.logs)
         kat = self.bot.get_user(constants.kat_id)
         purged_messages_list = await ctx.channel.history(limit=limit).flatten()

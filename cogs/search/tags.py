@@ -19,12 +19,11 @@ class Tags(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # Fetching tag command.
     @commands.guild_only()
     @commands.group(invoke_without_command=True)
     async def tag(self, ctx, *, tag_name):
         """
-        Fetches tags from a database.
+        General group for tags. If no subcommand is specified, the bot will search for a tag from a database.
 
         :param ctx:
         :param tag_name: str
@@ -32,22 +31,21 @@ class Tags(commands.Cog):
         """
 
         tag_name = tag_name.lower()
-        collection.find({"name": tag_name})
         result_count = collection.count_documents({"name": tag_name})
 
-        if result_count > 0:
-            results = collection.find({"name": tag_name})
-            for result in results:
-                await ctx.send(result["content"])
+        if result_count == 0:
+            raise TypeError
 
-                collection.update_one(
-                    {"name": tag_name},
-                    {"$set":
-                         {"uses": result["uses"] + 1}
-                     }, upsert=True
-                )
-        else:
-            await ctx.send("Couldn't find a tag by that name. Sorry.")
+        results = collection.find({"name": tag_name})
+        for result in results:
+            await ctx.send(result["content"])
+
+            collection.update_one(
+                {"name": tag_name},
+                {"$set":
+                    {"uses": result["uses"] + 1}
+                 }, upsert=True
+            )
 
     # Adding tag command.
     @tag.command()
@@ -67,9 +65,12 @@ class Tags(commands.Cog):
             if int(str(d['_id'])) > max_id:
                 max_id = d['_id']
 
+            if int(str(d['name'])) == tag_name:
+                await ctx.send('A tag with that name already exists.')
+                return
+
         await ctx.send("Tag name set! Send your tag content below. Send `cancel` to cancel.")
 
-        # This checks that the bot only responds to the author in the right channel
         def check(message):
             return message.author.id == ctx.author.id and message.channel.id == ctx.channel.id
 
@@ -101,28 +102,40 @@ class Tags(commands.Cog):
 
         tag_query = collection.find_one({"name": tag_name})
 
-        if ctx.author.id == tag_query['author_id'] or ctx.author.id == constants.kat_id:
-            await ctx.send("Tag ready for changing! Send your updated tag content below.")
-
-            # This checks that the bot only responds to the author in the right channel
-            def check(message):
-                return message.author.id == ctx.author.id and message.channel.id == ctx.channel.id
-
-            content = await self.bot.wait_for('message', check=check)
-
-            collection.update_one(
-                {"name": tag_name},
-                {"$set":
-                     {"content": content.content}
-                 }, upsert=True
-            )
-
-            await ctx.send("Your tag has been successfully updated!")
-        else:
+        if ctx.author.id != tag_query['author_id'] and ctx.author.id != constants.kat_id:
             await ctx.send("You do not own this tag.")
-        # collection.insert_many([post1, post2])
-        # collection.delete_one({"name": "Kat"})
-        # collection.delete_many([post3, post4])
+            return
+
+        await ctx.send("Tag ready for changing! Send your updated tag content below.")
+
+        def check(message):
+            return message.author.id == ctx.author.id and message.channel.id == ctx.channel.id
+
+        content = await self.bot.wait_for('message', check=check)
+
+        collection.update_one(
+            {"name": tag_name},
+            {"$set":
+                 {"content": content.content}
+             }, upsert=True
+        )
+
+        await ctx.send("Your tag has been successfully updated!")
+
+    @edit.error
+    async def on_error(self, ctx, error):
+        print(error)
+        ctx.error_handled = True
+
+        if isinstance(error, commands.CommandInvokeError):
+            error = error.original
+
+        if isinstance(error, TypeError):
+            await ctx.send(f"Couldn't find that tag.")
+        else:
+            ctx.error_handled = False
+
+        print(error)
 
 
 def setup(bot):
