@@ -11,7 +11,7 @@ class Submitting(commands.Cog):
     async def includes_image(self, message):
 
         if message.guild is not None:
-            if message.channel.name == 'events':
+            if message.channel.name == 'ps-events':
                 if message.attachments != [] and message.author != self.bot.user:
                     await message.add_reaction("<:blobFingerGuns:833076453050023987>")
 
