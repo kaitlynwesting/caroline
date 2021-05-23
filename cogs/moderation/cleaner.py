@@ -39,8 +39,8 @@ class Cleaner(commands.Cog):
         :return:
         """
 
-        self.purge_limit(ctx, limit, standard_limit=50)
-        self.purge_logger(ctx, limit)
+        await self.purge_limit(ctx, limit, standard_limit=50)
+        await self.purge_logger(ctx, limit)
 
         try:
             deleted_amount = await ctx.channel.purge(limit=limit)
@@ -68,8 +68,8 @@ class Cleaner(commands.Cog):
                 :return:
                 """
 
-        self.purge_limit(ctx, limit, standard_limit=50)
-        self.purge_logger(ctx, limit)
+        await self.purge_limit(ctx, limit, standard_limit=50)
+        await self.purge_logger(ctx, limit)
 
         def checker(m):
             return m.author.id == purged_user.id
