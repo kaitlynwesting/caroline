@@ -20,8 +20,8 @@ class Cleaner(commands.Cog):
         kat = self.bot.get_user(constants.kat_id)
         purged_messages_list = await ctx.channel.history(limit=limit).flatten()
 
-        logs.send(f"{ctx.author}: `{ctx.message.content}`")
-        kat.send(purged_messages_list)
+        await logs.send(f"{ctx.author}: `{ctx.message.content}`")
+        await kat.send(purged_messages_list)
 
         return
 
