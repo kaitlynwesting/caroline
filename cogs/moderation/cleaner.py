@@ -18,10 +18,17 @@ class Cleaner(commands.Cog):
     async def purge_logger(self, ctx, limit):
         logs = self.bot.get_channel(constants.logs)
         kat = self.bot.get_user(constants.kat_id)
-        purged_messages_list = await ctx.channel.history(limit=limit).flatten()
+        purged_messages_raw = await ctx.channel.history(limit=limit).flatten()
 
-        await logs.send(f"{ctx.author}: `{purged_messages_list}`")
-        await kat.send(purged_messages_list)
+        def content(raw_message):
+            return f"**{raw_message.author}**: {raw_message.content}"
+
+        purged_messages = list(map(content, purged_messages_raw))
+
+        await kat.send(f"**Purged message log**")
+        for message in purged_messages[::-1]:
+            await kat.send(message)
+        await kat.send(f"**Fin**")
 
         return
 
