@@ -40,7 +40,7 @@ class Handler(commands.Cog):
         elif isinstance(error, commands.CommandNotFound):
 
             if ctx.message.content.startswith("!d"):
-                pass
+                return
 
             await ctx.send("Couldn't find that command, sorry.")
 
