@@ -10,10 +10,14 @@ class Cleaner(commands.Cog):
 
     async def purge_limit(self, ctx, limit, standard_limit):
         if limit < 0:
-            return await ctx.send(f"Invalid amount.")
+            await ctx.send(f"Invalid amount.")
+            return False
         elif limit > standard_limit:
-            return await ctx.send(f"Can't do that. Maximum limit set for this mode is {standard_limit}.\n"
-                                  f"But check `!help purge` or its subcommands if you need.")
+            await ctx.send(f"Can't do that. Maximum limit set for this mode is {standard_limit}.\n"
+                           f"But check `!help purge` or its subcommands if you need.")
+            return False
+        else:
+            return True
 
     async def purge_logger(self, ctx, limit):
         logs = self.bot.get_channel(constants.logs)
@@ -46,7 +50,8 @@ class Cleaner(commands.Cog):
         :return:
         """
 
-        await self.purge_limit(ctx, limit, standard_limit=50)
+        if await self.purge_limit(ctx, limit, standard_limit=50) is False:
+            return
 
         try:
             deleted_amount = await ctx.channel.purge(limit=limit)
@@ -74,7 +79,8 @@ class Cleaner(commands.Cog):
                 :return:
                 """
 
-        await self.purge_limit(ctx, limit, standard_limit=50)
+        if await self.purge_limit(ctx, limit, standard_limit=50) is False:
+            return
 
         def checker(m):
             return m.author.id == purged_user.id
