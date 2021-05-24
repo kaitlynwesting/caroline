@@ -47,7 +47,6 @@ class Cleaner(commands.Cog):
         """
 
         await self.purge_limit(ctx, limit, standard_limit=50)
-        await self.purge_logger(ctx, limit)
 
         try:
             deleted_amount = await ctx.channel.purge(limit=limit)
@@ -76,7 +75,6 @@ class Cleaner(commands.Cog):
                 """
 
         await self.purge_limit(ctx, limit, standard_limit=50)
-        await self.purge_logger(ctx, limit)
 
         def checker(m):
             return m.author.id == purged_user.id
@@ -88,7 +86,6 @@ class Cleaner(commands.Cog):
         except Exception as e:
             notification = await ctx.channel.send(f'👌 Deleted messages. Caught an exception - {e} - for you.')
             await notification.delete(delay=5)
-
 
 
 def setup(bot):
