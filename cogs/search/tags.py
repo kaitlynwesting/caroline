@@ -65,7 +65,7 @@ class Tags(commands.Cog):
             if int(str(d['_id'])) > max_id:
                 max_id = d['_id']
 
-            if int(str(d['name'])) == tag_name:
+            if str(d['name']) == str(tag_name):
                 await ctx.send('A tag with that name already exists.')
                 return
 
