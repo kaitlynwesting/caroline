@@ -32,7 +32,6 @@ print("Running discord.py version", discord.__version__, ", starting...")
 intents = discord.Intents(messages=True, guilds=True, reactions=True, members=True, presences=True)
 bot = commands.Bot(command_prefix=settings.prefix, intents=intents)  # help_command=help.MyHelp()
 
-
 @bot.event
 async def on_ready():
     print("Finished initialising bot, setting status...", flush=True)
@@ -55,6 +54,11 @@ async def on_ready():
                         bot.load_extension(loading_path)
                     except Exception as e:
                         print(f"Could not load {file} due to {e}")
+
+
+@bot.command(dm_only=True)
+async def test(ctx):
+    print(1)
 
 
 # heroku ps -a robolydia #(twd) tie city 206

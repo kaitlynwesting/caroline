@@ -11,6 +11,7 @@ class Subscription(commands.Cog):
         self.bot = bot
 
     # SUBSCRIBE ALL
+    @commands.guild_only()
     @commands.command(aliases=["sub"])
     async def subscribe(self, ctx, message):
         message = message.lower()
@@ -36,6 +37,7 @@ class Subscription(commands.Cog):
             await ctx.send(
                 f"Please subscribe in the proper channel - that is, <#{constants.bot_commands}>.")  # UPDATE FOR REAL PS SERVER
 
+    @commands.guild_only()
     @commands.command()
     async def unsubscribe(self, ctx, message):
         message = message.lower()

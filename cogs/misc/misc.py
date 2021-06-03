@@ -38,10 +38,5 @@ class Misc(commands.Cog):
 
         await msg.edit(embed=embed)
 
-    @commands.command()
-    async def say(self, ctx, *, args):
-        print(args)
-
-
 def setup(bot):
     bot.add_cog(Misc(bot))

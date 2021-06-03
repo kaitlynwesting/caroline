@@ -3,7 +3,6 @@ import asyncio
 import discord
 from discord.ext import commands
 
-import random
 import requests
 import string
 from utils import constants
@@ -17,6 +16,7 @@ class Fun(commands.Cog):
         self.bot = bot
 
     # BREAD COMMAND WHICH MUTES THE USER FOR SMELLINESS.
+    @commands.guild_only()
     @commands.command()
     async def bread(self, ctx):
 
@@ -40,22 +40,6 @@ class Fun(commands.Cog):
             await ctx.author.remove_roles(muted)
 
             await ctx.send(f"📨 {ctx.author.mention} has been automatically **unmuted** now. Shower next time.")
-
-
-    @commands.command()
-    async def topic(self, ctx):
-
-        fin = open("cogs/texts/prompts.txt", "r")
-        lines = fin.readlines()
-
-        question = random.choice(lines)
-
-        # Generate a nice question embed, and send it.
-        embed = discord.Embed()
-
-        embed.add_field(name=str("A random topic..."), value=f"{question}", inline=False)
-        embed.set_author(name=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=embed)
 
     # RANDOM WOULD-YOU-RATHER GENERATOR.
     @commands.command()
