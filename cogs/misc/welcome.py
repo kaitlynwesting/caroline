@@ -35,7 +35,7 @@ class Welcome(commands.Cog):
 
             embed = discord.Embed(
                 title=f'Welcome to Photoshop Discord, {member.name}!',
-                color=0x349feb,
+                color=constants.blurple,
                 description=' '.join(user_message)
             )
 

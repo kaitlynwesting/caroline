@@ -34,9 +34,15 @@ class Misc(commands.Cog):
             color=constants.blurple,
             description=rule)
 
-        embed.set_thumbnail(url="https://i.postimg.cc/bJSGjhD5/IDEK.png")
+        embed.set_thumbnail(url="https://i.postimg.cc/hj4bVZwg/ISW-EAR.png")
 
         await msg.edit(embed=embed)
+
+    @commands.command()
+    async def vo(self, ctx):
+        rules = self.bot.get_channel(constants.events)
+        msg = await rules.fetch_message(850357324316409858)
+        await msg.add_reaction("<:blobFingerGuns:833076453050023987>")
 
 def setup(bot):
     bot.add_cog(Misc(bot))
