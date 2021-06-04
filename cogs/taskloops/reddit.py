@@ -1,15 +1,14 @@
-import asyncpraw as ap
-from asyncpraw import Reddit
-
-from datetime import datetime, timedelta
-from discord.ext import tasks, commands
-from discord.utils import get
-
 import requests
 import pytz
 
+import asyncpraw as ap
+from datetime import datetime, timedelta
+from discord.ext import tasks, commands
 
-class Reddit(commands.Cog):
+from utils import constants
+
+
+class RedditLoop(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -53,7 +52,7 @@ class Reddit(commands.Cog):
                 embed = {
                     "title": "Top posts today from r/Photoshop:",
                     "description": f"{content}",
-                    "color": 0x349feb,
+                    "color": constants.blurple,
                 }
 
                 data = {
@@ -72,4 +71,4 @@ class Reddit(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Reddit(bot))
+    bot.add_cog(RedditLoop(bot))

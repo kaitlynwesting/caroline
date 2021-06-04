@@ -31,7 +31,7 @@ class Misc(commands.Cog):
 
         embed = Embed(
             title=f"Photoshop Discord Rules",
-            color=0x349feb,
+            color=constants.blurple,
             description=rule)
 
         embed.set_thumbnail(url="https://i.postimg.cc/bJSGjhD5/IDEK.png")
