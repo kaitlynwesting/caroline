@@ -104,7 +104,7 @@ class EventVetting(commands.Cog):
         voting_emoji = "<:blobFingerGuns:833076453050023987>"
         voted_times = 0
 
-        if context_channel.id != constants.testing:
+        if context_channel.id != constants.events:
             return
 
         if context_emoji != voting_emoji:
