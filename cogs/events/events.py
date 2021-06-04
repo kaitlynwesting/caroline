@@ -147,12 +147,12 @@ class EventVetting(commands.Cog):
 
                                 return
 
-                            result = collection.find_one({"_id": int(context_message.author.id)})
-                            collection.update_one(
-                                {"_id": int(context_message.author.id)},
-                                {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
-                                upsert=True
-                            )
+        result = collection.find_one({"_id": int(context_message.author.id)})
+        collection.update_one(
+            {"_id": int(context_message.author.id)},
+            {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
+            upsert=True
+        )
 
 
 def setup(bot):
