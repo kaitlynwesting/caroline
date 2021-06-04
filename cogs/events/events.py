@@ -111,9 +111,13 @@ class EventVetting(commands.Cog):
                             for reaction in submission.reactions:
                                 # Looks at each user for each reaction
                                 async for user in reaction.users():
+
                                     if user == payload.member and str(reaction) == voting_emoji:
+
                                         voted_times += 1
+
                                         if voted_times > 1:
+
                                             await context_message.remove_reaction(reaction, user)
                                             reminder_message = \
                                                 await context_channel.send(f"**No voting more than once, "
@@ -122,6 +126,8 @@ class EventVetting(commands.Cog):
                                                                            f"previous vote first.")
                                             await reminder_message.delete(delay=3)
                                             return
+
+                                    # So they didn't vote twice. Maybe they voted for themselves, though
                                     if user == payload.member and user == submission.author:
                                         await context_message.remove_reaction(reaction, user)
                                         reminder_message = \
@@ -129,6 +135,13 @@ class EventVetting(commands.Cog):
                                                                        f"for yourself!** Self voting is not allowed.")
                                         await reminder_message.delete(delay=3)
                                         return
+
+                        result = collection.find_one({"_id": int(context_message.author.id)})
+                        collection.update_one(
+                            {"_id": int(context_message.author.id)},
+                            {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
+                            upsert=True
+                        )
                         return
     # @commands.Cog.listener()
     # async def on_raw_reaction_add(self, payload):
