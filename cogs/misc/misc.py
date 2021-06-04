@@ -38,11 +38,11 @@ class Misc(commands.Cog):
 
         await msg.edit(embed=embed)
 
-    @commands.command()
-    async def vo(self, ctx):
-        rules = self.bot.get_channel(constants.events)
-        msg = await rules.fetch_message(850134966934306826)
-        await msg.add_reaction("<:blobFingerGuns:833076453050023987>")
+    # @commands.command()
+    # async def vo(self, ctx):
+    #     rules = self.bot.get_channel(constants.events)
+    #     msg = await rules.fetch_message(850134966934306826)
+    #     await msg.add_reaction("<:blobFingerGuns:833076453050023987>")
 
 def setup(bot):
     bot.add_cog(Misc(bot))
