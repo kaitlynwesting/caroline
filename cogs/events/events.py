@@ -96,63 +96,99 @@ class EventVetting(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-
         context_channel = self.bot.get_channel(payload.channel_id)
         context_message = await context_channel.fetch_message(payload.message_id)
         context_emoji = str(payload.emoji)
-
         voting_emoji = "<:blobFingerGuns:833076453050023987>"
         voted_times = 0
 
-        if context_channel.id != constants.events:
-            return
-
-        if context_emoji != voting_emoji:
-            return
-
-        if context_message.author == self.bot.user:
-            return
-
-        async for message in context_channel.history(limit=20):
-
-            if 'Challenge Number' in message.content:
-
-                async for submission in context_channel.history(after=message):
-
-                    for reaction in submission.reactions:
-
-                        async for user in reaction.users():
-
-                            if user == payload.member and str(reaction) == voting_emoji:
-
-                                voted_times += 1
-
-                                if voted_times > 1:
-                                    await context_message.remove_reaction(reaction, user)
-                                    reminder_message = \
-                                        await context_channel.send(f"**No voting more than once, "
-                                                                   f"{user.mention}!** If you wish to "
-                                                                   f"vote for a different person, remove your "
-                                                                   f"previous vote first.")
-                                    await reminder_message.delete(delay=3)
-
-                                    return
-
-                            if user == payload.member and user == submission.author:
-                                await context_message.remove_reaction(reaction, user)
-                                reminder_message = \
-                                    await context_channel.send(f"**Shame, {user.mention}, you tried to vote "
-                                                               f"for yourself!** Self voting is not allowed.")
-                                await reminder_message.delete(delay=3)
-
-                                return
-
-        result = collection.find_one({"_id": int(context_message.author.id)})
-        collection.update_one(
-            {"_id": int(context_message.author.id)},
-            {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
-            upsert=True
-        )
+        if context_channel.id == constants.events:
+            if context_emoji == voting_emoji:
+                async for message in context_channel.history(limit=25):
+                    if 'Challenge Number' in message.content:
+                        async for submission in context_channel.history(after=message):
+                            # Looks at each reaction for each submission after event marker
+                            for reaction in submission.reactions:
+                                # Looks at each user for each reaction
+                                async for user in reaction.users():
+                                    if user == payload.member and str(reaction) == voting_emoji:
+                                        voted_times += 1
+                                        if voted_times > 1:
+                                            await context_message.remove_reaction(reaction, user)
+                                            reminder_message = \
+                                                await context_channel.send(f"**No voting more than once, "
+                                                                           f"{user.mention}!** If you wish to "
+                                                                           f"vote for a different person, remove your "
+                                                                           f"previous vote first.")
+                                            await reminder_message.delete(delay=3)
+                                            return
+                                    if user == payload.member and user == submission.author:
+                                        await context_message.remove_reaction(reaction, user)
+                                        reminder_message = \
+                                            await context_channel.send(f"**Shame, {user.mention}, you tried to vote"
+                                                                       f"for yourself!** Self voting is not allowed.")
+                                        await reminder_message.delete(delay=3)
+                                        return
+                        return
+    # @commands.Cog.listener()
+    # async def on_raw_reaction_add(self, payload):
+    #
+    #     context_channel = self.bot.get_channel(payload.channel_id)
+    #     context_message = await context_channel.fetch_message(payload.message_id)
+    #     context_emoji = str(payload.emoji)
+    #
+    #     voting_emoji = "<:blobFingerGuns:833076453050023987>"
+    #     voted_times = 0
+    #
+    #     if context_channel.id != constants.events:
+    #         return
+    #
+    #     if context_emoji != voting_emoji:
+    #         return
+    #
+    #     if context_message.author == self.bot.user:
+    #         return
+    #
+    #     async for message in context_channel.history(limit=10):
+    #
+    #         if 'Challenge Number' in message.content:
+    #
+    #             async for submission in context_channel.history(after=message):
+    #
+    #                 for reaction in submission.reactions:
+    #
+    #                     async for user in reaction.users():
+    #                         print(user, reaction)
+    #                         if user == payload.member and str(reaction) == voting_emoji:
+    #
+    #                             voted_times += 1
+    #
+    #                             if voted_times > 1:
+    #                                 await context_message.remove_reaction(reaction, user)
+    #                                 reminder_message = \
+    #                                     await context_channel.send(f"**No voting more than once, "
+    #                                                                f"{user.mention}!** If you wish to "
+    #                                                                f"vote for a different person, remove your "
+    #                                                                f"previous vote first.")
+    #                                 await reminder_message.delete(delay=3)
+    #
+    #                                 return
+    #
+    #                         if user == payload.member and user == submission.author:
+    #                             await context_message.remove_reaction(reaction, user)
+    #                             reminder_message = \
+    #                                 await context_channel.send(f"**Shame, {user.mention}, you tried to vote "
+    #                                                            f"for yourself!** Self voting is not allowed.")
+    #                             await reminder_message.delete(delay=3)
+    #
+    #                             return
+    #
+    #     result = collection.find_one({"_id": int(context_message.author.id)})
+    #     collection.update_one(
+    #         {"_id": int(context_message.author.id)},
+    #         {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
+    #         upsert=True
+    #     )
 
 
 def setup(bot):
