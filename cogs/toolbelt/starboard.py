@@ -45,6 +45,7 @@ class Starboard(commands.Cog):
                                      icon_url=reaction.message.author.avatar_url)
                     embed.add_field(name="Original",
                                     value=f"[Jump!]({reaction.message.jump_url})")
+                    embed.set_image(url=reaction.message.attachments[0])
 
                     star_message = await starboard.send(f"**⭐{react.count}** from <#{reaction.message.channel.id}> | "
                                                         f"ID: {reaction.message.id}",
@@ -91,6 +92,8 @@ class Starboard(commands.Cog):
                 if result_count != 0:
 
                     result = collection.find_one({'_id': reaction.message.id})
+                    star_result = collection.find_one({"_id": 1})
+                    star_min = int(star_result["value"])
 
                     star_message = await starboard.fetch_message(result['star_id'])
                     await star_message.edit(content=f"**⭐{react.count}** from <#{reaction.message.channel.id}> | "
