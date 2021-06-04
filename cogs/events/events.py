@@ -47,7 +47,7 @@ class EventVetting(commands.Cog):
         if message.guild is None:
             return
 
-        if message.channel.id != constants.testing:
+        if message.channel.id != constants.events:
             return
 
         if (
