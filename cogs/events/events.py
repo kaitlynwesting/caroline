@@ -102,7 +102,7 @@ class EventVetting(commands.Cog):
         voting_emoji = "<:blobFingerGuns:833076453050023987>"
         voted_times = 0
 
-        if context_message.author == self.bot:
+        if payload.member == self.bot:
             return
 
         if context_channel.id == constants.events:
