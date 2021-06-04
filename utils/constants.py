@@ -16,6 +16,13 @@ mod = 777207888846389274
 admin = 777207888846389275
 owner = 777229939727401000
 
+mod_roles = [
+    helper,
+    mod,
+    admin,
+    owner
+]
+
 # Server channels
 welcome = 780559523634479136
 rules = 777237462904209429
@@ -35,6 +42,7 @@ alpha = 780519472444080158
 beta = 777207889277616192
 
 staff_bot = 777316504425332746
+testing = 836338340730634271
 logs = 777207889424941118
 
 # Server constant texts, etc
