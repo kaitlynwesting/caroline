@@ -1,6 +1,6 @@
 from discord.ext import commands
 from pymongo import MongoClient
-from utils import constants, numbers
+from utils import constants, helpers
 
 cluster = MongoClient(
     "mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01."
@@ -31,7 +31,7 @@ class Events(commands.Cog):
 
         result = collection.find_one({"_id": int(ctx.author.id)})
         await ctx.send(f"For **Season {season_number}**, you have collected {result[f'season_{season_number}']} "
-                       f"vote{numbers.plural(result[f'season_{season_number}'])}.")
+                       f"vote{helpers.plural(result[f'season_{season_number}'])}.")
 
 
 class EventVetting(commands.Cog):
