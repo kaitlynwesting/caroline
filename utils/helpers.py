@@ -3,3 +3,5 @@ def plural(num: int) -> str:
         return ''
     else:
         return 's'
+
+
