@@ -41,7 +41,7 @@ class Misc(commands.Cog):
     @commands.command()
     async def vo(self, ctx):
         rules = self.bot.get_channel(constants.events)
-        msg = await rules.fetch_message(850357324316409858)
+        msg = await rules.fetch_message(850134966934306826)
         await msg.add_reaction("<:blobFingerGuns:833076453050023987>")
 
 def setup(bot):
