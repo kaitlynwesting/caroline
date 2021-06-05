@@ -21,7 +21,7 @@ class Events(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def votes(self, ctx, participant: discord.Member):
+    async def votes(self, ctx, participant: discord.Member = None):
         if participant is None:
             participant = ctx.author
 
@@ -29,13 +29,14 @@ class Events(commands.Cog):
         result_count = collection.count_documents({"_id": int(participant.id)})
 
         if result_count == 0:
-            await ctx.send("Well, I couldn't find your profile. "
-                           "This is probably because you've never participated in any of our seasons, and "
+            await ctx.send(f"I couldn't find {participant.display_name}'s profile. "
+                           "This is probably because they've never participated in any of our seasons, and "
                            "so have received no votes!")
             return
 
         result = collection.find_one({"_id": int(participant.id)})
-        await ctx.send(f"For **Season {season_number}**, you have collected {result[f'season_{season_number}']} "
+        await ctx.send(f"For **Season {season_number}**, {participant.display_name} has "
+                       f"collected {result[f'season_{season_number}']} "
                        f"vote{helpers.plural(result[f'season_{season_number}'])}.")
 
 
