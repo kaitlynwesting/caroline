@@ -45,7 +45,9 @@ class Starboard(commands.Cog):
                                      icon_url=reaction.message.author.avatar_url)
                     embed.add_field(name="Original",
                                     value=f"[Jump!]({reaction.message.jump_url})")
-                    embed.set_image(url=reaction.message.attachments[0])
+
+                    if react.message.attachments:  # if there are attachments
+                        embed.set_image(url=reaction.message.attachments[0])
 
                     star_message = await starboard.send(f"**⭐{react.count}** from <#{reaction.message.channel.id}> | "
                                                         f"ID: {reaction.message.id}",
