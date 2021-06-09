@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from datetime import datetime, timedelta
 from pymongo import MongoClient
 from utils import constants, helpers
 
@@ -56,10 +57,12 @@ class EventVetting(commands.Cog):
         if message.channel.id != constants.events:
             return
 
+        if message.author == self.bot.user:
+            return
+
         if (
-                message.attachments == [] and
-                any(r in map(role_to_id, message.author.roles) for r in constants.mod_roles) is True or
-                message.author == self.bot.user
+                "Challenge Number" in str(message.content) and
+                any(r in map(role_to_id, message.author.roles) for r in constants.mod_roles) is True
         ):
             return
 
@@ -102,73 +105,83 @@ class EventVetting(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
+
+        if payload.guild_id is None:
+            return
+
         context_channel = self.bot.get_channel(payload.channel_id)
         context_message = await context_channel.fetch_message(payload.message_id)
         context_emoji = str(payload.emoji)
         voting_emoji = "<:blobFingerGuns:833076453050023987>"
         voted_times = 0
 
+        # Auto voting score updating is already done in the above method.
         if payload.member == self.bot.user:
             return
 
-        if context_channel.id == constants.events:
-            if context_emoji == voting_emoji:
-                async for message in context_channel.history(limit=25):
-                    if 'Challenge Number' in message.content:
-                        async for submission in context_channel.history(after=message):
-                            # Looks at each reaction for each submission after event marker
-                            for reaction in submission.reactions:
-                                # Looks at each user for each reaction
-                                async for user in reaction.users():
+        if context_channel.id != constants.events:
+            return
 
-                                    if user == payload.member and str(reaction) == voting_emoji:
+        if datetime.now() - context_message.created_at > timedelta(days=8):
+            return
 
-                                        voted_times += 1
+        if context_emoji == voting_emoji:
+            async for message in context_channel.history(limit=25):
+                if 'Challenge Number' in message.content:
+                    async for submission in context_channel.history(after=message):
+                        # Looks at each reaction for each submission after event marker
+                        for reaction in submission.reactions:
+                            # Looks at each user for each reaction
+                            async for user in reaction.users():
 
-                                        if voted_times > 1:
-                                            await context_message.remove_reaction(reaction, user)
-                                            reminder_message = \
-                                                await context_channel.send(f"**No voting more than once, "
-                                                                           f"{user.mention}!** If you wish to "
-                                                                           f"vote for a different person, remove your "
-                                                                           f"previous vote first.")
-                                            await reminder_message.delete(delay=3)
+                                if user == payload.member and str(reaction) == voting_emoji:
 
-                                            result = collection.find_one({"_id": int(context_message.author.id)})
-                                            collection.update_one(
-                                                {"_id": int(context_message.author.id)},
-                                                {"$set": {f"season_{season_number}": int(
-                                                    result[f"season_{season_number}"]) + 1}},
-                                                upsert=True
-                                            )
+                                    voted_times += 1
 
-                                            return
-
-                                    # So they didn't vote twice. Maybe they voted for themselves, though
-                                    if user == payload.member and user == submission.author:
+                                    if voted_times > 1:
                                         await context_message.remove_reaction(reaction, user)
                                         reminder_message = \
-                                            await context_channel.send(f"**Shame, {user.mention}, you tried to vote"
-                                                                       f"for yourself!** Self voting is not allowed.")
+                                            await context_channel.send(f"**No voting more than once, "
+                                                                       f"{user.mention}!** If you wish to "
+                                                                       f"vote for a different person, remove your "
+                                                                       f"previous vote first.")
                                         await reminder_message.delete(delay=3)
 
                                         result = collection.find_one({"_id": int(context_message.author.id)})
                                         collection.update_one(
                                             {"_id": int(context_message.author.id)},
-                                            {"$set": {
-                                                f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
+                                            {"$set": {f"season_{season_number}": int(
+                                                result[f"season_{season_number}"]) + 1}},
                                             upsert=True
                                         )
 
                                         return
 
-                        result = collection.find_one({"_id": int(context_message.author.id)})
-                        collection.update_one(
-                            {"_id": int(context_message.author.id)},
-                            {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
-                            upsert=True
-                        )
-                        return
+                                # So they didn't vote twice. Maybe they voted for themselves, though
+                                if user == payload.member and user == submission.author:
+                                    await context_message.remove_reaction(reaction, user)
+                                    reminder_message = \
+                                        await context_channel.send(f"**Shame, {user.mention}, you tried to vote"
+                                                                   f"for yourself!** Self voting is not allowed.")
+                                    await reminder_message.delete(delay=3)
+
+                                    result = collection.find_one({"_id": int(context_message.author.id)})
+                                    collection.update_one(
+                                        {"_id": int(context_message.author.id)},
+                                        {"$set": {
+                                            f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
+                                        upsert=True
+                                    )
+
+                                    return
+
+                    result = collection.find_one({"_id": int(context_message.author.id)})
+                    collection.update_one(
+                        {"_id": int(context_message.author.id)},
+                        {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
+                        upsert=True
+                    )
+                    return
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
@@ -178,6 +191,9 @@ class EventVetting(commands.Cog):
         voting_emoji = "<:blobFingerGuns:833076453050023987>"
 
         if context_channel.id != constants.events:
+            return
+
+        if datetime.now() - context_message.created_at > timedelta(days=8):
             return
 
         if context_emoji != voting_emoji:
