@@ -16,8 +16,14 @@ mod = 777207888846389274
 admin = 777207888846389275
 owner = 777229939727401000
 
-mod_roles = [
+staff_roles = [
     helper,
+    mod,
+    admin,
+    owner
+]
+
+mod_roles = [
     mod,
     admin,
     owner

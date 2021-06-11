@@ -42,11 +42,10 @@ class Cleaner(commands.Cog):
     async def purge(self, ctx, limit: int = 2):
         """
         Purges the most recent number of messages from a channel. No filters are applied.
-        Note: limit will default to 1, if limit is not specified.
         Example: !purge 10
 
         :param ctx:
-        :param limit: int = 1
+        :param limit: int = 2
         :return:
         """
 
@@ -54,14 +53,14 @@ class Cleaner(commands.Cog):
             return
 
         try:
-            deleted_amount = await ctx.channel.purge(limit=limit)
+            deleted_amount = await ctx.channel.purge(limit=limit+1)
             notification = await ctx.channel.send(f'👌 Deleted {len(deleted_amount)} message(s).')
             await notification.delete(delay=5)
         except Exception as e:
             notification = await ctx.channel.send(f'👌 Deleted messages. Caught an exception - {e} - for you.')
             await notification.delete(delay=5)
 
-    @commands.guild_only()
+    @commands.dm_only()
     @purge.command(invoke_without_command=True, aliases=["clean", "scrub", "delete", "deletus"])
     @commands.has_permissions(kick_members=True)
     async def user(self, ctx, purged_user: discord.User, limit: int = None):
@@ -86,7 +85,7 @@ class Cleaner(commands.Cog):
             return m.author.id == purged_user.id
 
         try:
-            deleted_amount = await ctx.channel.purge(limit=limit, check=checker)
+            deleted_amount = await ctx.channel.purge(limit=limit+1, check=checker)
             notification = await ctx.channel.send(f'👌 Deleted {len(deleted_amount)} message(s).')
             await notification.delete(delay=5)
         except Exception as e:

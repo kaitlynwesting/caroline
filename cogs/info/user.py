@@ -9,6 +9,7 @@ class User(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.guild_only()
     @commands.command()
     async def avatar(self, ctx, member: discord.Member = None):
         embed = discord.Embed(color=0x349feb)
@@ -21,6 +22,7 @@ class User(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.guild_only()
     @commands.command()
     async def member(self, ctx, member: discord.Member = None):
 
@@ -28,7 +30,7 @@ class User(commands.Cog):
             member = ctx.author
 
         embed = discord.Embed(
-            title=f"{member.nick} ({member})",
+            title=f"{member.display_name}",
             color=constants.blurple
         )
 

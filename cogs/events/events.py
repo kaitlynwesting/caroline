@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ext import commands
 from datetime import datetime, timedelta
@@ -21,7 +22,8 @@ class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.guild_only()
+    @commands.group(invoke_without_command=True)
     async def votes(self, ctx, participant: discord.Member = None):
         if participant is None:
             participant = ctx.author
@@ -39,6 +41,40 @@ class Events(commands.Cog):
         await ctx.send(f"For **Season {season_number}**, {participant.display_name} has "
                        f"collected {result[f'season_{season_number}']} "
                        f"vote{helpers.plural(result[f'season_{season_number}'])}.")
+
+    @votes.command()
+    @commands.guild_only()
+    @commands.check_any(commands.has_guild_permissions(manage_messages=True))
+    async def set(self, ctx, participant: discord.Member, votes_number: int):
+        result_count = collection.count_documents({"_id": int(participant.id)})
+
+        if result_count == 0:
+            await ctx.send(f"I couldn't find {participant.display_name}'s profile.")
+            return
+
+        result = collection.find_one({"_id": int(participant.id)})
+
+        await ctx.send(f"You are preparing to set {participant.display_name}'s votes number to **{votes_number}**, "
+                       f"erasing the former votes number of **{result[f'season_{season_number}']}**. Are you sure "
+                       f"you want to do this? Enter 'CONFIRM' to continue.")
+
+        def check(message) -> bool:
+            return message.author.id == ctx.author.id and message.channel.id == ctx.channel.id
+
+        try:
+            response = await self.bot.wait_for('message', timeout=30.0, check=check)
+        except asyncio.TimeoutError:
+            await ctx.channel.send('Took too long.')
+        else:
+            if response.content == 'CONFIRM':
+                await ctx.channel.send('👍')
+                collection.update_one(
+                    {"_id": participant.id},
+                    {"$set": {f"season_{season_number}": votes_number}},
+                    upsert=True
+                )
+            else:
+                await ctx.channel.send('Cancelled.')
 
 
 class EventVetting(commands.Cog):
@@ -62,12 +98,18 @@ class EventVetting(commands.Cog):
 
         if (
                 "Challenge Number" in str(message.content) and
-                any(r in map(role_to_id, message.author.roles) for r in constants.mod_roles) is True
+                any(r in map(role_to_id, message.author.roles) for r in constants.staff_roles) is True
         ):
             return
 
         if (
-                any(r in map(role_to_id, message.author.roles) for r in constants.mod_roles) is False and
+                message.attachments == [] and
+                any(r in map(role_to_id, message.author.roles) for r in constants.staff_roles) is True
+        ):
+            return
+
+        if (
+                any(r in map(role_to_id, message.author.roles) for r in constants.staff_roles) is False and
                 message.attachments == []
         ):
             await message.delete()
@@ -123,6 +165,9 @@ class EventVetting(commands.Cog):
             return
 
         if datetime.now() - context_message.created_at > timedelta(days=8):
+            return
+
+        if '[BEFORE]' in context_message.content:
             return
 
         if context_emoji == voting_emoji:
@@ -206,67 +251,6 @@ class EventVetting(commands.Cog):
             upsert=True
         )
         return
-
-
-    # @commands.Cog.listener()
-    # async def on_raw_reaction_add(self, payload):
-    #
-    #     context_channel = self.bot.get_channel(payload.channel_id)
-    #     context_message = await context_channel.fetch_message(payload.message_id)
-    #     context_emoji = str(payload.emoji)
-    #
-    #     voting_emoji = "<:blobFingerGuns:833076453050023987>"
-    #     voted_times = 0
-    #
-    #     if context_channel.id != constants.events:
-    #         return
-    #
-    #     if context_emoji != voting_emoji:
-    #         return
-    #
-    #     if context_message.author == self.bot.user:
-    #         return
-    #
-    #     async for message in context_channel.history(limit=10):
-    #
-    #         if 'Challenge Number' in message.content:
-    #
-    #             async for submission in context_channel.history(after=message):
-    #
-    #                 for reaction in submission.reactions:
-    #
-    #                     async for user in reaction.users():
-    #                         print(user, reaction)
-    #                         if user == payload.member and str(reaction) == voting_emoji:
-    #
-    #                             voted_times += 1
-    #
-    #                             if voted_times > 1:
-    #                                 await context_message.remove_reaction(reaction, user)
-    #                                 reminder_message = \
-    #                                     await context_channel.send(f"**No voting more than once, "
-    #                                                                f"{user.mention}!** If you wish to "
-    #                                                                f"vote for a different person, remove your "
-    #                                                                f"previous vote first.")
-    #                                 await reminder_message.delete(delay=3)
-    #
-    #                                 return
-    #
-    #                         if user == payload.member and user == submission.author:
-    #                             await context_message.remove_reaction(reaction, user)
-    #                             reminder_message = \
-    #                                 await context_channel.send(f"**Shame, {user.mention}, you tried to vote "
-    #                                                            f"for yourself!** Self voting is not allowed.")
-    #                             await reminder_message.delete(delay=3)
-    #
-    #                             return
-    #
-    #     result = collection.find_one({"_id": int(context_message.author.id)})
-    #     collection.update_one(
-    #         {"_id": int(context_message.author.id)},
-    #         {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
-    #         upsert=True
-    #     )
 
 
 def setup(bot):
