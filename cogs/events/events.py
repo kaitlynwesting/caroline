@@ -96,6 +96,9 @@ class EventVetting(commands.Cog):
         if message.author == self.bot.user:
             return
 
+        if '[BEFORE]' in message.content:
+            return
+
         if (
                 "Challenge Number" in str(message.content) and
                 any(r in map(role_to_id, message.author.roles) for r in constants.staff_roles) is True
