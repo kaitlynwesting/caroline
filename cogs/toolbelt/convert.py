@@ -15,7 +15,7 @@ class Convert(commands.Cog):
     @commands.guild_only()
     @commands.group(invoke_without_command=True)
     async def convert(self, ctx):
-
+        await ctx.send("How do I know what you want to convert to? Use `!help convert` to see the available modes.")
         return
 
     @convert.command()
@@ -37,7 +37,7 @@ class Convert(commands.Cog):
                  'svg'
                  )
         ) is False:
-            await ctx.send("Are you trying to kill me?")
+            await ctx.send("Not a supported file format. Are you trying to kill me? ")
             return
 
         await ctx.message.attachments[0].save('media/temp.png')
