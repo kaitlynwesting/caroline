@@ -50,7 +50,7 @@ class Tags(commands.Cog):
     # Adding tag command.
     @tag.command()
     @commands.guild_only()
-    @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
+    @commands.check_any(commands.has_permissions(kick_members=True))
     async def create(self, ctx, *, tag_name):
         """
         Creates and stores new tags in a database.
