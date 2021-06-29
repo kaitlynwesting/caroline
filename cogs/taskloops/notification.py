@@ -77,7 +77,7 @@ class Notification(commands.Cog):
     @commands.command()
     async def ping(self, ctx):
 
-        await ctx.send(f"Pong! The latency is {round(self.bot.latency, 3)} milliseconds.")
+        await ctx.send(f"Pong! The latency is {round(self.bot.latency, 3)} seconds, between heartbeats.")
 
 
 def setup(bot):
