@@ -28,6 +28,7 @@ class Subscription(commands.Cog):
 
     @subscribe.command()
     async def announcements(self, ctx):
+        print(ctx.author.name)
 
         announcements_role = ctx.guild.get_role(constants.announcements_role)
 
@@ -54,44 +55,36 @@ class Subscription(commands.Cog):
                        "If you wish to unsubscribe, you can do so at any time with `!unsub events`.")
 
     @commands.guild_only()
-    @commands.group(aliases=["unsub"])
-    async def unsubscribe(self, ctx):
+    @commands.command(aliases=["unsub"])
+    async def unsubscribe(self, ctx, subscribed_content: str):
         """
-        A group of commands for removing subscription role pings.
+        A command to unsubscribe from a role ping.
 
         :param ctx:
+        :param subscribed_content:
         :return:
         """
-
-        if ctx.invoked_subcommand is None:
-            await ctx.send("Interesting. What do you want to unsubscribe from? "
-                           "Choose a subcommand from the below menu.")
-
-            await ctx.send_help('unsubscribe')
-
-    @unsubscribe.command()
-    async def announcements(self, ctx):
         announcements_role = ctx.guild.get_role(constants.announcements_role)
-
-        if announcements_role not in ctx.author.roles:
-            await ctx.send("You are already not subscribed. "
-                           "Perhaps you meant to unsubscribe from something else?")
-            return
-
-        await ctx.author.remove_roles(announcements_role)
-        await ctx.send("You have been removed from the announcements subscription.")
-
-    @unsubscribe.command()
-    async def events(self, ctx):
         weekly_events_role = ctx.guild.get_role(constants.weekly_events_role)
 
-        if weekly_events_role not in ctx.author.roles:
-            await ctx.send("You are already not subscribed. "
-                           "Perhaps you meant to unsubscribe from something else?")
-            return
+        if subscribed_content == 'announcements':
+            if announcements_role not in ctx.author.roles:
+                return await ctx.send("You are already not subscribed. "
+                                      "Perhaps you meant to unsubscribe from something else?")
 
-        await ctx.author.remove_roles(weekly_events_role)
-        await ctx.send("You have been removed from the announcements subscription.")
+            await ctx.author.remove_roles(announcements_role)
+            return await ctx.send("You have been removed from the announcements subscription.")
+
+        elif subscribed_content == 'events':
+            if weekly_events_role not in ctx.author.roles:
+                return await ctx.send("You are already not subscribed. "
+                                      "Perhaps you meant to unsubscribe from something else?")
+
+            await ctx.author.remove_roles(weekly_events_role)
+            return await ctx.send("You have been removed from the weekly events subscription.")
+
+        else:
+            return await ctx.send("Not a valid subscription to unsubscribe from.")
 
 
 def setup(bot):
