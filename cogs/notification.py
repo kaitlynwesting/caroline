@@ -48,36 +48,39 @@ class Notification(commands.Cog):
 #                         pass
 
     # CLOSE HELP CHANNEL MANUALLY
-    @commands.command()
-    async def close(self, ctx):
-        channelList = [780519472444080158, 777207889277616192]
+#     @commands.command()
+#     async def close(self, ctx):
+#         channelList = [780519472444080158, 777207889277616192]
+#
+#         if ctx.channel.id in channelList:
+#             embed = discord.Embed(
+#                 color=0x349feb
+#             )
+#
+#             embed.set_author(name=f"Open help channel", icon_url="https://i.postimg.cc/BZMpHQQV/image5.jpg")
+#
+#             embed.add_field(
+#                 name=f"Some tips to keep in mind before you ask:",
+#                 value=f"""• Refrain from asking generic or vague questions, such as "Can I get help" or "Why isn't this working".
+# • Explain what you're trying to do, what you have tried, and the outcome. This greatly facilitates the work of any potential helpers.
+# • Include a screenshot or snip of your Photoshop workspace, if appropriate.""",
+#                 inline=False)
+#             embed.set_footer(text="Others will try to help you solve the problem, if they can. Sit tight!")
+#
+#             await ctx.send(embed=embed)
+#
+#         else:
+#             await ctx.send("Please use that in the proper channels, i.e. our help channels.")
 
-        if ctx.channel.id in channelList:
-            embed = discord.Embed(
-                color=0x349feb
-            )
-
-            embed.set_author(name=f"Open help channel", icon_url="https://i.postimg.cc/BZMpHQQV/image5.jpg")
-
-            embed.add_field(
-                name=f"Some tips to keep in mind before you ask:",
-                value=f"""• Refrain from asking generic or vague questions, such as "Can I get help" or "Why isn't this working".
-• Explain what you're trying to do, what you have tried, and the outcome. This greatly facilitates the work of any potential helpers.
-• Include a screenshot or snip of your Photoshop workspace, if appropriate.""",
-                inline=False)
-            embed.set_footer(text="Others will try to help you solve the problem, if they can. Sit tight!")
-
-            await ctx.send(embed=embed)
-
-        else:
-            await ctx.send("Please use that in the proper channels, i.e. our help channels.")
-
-
-    # CHECC PING
     @commands.command()
     async def ping(self, ctx):
+        """
+        Check the latency of the bot.
+        :param ctx:
+        :return:
+        """
 
-        await ctx.send(f"Pong! The latency is {round(self.bot.latency, 3)} seconds, between heartbeats.")
+        await ctx.send(f"Pong! I have {round(self.bot.latency, 3)*1000} ms between heartbeats.")
 
 
 def setup(bot):
