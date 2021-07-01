@@ -5,7 +5,18 @@ import settings
 
 # If you want to add more modules in the future
 initial_extensions = (
+    "cogs.arrivals",
+    "cogs.events",
+    "cogs.filters",
+    "cogs.fun",
+    "cogs.jail",
+    "cogs.misc",
+    "cogs.moderation",
+    "cogs.reddit",
+    "cogs.starboard",
     "cogs.subscription",
+    "cogs.tags",
+    "cogs.user",
     "cogs.handler",
 )
 
