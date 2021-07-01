@@ -43,7 +43,7 @@ class Tags(commands.Cog):
             collection.update_one(
                 {"name": tag_name},
                 {"$set":
-                    {"uses": result["uses"] + 1}
+                     {"uses": result["uses"] + 1}
                  }, upsert=True
             )
 
@@ -122,9 +122,27 @@ class Tags(commands.Cog):
 
         await ctx.send("Your tag has been successfully updated!")
 
+    # Adding tag command.
+    @tag.command()
+    @commands.guild_only()
+    async def list(self, ctx, *, tag_name):
+        """
+        Open a list of all available tags.
+
+        :param ctx:
+        :param tag_name:
+        :return:
+        """
+        paginator = commands.Paginator()
+        paginator.add_line('some line')
+        paginator.add_line('some other line')
+
+        for page in paginator.pages:
+            await ctx.send(page)
+
+    @tag.error
     @edit.error
     async def on_error(self, ctx, error):
-        print(error)
         ctx.error_handled = True
 
         if isinstance(error, commands.CommandInvokeError):
@@ -135,7 +153,6 @@ class Tags(commands.Cog):
         else:
             ctx.error_handled = False
 
-        print(error)
 
 
 def setup(bot):

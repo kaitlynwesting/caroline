@@ -14,7 +14,7 @@ class Handler(commands.Cog):
     async def on_command_error(self, ctx, error):
         """
 
-        :param ctx: commands.Context
+        :param ctx:
         :param error: commands.CommandError
         :return:
         """
@@ -26,9 +26,12 @@ class Handler(commands.Cog):
             error = error.original
 
         if isinstance(error, commands.MissingRequiredArgument):
+
             await ctx.send(
                 f"Missing required argument(s): {error.param}"
             )
+
+            await ctx.send(traceback.format_exc())
 
             print(ctx.command.short_doc)  # YES
             # await ctx.send_help(ctx.command)
@@ -42,15 +45,13 @@ class Handler(commands.Cog):
             if ctx.message.content.startswith("!d"):
                 return
 
-            await ctx.send("Couldn't find that command, sorry.")
-
-        elif isinstance(error, TypeError):
-            await ctx.send(f"TypeError. Oof. {error}")
+            await ctx.send("Couldn't find that command. Sorry.")
 
         else:
             print(error)
             await ctx.send(str(error)[:1000])
-            print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+            something = traceback.format_exc()
+            await ctx.send(str(something)[:1000])
 
 
 def setup(bot):

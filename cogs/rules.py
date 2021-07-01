@@ -28,11 +28,15 @@ class Rules(commands.Cog):
 
     @rules.error
     async def bounds_error(self, ctx, error):
+        ctx.error_handled = True
 
-        await ctx.send(
-            f"Rules range from 1-7. \n"
-            f"`{error}`"
-        )
+        if isinstance(error, commands.CommandInvokeError):
+            error = error.original
+
+        if isinstance(error, AttributeError):
+            await ctx.send(f"Rules range from 1-7.")
+        else:
+            ctx.error_handled = False
 
 
 def setup(bot):

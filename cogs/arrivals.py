@@ -1,8 +1,10 @@
 import discord
 from discord.ext import commands
-
+from discord.utils import get
 from utils import constants
 
+
+# COG FOR NEW ARRIVALS AND DEPARTS
 
 class Welcome(commands.Cog):
 
@@ -41,11 +43,28 @@ class Welcome(commands.Cog):
             embed.set_thumbnail(url="https://i.postimg.cc/L6wQ6HNq/5e78affab2547d678e4c5458dd931381.gif")
 
             embed.set_footer(
-                text="This bot was written for Photoshop Discord by Kat. We are always developing new features!"
+                text="We are always developing new features!"
             )
 
             await member.send(embed=embed)
 
 
+class Joins(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        channel = get(member.guild.text_channels, name="logs")
+        await channel.send(f"{member.mention} has joined us.")
+
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        channel = get(member.guild.text_channels, name="logs")
+        await channel.send(f"{member.mention} has left.")
+
+
 def setup(bot):
     bot.add_cog(Welcome(bot))
+    bot.add_cog(Joins(bot))

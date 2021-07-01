@@ -1,66 +1,49 @@
 import discord
+import traceback
 from discord.ext import commands
-import os
 import settings
 
-description = """
-Hello! I'm a bot written by Kaitlyn to provide some nice utilities.
-"""
-
+# If you want to add more modules in the future
 initial_extensions = (
-    'cogs.meta',
-    'cogs.splatoon',
-    'cogs.rng',
-    'cogs.mod',
-    'cogs.profile',
-    'cogs.tags',
-    'cogs.lounge',
-    'cogs.carbonitex',
-    'cogs.api',
-    'cogs.stars',
-    'cogs.admin',
-    'cogs.buttons',
-    'cogs.reminder',
-    'cogs.stats',
-    'cogs.emoji',
-    'cogs.config',
-    'cogs.dpy',
-    'cogs.funhouse',
+    "cogs.subscription",
+    "cogs.handler",
 )
 
-print("Running discord.py version", discord.__version__, ", starting...")
-intents = discord.Intents(messages=True, guilds=True, reactions=True, members=True, presences=True)
-bot = commands.Bot(command_prefix=settings.prefix, intents=intents)  # help_command=help.MyHelp()
+intents = discord.Intents(
+    messages=True,
+    guilds=True,
+    reactions=True,
+    members=True,
+    presences=True
+)
+
+bot = commands.Bot(
+    command_prefix=settings.prefix,
+    intents=intents
+)
+
+print(f"discord.py, version {discord.__version__}")
+
 
 @bot.event
 async def on_ready():
-    print("Finished initialising bot, setting status...", flush=True)
+    print(f"Logged in. \n"
+          f"Name: {bot.user.name} \n"
+          f"Guilds: {str(len(bot.guilds))} \n"
+          f"-----")
 
     await bot.change_presence(
-        activity=discord.Activity(status=discord.Status.idle,
-                                  type=discord.ActivityType.listening,
-                                  name=settings.nowplaying)
+            activity=discord.Activity(
+            type=discord.ActivityType.listening,
+            name=settings.nowplaying)
     )
 
-    print("-----")
-
-    for folder in (os.listdir('./cogs')):
-        print(folder)
-        for file in os.listdir(f'./cogs/{folder}'):
-            if file.endswith(".py"):
-                if not file.startswith("__init__"):
-                    loading_path = f"cogs.{folder}.{file[:-3]}"
-                    try:
-                        bot.load_extension(loading_path)
-                    except Exception as e:
-                        print(f"Could not load {file} due to {e}")
-
-
-@bot.command(dm_only=True)
-async def test(ctx):
-    print(1)
-
-
-# heroku ps -a robolydia #(twd) tie city 206
+    for extension in initial_extensions:
+        try:
+            bot.load_extension(extension)
+        except Exception:
+            print(f"Failed to load extension '{extension}'\n"
+                  f"{traceback.format_exc()}")
 
 bot.run(settings.token)
+

@@ -1,5 +1,3 @@
-import asyncio
-import discord
 from discord.ext import commands
 from utils import constants
 from pymongo import MongoClient

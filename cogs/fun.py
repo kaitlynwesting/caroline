@@ -15,7 +15,34 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # BREAD COMMAND WHICH MUTES THE USER FOR SMELLINESS.
+    @commands.group(invoke_without_command=False)
+    async def binary(self, ctx):
+        return
+
+    @binary.command()
+    async def decode(self, ctx, code):
+
+        a_binary_string = str(code)
+
+        binary_values = a_binary_string.split()
+
+        ascii_string = ""
+
+        for binary_value in binary_values:
+            an_integer = int(binary_value, 2)
+            ascii_character = chr(an_integer)
+            ascii_string += ascii_character
+
+        await ctx.send(f"Your decoded binary is: {ascii_string}")
+
+    @binary.command()
+    async def encode(self, ctx, code: str):
+
+        res = ' '.join(format(ord(i), 'b') for i in code)
+
+        # printing result
+        await ctx.send(f"Your encoded binary is: {str(res)}")
+
     @commands.guild_only()
     @commands.command()
     async def bread(self, ctx):

@@ -7,7 +7,8 @@ trouble_red = 0xeb4034
 blurple = 0x5865F2
 
 # Server roles - subscriptions
-announcements_sub = 787092272570171392
+announcements_role = 787092272570171392
+weekly_events_role = 860240614041452544
 muted = 787091480400887849
 
 # Server roles - rank
@@ -48,6 +49,7 @@ bot_commands = 787090740517273680
 alpha = 780519472444080158
 beta = 777207889277616192
 
+helpers_chat = 822229241511936090
 staff_bot = 777316504425332746
 testing = 836338340730634271
 logs = 777207889424941118
