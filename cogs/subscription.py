@@ -56,7 +56,7 @@ class Subscription(commands.Cog):
 
     @commands.guild_only()
     @commands.command(aliases=["unsub"])
-    async def unsubscribe(self, ctx, subscribed_content: str):
+    async def unsubscribe(self, ctx, subscribed_content: str = None):
         """
         A command to unsubscribe from a role ping.
 
@@ -84,7 +84,9 @@ class Subscription(commands.Cog):
             return await ctx.send("You have been removed from the weekly events subscription.")
 
         else:
-            return await ctx.send("Not a valid subscription to unsubscribe from.")
+            await ctx.send("Not a valid subscription to unsubscribe from. "
+                           "Choose from one of the subcommands below.")
+            return await ctx.send_help('unsubscribe')
 
 
 def setup(bot):

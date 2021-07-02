@@ -48,7 +48,6 @@ class Handler(commands.Cog):
             await ctx.send("Couldn't find that command. Sorry.")
 
         else:
-            print(error)
             await ctx.send(str(error)[:1000])
             something = traceback.format_exc()
             await ctx.send(str(something)[:1000])
