@@ -49,8 +49,6 @@ class Handler(commands.Cog):
 
         else:
             await ctx.send(str(error)[:1000])
-            something = traceback.format_exc()
-            await ctx.send(str(something)[:1000])
 
 
 def setup(bot):
