@@ -64,7 +64,7 @@ class Welcome(commands.Cog):
                 description=' '.join(user_message)
             )
 
-            embed.set_thumbnail(url="https://i.postimg.cc/L6wQ6HNq/5e78affab2547d678e4c5458dd931381.gif")
+            embed.set_thumbnail(url="https://i.pinimg.com/originals/e4/43/4c/e4434c1d99dd02a12daef6fcf05be9d9.gif")
 
 class Joins(commands.Cog):
 
