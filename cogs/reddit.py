@@ -1,7 +1,7 @@
+import asyncpraw as ap
 import requests
 import pytz
 
-import asyncpraw as ap
 from datetime import datetime, timedelta
 from discord.ext import tasks, commands
 
@@ -17,14 +17,21 @@ class RedditLoop(commands.Cog):
     @tasks.loop(seconds=60)
     async def reddit(self):
 
-        channel = self.bot.get_channel(819345108335853578)
+        channel = self.bot.get_channel(constants.testing)
 
-        async for message in channel.history(limit=1):
+        async for message in channel.history(limit=2):
             message_time = pytz.utc.localize(message.created_at)
             time_now = datetime.now(pytz.utc)
             time_difference = time_now - message_time
 
-            if time_difference > timedelta(hours=24):
+            if time_difference < timedelta(hours=24):
+                return
+
+            if str(message.type) != 'MessageType.pins_add':
+
+                print(message.id)
+                await message.add_reaction('🔢')
+                await message.unpin()
 
                 reddit = ap.Reddit(
                     client_id='-EXpNodmhibB5Q',
@@ -68,6 +75,9 @@ class RedditLoop(commands.Cog):
                     print(f"Not sent with {result.status_code} code, response:\n{result.json()}")
 
                 await reddit.close()
+
+                async for message in channel.history(limit=1):
+                    await message.pin()
 
 
 def setup(bot):
