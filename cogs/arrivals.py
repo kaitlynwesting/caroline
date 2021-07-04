@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ext import commands
 from discord.utils import get
@@ -16,20 +17,17 @@ class Welcome(commands.Cog):
         if before.pending != after.pending:
 
             member = await self.bot.fetch_user(before.id)
-            print(member)
 
             user_message = (
                 f"**Now partnered with the [r/Photoshop](https://www.reddit.com/r/photoshop/) subreddit! ^_^** \n\n"
-                f"Thank you for accepting our rules! "
-                f"For reference, you can find them again in <#{constants.rules}>.\n\n"
+                f"Thank you for accepting our <#{constants.rules}>!\n\n"
                 f"**Here's a fast rundown on what to do now, in the server:**\n",
                 f"• Introduce yourself in the <#{constants.introduce_yourself} channel, if you'd like! We want to get ",
                 f"to know all of our wonderful community members!\n\n",
-                f"• Technical help with Photoshop is exchanged in our help channels: <#{constants.alpha}> + ",
-                f"<#{constants.beta}>. We'll help you to the best of our ability.\n\n",
-                f"• To receive advice and suggestions for your ongoing works in progress (WIPs), head over to",
-                f"<#{constants.critique}> and post your work, or give advice to others.\n\n",
-                f"• Improve your skills and make fantastic art by participating in the most recent event in our",
+                f"• User help with Photoshop is exchanged in our help channels: <#{constants.alpha}> + ",
+                f"<#{constants.beta}>. We'll be happy to lend a hand, provided you ask a good question "
+                f"(send `!tag help` to me to know how).\n\n",
+                f"• Improve your skills and make fresh art by participating in the most recent challenge in our",
                 f"<#{constants.events}> channel, which changes weekly :)\n\n"
                 f"That's it for now! We wish you an enjoyable and excellent stay. See you inside!"
             )
@@ -43,11 +41,30 @@ class Welcome(commands.Cog):
             embed.set_thumbnail(url="https://i.postimg.cc/L6wQ6HNq/5e78affab2547d678e4c5458dd931381.gif")
 
             embed.set_footer(
-                text="We are always developing new features!"
+                text="We love Photoshop!"
             )
 
             await member.send(embed=embed)
 
+            await asyncio.sleep(180)
+
+            user_message = (
+                f"**How very silly of me!** \n\n"
+                f"I was instructed to tell you this: \n"
+                f"• If you'd like to stay tuned on important updates and features from the Photoshop server, "
+                f"you can subscribe to announcements by doing `!sub announcements` in <#{constants.bot_commands}>. \n"
+                f"• If you'd like to get notified each week for our new weekly events, you can subscribe, similarly, "
+                f"by doing `!sub events` in <#{constants.bot_commands}>. (The events are fun, I promise!) \n\n"
+                f"Okay, that's all, for real this time."
+            )
+
+            embed = discord.Embed(
+                title=f'I forgot to tell you something!',
+                color=constants.blurple,
+                description=' '.join(user_message)
+            )
+
+            embed.set_thumbnail(url="https://i.postimg.cc/L6wQ6HNq/5e78affab2547d678e4c5458dd931381.gif")
 
 class Joins(commands.Cog):
 

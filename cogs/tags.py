@@ -19,7 +19,6 @@ class Tags(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.guild_only()
     @commands.group(invoke_without_command=True)
     async def tag(self, ctx, *, tag_name):
         """
@@ -30,7 +29,6 @@ class Tags(commands.Cog):
         :return:
         """
 
-        tag_name = tag_name.lower()
         result_count = collection.count_documents({"name": tag_name})
 
         if result_count == 0:
@@ -94,7 +92,7 @@ class Tags(commands.Cog):
 
     @tag.command()
     @commands.guild_only()
-    @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
+    @commands.check_any(commands.has_permissions(kick_members=True))
     async def edit(self,
                    ctx,
                    *,
@@ -123,22 +121,22 @@ class Tags(commands.Cog):
         await ctx.send("Your tag has been successfully updated!")
 
     # Adding tag command.
-    @tag.command()
-    @commands.guild_only()
-    async def list(self, ctx, *, tag_name):
-        """
-        Open a list of all available tags.
-
-        :param ctx:
-        :param tag_name:
-        :return:
-        """
-        paginator = commands.Paginator()
-        paginator.add_line('some line')
-        paginator.add_line('some other line')
-
-        for page in paginator.pages:
-            await ctx.send(page)
+    # @tag.command()
+    # @commands.guild_only()
+    # async def list(self, ctx, *, tag_name):
+    #     """
+    #     Open a list of all available tags.
+    #
+    #     :param ctx:
+    #     :param tag_name:
+    #     :return:
+    #     """
+    #     paginator = commands.Paginator()
+    #     paginator.add_line('some line')
+    #     paginator.add_line('some other line')
+    #
+    #     for page in paginator.pages:
+    #         await ctx.send(page)
 
     @tag.error
     @edit.error
