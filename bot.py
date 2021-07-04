@@ -17,6 +17,13 @@ initial_extensions = (
     "cogs.subscription",
     "cogs.tags",
     "cogs.user",
+    "cogs.rules",
+    "cogs.handler",
+)
+
+testing_extensions = (
+    "cogs.badges",
+    "cogs.reddit",
     "cogs.handler",
 )
 
