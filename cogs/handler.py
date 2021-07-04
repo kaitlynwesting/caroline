@@ -1,8 +1,9 @@
 import discord
-from discord.ext import commands
-from discord.utils import get
 import sys
 import traceback
+
+from discord.ext import commands
+
 
 
 class Handler(commands.Cog):
@@ -48,6 +49,8 @@ class Handler(commands.Cog):
             await ctx.send("Couldn't find that command. Sorry.")
 
         else:
+            print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
             await ctx.send(str(error)[:1000])
 
 
