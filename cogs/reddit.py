@@ -77,6 +77,7 @@ class RedditLoop(commands.Cog):
 
                 async for message in channel.history(limit=1):
                     await message.pin()
+                    await message.publish()
 
 
 def setup(bot):
