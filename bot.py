@@ -56,8 +56,9 @@ async def on_ready():
             name=settings.nowplaying)
     )
 
-    for extension in initial_extensions:
+    for extension in testing_extensions:
         try:
+            print(str(extension))
             bot.load_extension(extension)
         except Exception:
             print(f"Failed to load extension '{extension}'\n"

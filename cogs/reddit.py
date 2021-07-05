@@ -17,9 +17,10 @@ class RedditLoop(commands.Cog):
     @tasks.loop(seconds=60)
     async def reddit(self):
 
-        channel = self.bot.get_channel(constants.testing)
+        channel = self.bot.get_channel(constants.reddit)
 
         async for message in channel.history(limit=2):
+            print(message.id)
             message_time = pytz.utc.localize(message.created_at)
             time_now = datetime.now(pytz.utc)
             time_difference = time_now - message_time
@@ -28,8 +29,6 @@ class RedditLoop(commands.Cog):
                 return
 
             if str(message.type) != 'MessageType.pins_add':
-
-                print(message.id)
                 await message.add_reaction('🔢')
                 await message.unpin()
 
