@@ -50,7 +50,6 @@ class Tags(commands.Cog):
     @tag.command()
     @commands.guild_only()
     @is_staff()
-    @commands.check_any(commands.has_permissions(kick_members=True))
     async def create(self, ctx, *, tag_name):
         """
         Creates and stores new tags in a database.
@@ -95,7 +94,6 @@ class Tags(commands.Cog):
     @tag.command()
     @commands.guild_only()
     @is_staff()
-    @commands.check_any(commands.has_permissions(kick_members=True))
     async def edit(self,
                    ctx,
                    *,

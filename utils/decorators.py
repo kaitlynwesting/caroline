@@ -10,5 +10,7 @@ def is_staff():
 
         staff_roles = [helper, moderator, admin]
 
-        return any(role in ctx.author.roles for role in staff_roles)
+        staff = any(role in staff_roles for role in ctx.author.roles)
+        print(staff)
+        return staff
     return commands.check(predicate)
