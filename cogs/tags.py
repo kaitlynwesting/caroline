@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from discord.ext import commands
 from utils import constants
+from utils.decorators import is_staff
 
 from pymongo import MongoClient
 
@@ -48,6 +49,7 @@ class Tags(commands.Cog):
     # Adding tag command.
     @tag.command()
     @commands.guild_only()
+    @is_staff()
     @commands.check_any(commands.has_permissions(kick_members=True))
     async def create(self, ctx, *, tag_name):
         """
@@ -92,6 +94,7 @@ class Tags(commands.Cog):
 
     @tag.command()
     @commands.guild_only()
+    @is_staff()
     @commands.check_any(commands.has_permissions(kick_members=True))
     async def edit(self,
                    ctx,
