@@ -18,7 +18,7 @@ class Subscription(commands.Cog):
         :param ctx:
         :return:
         """
-        print(str(ctx.subcommand_passed))
+
         if ctx.invoked_subcommand is None:
 
             await ctx.send("What do you want to subscribe to? "

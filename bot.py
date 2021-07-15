@@ -22,8 +22,8 @@ initial_extensions = (
 )
 
 testing_extensions = (
+    "cogs.tags",
     "cogs.badges",
-    "cogs.reddit",
     "cogs.handler",
 )
 
@@ -56,7 +56,7 @@ async def on_ready():
             name=settings.nowplaying)
     )
 
-    for extension in testing_extensions:
+    for extension in initial_extensions:
         try:
             print(str(extension))
             bot.load_extension(extension)

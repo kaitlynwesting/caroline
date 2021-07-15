@@ -24,13 +24,16 @@ async def kick(
         f"{public_message}"
     )
 
-    await embed_template.dm_manual_embed(
-        infraction_member,
-        f"Infraction received from Photoshop Discord",
-        f"{private_message}",
-        f"If you believe that there has been an error, please DM our Modmail bot.",
-        constants.trouble_red
-    )
+    try:
+        await embed_template.dm_manual_embed(
+            infraction_member,
+            f"Infraction received from Photoshop Discord",
+            f"{private_message}",
+            f"If you believe that there has been an error, please DM our Modmail bot.",
+            constants.trouble_red
+        )
+    except discord.errors.Forbidden:
+        print(f"Tried to DM {infraction_member} before kicking, but their DMs were disabled. Moving on.")
 
     await infraction_member.kick(reason=infraction_reason)
 

@@ -44,7 +44,11 @@ class Welcome(commands.Cog):
                 text="We love Photoshop!"
             )
 
-            await member.send(embed=embed)
+            try:
+                await member.send(embed=embed)
+            except discord.errors.Forbidden:
+                print(f"Tried to DM {member.name} a welcome message, but their DMs were disabled. Aborting.")
+                return
 
             await asyncio.sleep(180)
 

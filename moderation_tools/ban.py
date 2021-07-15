@@ -27,13 +27,16 @@ async def ban(
     )
 
     # Private notification
-    await embed_template.dm_manual_embed(
-        infraction_member,
-        f"Infraction received from Photoshop Discord",
-        f"{private_message}",
-        f"This ban is permanent and will not be revoked.",
-        constants.trouble_red
-    )
+    try:
+        await embed_template.dm_manual_embed(
+            infraction_member,
+            f"Infraction received from Photoshop Discord",
+            f"{private_message}",
+            f"This ban is permanent and will not be revoked.",
+            constants.trouble_red
+        )
+    except discord.errors.Forbidden:
+        print(f"Tried to DM {infraction_member} before banning, but their DMs were disabled. Moving on.")
 
     await infraction_member.ban(reason=infraction_reason)
 

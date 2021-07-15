@@ -1,3 +1,4 @@
+import asyncio
 from discord.ext import commands
 from discord import Embed
 import discord
@@ -44,6 +45,14 @@ class Misc(commands.Cog):
     #     rules = self.bot.get_channel(constants.events)
     #     msg = await rules.fetch_message(850134966934306826)
     #     await msg.add_reaction("<:blobFingerGuns:833076453050023987>")
+
+    @commands.command()
+    async def unpin(self, ctx):
+        await ctx.message.pin()
+
+        await asyncio.sleep(10)
+
+        await ctx.message.unpin()
 
     @commands.command()
     @commands.has_permissions(administrator=True)
