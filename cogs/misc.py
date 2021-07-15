@@ -47,14 +47,6 @@ class Misc(commands.Cog):
     #     await msg.add_reaction("<:blobFingerGuns:833076453050023987>")
 
     @commands.command()
-    async def unpin(self, ctx):
-        await ctx.message.pin()
-
-        await asyncio.sleep(10)
-
-        await ctx.message.unpin()
-
-    @commands.command()
     @commands.has_permissions(administrator=True)
     async def promote(self, ctx, member: discord.Member):
 
