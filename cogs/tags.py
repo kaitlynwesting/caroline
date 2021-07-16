@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from discord.ext import commands
 from utils import constants
-from utils.decorators import is_staff
+from utils.decorators import staff_only
 
 from pymongo import MongoClient
 
@@ -49,7 +49,7 @@ class Tags(commands.Cog):
     # Adding tag command.
     @tag.command()
     @commands.guild_only()
-    @is_staff()
+    @staff_only()
     async def create(self, ctx, *, tag_name):
         """
         Creates and stores new tags in a database.
@@ -93,11 +93,18 @@ class Tags(commands.Cog):
 
     @tag.command()
     @commands.guild_only()
-    @is_staff()
+    @staff_only()
     async def edit(self,
                    ctx,
                    *,
                    tag_name):
+        """
+        Edit an existing tag's content. You must own the tag to edit it.
+
+        :param ctx:
+        :param tag_name: str
+        :return:
+        """
 
         tag_query = collection.find_one({"name": tag_name})
 
