@@ -43,7 +43,7 @@ class Handler(commands.Cog):
             if ctx.message.content.startswith("!d"):
                 return
 
-            await ctx.send("Couldn't find that command. Sorry.")
+            return
 
         else:
             print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)

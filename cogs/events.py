@@ -28,7 +28,6 @@ class Events(commands.Cog):
         if participant is None:
             participant = ctx.author
 
-        print(participant.display_name)
         result_count = collection.count_documents({"_id": int(participant.id)})
 
         if result_count == 0:
@@ -38,6 +37,15 @@ class Events(commands.Cog):
             return
 
         result = collection.find_one({"_id": int(participant.id)})
+
+        try:
+            print(result[f'season_{season_number}'])
+        except Exception as e:
+            await ctx.send(f"Looks like {participant.display_name} hasn't participated in the "
+                           f"current season so far. Perhaps it's time to change that? "
+                           f"<:blobcreep:865602113617920036>")
+            return
+
         await ctx.send(f"For **Season {season_number}**, {participant.display_name} has "
                        f"collected {result[f'season_{season_number}']} "
                        f"vote{helpers.plural(result[f'season_{season_number}'])}.")
