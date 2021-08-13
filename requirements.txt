@@ -9,3 +9,4 @@ python-dotenv==0.17.1
 asyncio~=3.4.3
 asyncpg~=0.23.0
 DateTime~=4.3
+aiosqlite>=0.17.0

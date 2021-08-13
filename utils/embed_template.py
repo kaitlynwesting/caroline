@@ -6,6 +6,24 @@ from datetime import datetime
 # dm_auto_embed: automatically sends DMs to user when they have tripped a filter
 # dm_manual_embed: manual DM embeds with member argument
 
+async def error_embed(
+        ctx,
+        title,
+        field_name,
+        field_value,
+        footer,
+        colour
+):
+    embed = Embed(
+        title=title,
+        color=colour,
+    )
+    embed.add_field(name=f"{field_name}",
+                    value=f"{field_value}")
+    embed.set_footer(text=footer)
+
+    await ctx.send(embed=embed)
+
 
 async def dm_auto_embed(
         message,

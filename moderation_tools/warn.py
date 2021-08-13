@@ -21,6 +21,6 @@ async def warn(
         f"Infraction received from Photoshop Discord",
         f"{private_message}",
         f"If you believe that there has been an error, please DM our Modmail bot.",
-        constants.trouble_red
+        constants.red
     )
 

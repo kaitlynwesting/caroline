@@ -33,7 +33,7 @@ async def ban(
             f"Infraction received from Photoshop Discord",
             f"{private_message}",
             f"This ban is permanent and will not be revoked.",
-            constants.trouble_red
+            constants.red
         )
     except discord.errors.Forbidden:
         print(f"Tried to DM {infraction_member} before banning, but their DMs were disabled. Moving on.")

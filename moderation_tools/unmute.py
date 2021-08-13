@@ -33,7 +33,7 @@ async def unmute(
         f"Infraction pardoned from Photoshop Discord",
         f"{''.join(private_message)}",
         f"",
-        constants.trouble_red
+        constants.red
     )
 
     await pardoned_member.remove_roles(muted)

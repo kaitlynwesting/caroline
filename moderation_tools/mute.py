@@ -40,7 +40,7 @@ async def mute(
         f"Infraction received from Photoshop Discord",
         f"{''.join(private_message)}",
         f"If you believe that there has been an error, please DM our Modmail bot.",
-        constants.trouble_red
+        constants.red
     )
 
     await infraction_member.add_roles(muted)
@@ -57,5 +57,5 @@ async def mute(
             f"Your mute has expired.\n"
             f"You are free to continue talking in the server.",
             "",
-            constants.trouble_red
+            constants.red
         )

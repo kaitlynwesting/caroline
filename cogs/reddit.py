@@ -28,7 +28,6 @@ class RedditLoop(commands.Cog):
                 return
 
             if str(message.type) != 'MessageType.pins_add':
-                await message.add_reaction('🔢')
                 await message.unpin()
 
                 reddit = ap.Reddit(

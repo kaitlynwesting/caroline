@@ -37,7 +37,7 @@ async def automute(
         f"Infraction received from Photoshop Discord",
         f"{''.join(private_message)}",
         f"If you believe that there has been an error, please DM our Modmail bot.",
-        constants.trouble_red
+        constants.red
     )
 
     await message.author.add_roles(muted)
@@ -52,5 +52,5 @@ async def automute(
             f"Infraction expired from Photoshop Discord",
             f"Your mute has expired. You are free to continue talking in the server.",
             "",
-            constants.trouble_red
+            constants.red
         )

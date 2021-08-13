@@ -30,7 +30,7 @@ async def kick(
             f"Infraction received from Photoshop Discord",
             f"{private_message}",
             f"If you believe that there has been an error, please DM our Modmail bot.",
-            constants.trouble_red
+            constants.red
         )
     except discord.errors.Forbidden:
         print(f"Tried to DM {infraction_member} before kicking, but their DMs were disabled. Moving on.")
