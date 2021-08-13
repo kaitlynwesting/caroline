@@ -3,8 +3,7 @@ import sys
 import traceback
 
 from discord.ext import commands
-from utils import constants
-from utils.embed_template import error_embed
+
 
 
 class Handler(commands.Cog):
@@ -24,21 +23,17 @@ class Handler(commands.Cog):
         if getattr(ctx, 'error_handled', False):  # or just hasattr
             return
 
-        # Safely unwrap the error
         if isinstance(error, commands.CommandInvokeError):
             error = error.original
 
-        if isinstance(error, commands.MissingRequiredArgument):
-
-            await error_embed(ctx,
-                              f"Oups! MissingRequiredArgument error with !{ctx.command}",
-                              f"You are missing the below argument:",
-                              f"```py\n{error.param}```",
-                              f'{ctx.command.signature}',
-                              constants.yellow)
-
-            print(ctx.command.help)  # YES
-            await ctx.send_help(ctx.command)
+        # if isinstance(error, commands.MissingRequiredArgument):
+        #
+        #     await ctx.send(
+        #         f"Missing required argument(s): {error.param}"
+        #     )
+        #
+        #     # print(ctx.command.short_doc)  # YES
+        #     await ctx.send_help(ctx.command)
 
         elif isinstance(error, commands.MissingPermissions):
             await ctx.send("You do not have permission to run this command.", file=discord.File("./media/image1.jpg"))
@@ -51,15 +46,11 @@ class Handler(commands.Cog):
             return
 
         else:
-            await error_embed(ctx,
-                              f"Oups! Uncaught error with !{ctx.command}",
-                              f"Severity: who knows?",
-                              f"```py\n{type(error).__name__}: {error}```",
-                              f'',
-                              constants.yellow)
             print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-
+            traceback_message = traceback.format_exc()
+            await ctx.send(traceback_message)
+            await ctx.send(str(error)[:1000])
 
 
 def setup(bot):

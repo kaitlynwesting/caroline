@@ -1,48 +1,10 @@
 # Hardcoded IDs
 bot_id = 785298572047417374
 kat_id = 669977303584866365
-enjoyer_id = 350093296049324032
-server_id = 777207888846389270
 
 # Server colours
-red = 0xED4245
-yellow = 0xFEE75C
-gold = 0xf1c40f
-green = 0x57F287
+trouble_red = 0xeb4034
 blurple = 0x5865F2
-
-# Bot early feature testers
-early_testers = [
-    350093296049324032,
-    622856015444049937,
-    434102368070795275
-]
-
-# Allowed filetypes
-allowed_filetypes = ['bmp',
-                     'jpg',
-                     'jpeg',
-                     'png',
-                     'svg',
-                     'tiff',
-                     'webp',
-                     'apng',
-                     'gif',
-                     'mkv',
-                     'mov',
-                     'mp4',
-                     'mpg',
-                     'webm',
-                     'psd']
-
-# Welcome words
-welcome_keywords = [', welcome',
-                    '. welcome',
-                    '! welcome',
-                    '> welcome',
-                    'hi welcome',
-                    'hey welcome',
-                    'greetings welcome']
 
 # Server roles - subscriptions
 announcements_role = 787092272570171392
