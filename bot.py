@@ -66,7 +66,7 @@ async def on_ready():
             name=settings.nowplaying)
     )
 
-    for extension in testing_extensions:
+    for extension in initial_extensions:
         try:
             print(str(extension))
             bot.load_extension(extension)
