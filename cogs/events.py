@@ -1,110 +1,223 @@
 import asyncio
 import discord
-from discord.ext import commands
+import traceback
+from discord.ext import commands, menus
 from datetime import datetime, timedelta
-from pymongo import MongoClient
-from utils import constants, helpers
+from utils import constants, decorators, helpers
 
-cluster = MongoClient(
-    "mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01."
-    "ilbju.mongodb.net:27017,buttercream-shard-00-02.ilbju.mongodb.net:27017/Discord?"
-    "ssl=true&replicaSet=atlas-65nepc-shard-0&authSource=admin&retryWrites=true&w=majority"
-)
 
-db = cluster["Discord"]
-collection = db["Seasons"]
+class EmbedPageSource(menus.ListPageSource):
+    def __init__(self, bot, entries, *args, **kwargs):
+        self.bot = bot
+        self.entries = entries
+        super(EmbedPageSource, self).__init__(entries, *args, **kwargs)
 
-season_result = collection.find_one({"_id": 1})
-season_number = int(season_result["season"])
+    async def format_page(self, menu, data):
+        description = ''
+        for entry in data:
+            server = self.bot.get_guild(constants.server_id)
+            member = server.get_member(entry[1])
+            description = f"{description}\n> **{entry[0]}**. {member.display_name} - {entry[2]}"
+
+        embed = discord.Embed.from_dict({'title': f'Seasonal Leaderboard - Season {data[0][-1]}',
+                                         'description': f'{description}',
+                                         'footer': {'text': f'Page {menu.current_page + 1} out of '
+                                                            f'{self.get_max_pages()}'},
+                                         'color': constants.blurple
+                                         })
+
+        return embed
 
 
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.season_number = bot.season_number
 
     @commands.guild_only()
     @commands.group(invoke_without_command=True)
-    async def votes(self, ctx, participant: discord.Member = None):
-        if participant is None:
-            participant = ctx.author
+    async def votes(self, ctx, member: discord.Member = None, season: int = None):
+        """
+        Check your event votes, or someone else's votes.
 
-        result_count = collection.count_documents({"_id": int(participant.id)})
+        :param ctx: commands.Context
+        :param member: discord.Member
+        :param season: int
+        :return:
+        """
 
-        if result_count == 0:
-            await ctx.send(f"I couldn't find {participant.display_name}'s profile. "
-                           "This is probably because they've never participated in any of our seasons, and "
-                           "so have received no votes!")
+        if member is None:
+            member = ctx.author
+
+        if member.bot:
+            return await ctx.send("I am a bot, what did you expect?")
+
+        if season is None:
+            season = self.season_number
+
+        votes_qty = (await(
+            await self.bot.db.execute("""SELECT votes FROM event_votes
+                                        WHERE user_id = (?) AND season_number = (?)""",
+                                      (member.id, season))).fetchone())[0]
+
+        if not votes_qty:
+            await ctx.send(f"{member.display_name} hasn't participated in Season {season} events yet. No points!")
             return
 
-        result = collection.find_one({"_id": int(participant.id)})
+        await ctx.send(f"For **Season {season}**, {member.display_name} has "
+                       f"collected {votes_qty} vote{helpers.plural(votes_qty)}.")
 
-        try:
-            print(result[f'season_{season_number}'])
-        except Exception as e:
-            await ctx.send(f"Looks like {participant.display_name} hasn't participated in the "
-                           f"current season so far. Perhaps it's time to change that? "
-                           f"<:blobcreep:865602113617920036>")
-            return
+    @votes.command(aliases=['top', 'rank'])
+    @commands.guild_only()
+    async def leaderboard(self, ctx, season: int = None):
+        """
+        Check the leaderboard of the current season.
 
-        await ctx.send(f"For **Season {season_number}**, {participant.display_name} has "
-                       f"collected {result[f'season_{season_number}']} "
-                       f"vote{helpers.plural(result[f'season_{season_number}'])}.")
+        :param ctx: commands.Context
+        :param season: int
+        :return:
+        """
+
+        if season is None:
+            season = self.season_number
+
+        ranking_info = await(
+            await self.bot.db.execute("""SELECT user_id, votes, season_number FROM event_votes
+                                        WHERE season_number = (?)
+                                        ORDER BY votes DESC""", (season,))).fetchall()
+
+        prev = None
+        rank = 0
+        incr = 1
+        positions = []
+
+        for user_id, value, season_number in ranking_info:
+            if value != prev:
+                rank += incr
+                incr = 1
+            else:
+                incr += 1
+            positions.append((rank, user_id, value, season))
+            prev = value
+
+        menu = menus.MenuPages(source=EmbedPageSource(self.bot, positions, per_page=5),
+                               timeout=60.0,
+                               clear_reactions_after=True)
+
+        await menu.start(ctx)
 
     @votes.command()
     @commands.guild_only()
-    @commands.check_any(commands.has_guild_permissions(manage_messages=True))
-    async def set(self, ctx, participant: discord.Member, votes_number: int):
-        result_count = collection.count_documents({"_id": int(participant.id)})
+    @decorators.mod_only()
+    async def set(self, ctx, member: discord.Member, season: int, new_votes: int):
+        """
+        Manually set a member's season event votes.
 
-        if result_count == 0:
-            await ctx.send(f"I couldn't find {participant.display_name}'s profile.")
-            return
+        :param ctx: commands.Context
+        :param member: discord.Member
+        :param season: int
+        :param new_votes: int
+        :return:
+        """
 
-        result = collection.find_one({"_id": int(participant.id)})
+        if member.bot:
+            return await ctx.send("I am a bot, what did you expect?")
 
-        await ctx.send(f"You are preparing to set {participant.display_name}'s votes number to **{votes_number}**, "
-                       f"erasing the former votes number of **{result[f'season_{season_number}']}**. Are you sure "
-                       f"you want to do this? Enter 'CONFIRM' to continue.")
+        old_votes = (await(
+            await self.bot.db.execute("""SELECT votes FROM event_votes
+                                         WHERE user_id = (?) AND season_number = (?)""",
+                                      (member.id, season))).fetchone())
 
-        def check(message) -> bool:
-            return message.author.id == ctx.author.id and message.channel.id == ctx.channel.id
+        if old_votes is None:
+            old_votes = 0
+        else:
+            old_votes = old_votes[0]
+
+        embed = discord.Embed.from_dict({'title': 'Confirmation',
+                                         'description': f'You are about to update the event vote count for '
+                                                        f'{member.display_name} in Season {season}.',
+                                         'fields': [
+                                             {'inline': True,
+                                              'name': 'New value',
+                                              'value': f'{new_votes}'},
+                                             {'inline': True,
+                                              'name': 'Old value',
+                                              'value': f'{old_votes}'}
+                                         ],
+                                         'footer': {'text': 'React with 👍 to this message within the next 60s '
+                                                            'to confirm.'},
+                                         'color': constants.blurple
+                                         })
+        await ctx.send(embed=embed)
+
+        def check(reaction, user):
+            return str(reaction.emoji) == '👍' and user == ctx.author
 
         try:
-            response = await self.bot.wait_for('message', timeout=30.0, check=check)
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
         except asyncio.TimeoutError:
-            await ctx.channel.send('Took too long.')
+            await ctx.send('Cancelled because of timeout.')
         else:
-            if response.content == 'CONFIRM':
-                await ctx.channel.send('👍')
-                collection.update_one(
-                    {"_id": participant.id},
-                    {"$set": {f"season_{season_number}": votes_number}},
-                    upsert=True
-                )
-            else:
-                await ctx.channel.send('Cancelled.')
+            # Upsert update votes
+            await self.bot.db.execute("""INSERT INTO event_votes
+                                        VALUES (?, ?, ?)
+                                        ON CONFLICT(user_id, season_number)
+                                        DO UPDATE SET votes = (?)""", (member.id, season, new_votes, new_votes,))
+
+            await self.bot.db.commit()
+
+            await ctx.send('Update successful.')
+
+    @leaderboard.error
+    async def on_error(self, ctx, error):
+        ctx.error_handled = True
+
+        # Safely unwrap the CommandInvokeError
+        if isinstance(error, commands.CommandInvokeError):
+            error = error.original
+
+        # Out of bounds
+        if isinstance(error, IndexError):
+            embed = discord.Embed.from_dict({'title': f'Oups! IndexError with !{ctx.command}',
+                                             'fields': [
+                                                 {'inline': True,
+                                                  'name': 'New value',
+                                                  'value': f'Make sure to pick a valid season number.'
+                                                           f'```py\n{type(error).__name__}: {error}```'}
+                                             ],
+                                             'footer': {'text': 'React with 👍 to this message within the next 60s '
+                                                                'to confirm.'},
+                                             'color': constants.blurple
+                                             })
+            await ctx.send(embed=embed)
+            var = traceback.format_exc()
+            await ctx.send(var[:2000])
+        else:
+            ctx.error_handled = False
 
 
 class EventVetting(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.vote_emoji = '⭐'
 
     @commands.Cog.listener('on_message')
     async def submission_vetting(self, message):
+        ctx = await self.bot.get_context(message)
 
         def role_to_id(role):
             return role.id
 
-        if message.guild is None:
+        if ctx.guild is None:
             return
 
-        if message.channel.id != constants.events:
+        if ctx.channel.id not in [constants.events, constants.testing]:
             return
 
-        if message.author == self.bot.user:
+        if ctx.author.bot:
             return
 
-        if '[BEFORE]' in message.content:
+        if '[BEFORE]' in ctx.message.content:
             return
 
         if (
@@ -128,140 +241,150 @@ class EventVetting(commands.Cog):
                 f"Hi, {message.author.mention}! This channel is for finished submissions only. "
                 f"If you have questions or would like feedback, ask in the <#{constants.lobby}>."
             )
-            await reminder.delete(delay=3)
-
+            await reminder.delete(delay=5.0)
             return
 
-        # If all other checks have passed, this indicates a genuine submission, and should be given a vote
-        await message.add_reaction("<:blobFingerGuns:833076453050023987>")
+        # If all other checks have passed, this indicates a genuine submission
+        await ctx.message.add_reaction(self.vote_emoji)
 
-        # It is time to document the votes
-        result_count = collection.count_documents({"_id": int(message.author.id)})
+        # Upsert member votes
+        await self.bot.db.execute("""INSERT INTO event_votes
+                                    VALUES (?, ?, ?)
+                                    ON CONFLICT(user_id, season_number)
+                                    DO UPDATE SET votes = votes + 1""",
+                                  (ctx.author.id, self.bot.season_number, 1,))
 
-        # If no such user has been found, create a new document for them
-        if result_count == 0:
-            post = {
-                f"_id": message.author.id,
-                f"season_{season_number}": 1,
-            }
+        await self.bot.db.commit()
 
-            collection.insert_one(post)
-            return
-
-        # If this user already exists, update the season field with +1 point
-        result = collection.find_one({"_id": message.author.id})
-        collection.update_one(
-            {"_id": message.author.id},
-            {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
-            upsert=True
-        )
-
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
+    @commands.Cog.listener('on_raw_reaction_add')
+    async def vote_add(self, payload):
 
         if payload.guild_id is None:
             return
 
-        context_channel = self.bot.get_channel(payload.channel_id)
-        context_message = await context_channel.fetch_message(payload.message_id)
+        channel = self.bot.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
         context_emoji = str(payload.emoji)
-        voting_emoji = "<:blobFingerGuns:833076453050023987>"
         voted_times = 0
+        ctx = await self.bot.get_context(message)
 
-        # Auto voting score updating is already done in the above method.
-        if payload.member == self.bot.user:
+        if payload.member.bot:
             return
 
-        if context_channel.id != constants.events:
+        if ctx.author.bot:
             return
 
-        if datetime.now() - context_message.created_at > timedelta(days=8):
+        if ctx.channel.id not in [constants.events, constants.testing]:
             return
 
-        if '[BEFORE]' in context_message.content:
+        if datetime.now() - ctx.message.created_at > timedelta(days=8):
             return
 
-        if context_emoji == voting_emoji:
-            async for message in context_channel.history(limit=25):
-                if 'Challenge Number' in message.content:
-                    async for submission in context_channel.history(after=message):
-                        # Looks at each reaction for each submission after event marker
-                        for reaction in submission.reactions:
-                            # Looks at each user for each reaction
-                            async for user in reaction.users():
+        if '[BEFORE]' in ctx.message.content:
+            return
 
-                                if user == payload.member and str(reaction) == voting_emoji:
+        if '[SOURCE]' in ctx.message.content:
+            return
 
-                                    voted_times += 1
+        if context_emoji != self.vote_emoji:
+            return
 
-                                    if voted_times > 1:
-                                        await context_message.remove_reaction(reaction, user)
-                                        reminder_message = \
-                                            await context_channel.send(f"**No voting more than once, "
-                                                                       f"{user.mention}!** If you wish to "
-                                                                       f"vote for a different person, remove your "
-                                                                       f"previous vote first.")
-                                        await reminder_message.delete(delay=3)
+        async for message in ctx.channel.history(limit=30):
+            if 'Challenge Number' in message.content:
 
-                                        result = collection.find_one({"_id": int(context_message.author.id)})
-                                        collection.update_one(
-                                            {"_id": int(context_message.author.id)},
-                                            {"$set": {f"season_{season_number}": int(
-                                                result[f"season_{season_number}"]) + 1}},
-                                            upsert=True
-                                        )
+                # Looks at each reaction for each submission after event marker
+                async for submission in ctx.channel.history(after=message):
 
-                                        return
+                    for reaction in submission.reactions:
 
-                                # So they didn't vote twice. Maybe they voted for themselves, though
-                                if user == payload.member and user == submission.author:
-                                    await context_message.remove_reaction(reaction, user)
-                                    reminder_message = \
-                                        await context_channel.send(f"**Shame, {user.mention}, you tried to vote "
-                                                                   f"for yourself!** Self voting is not allowed.")
-                                    await reminder_message.delete(delay=3)
+                        async for user in reaction.users():
 
-                                    result = collection.find_one({"_id": int(context_message.author.id)})
-                                    collection.update_one(
-                                        {"_id": int(context_message.author.id)},
-                                        {"$set": {
-                                            f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
-                                        upsert=True
-                                    )
+                            if user.bot:
+                                pass
 
+                            if user == payload.member and str(reaction) == self.vote_emoji:
+
+                                voted_times += 1
+
+                                if voted_times > 1:
+                                    await ctx.message.remove_reaction(reaction, user)
+                                    reminder_message = await ctx.channel.send(f"**No voting more than once, "
+                                                                              f"{user.mention}!** If you wish to "
+                                                                              f"vote for a different person, remove "
+                                                                              f"your previous vote first.")
+                                    await reminder_message.delete(delay=5.0)
                                     return
 
-                    result = collection.find_one({"_id": int(context_message.author.id)})
-                    collection.update_one(
-                        {"_id": int(context_message.author.id)},
-                        {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) + 1}},
-                        upsert=True
-                    )
-                    return
+                            # So they didn't vote twice. Maybe they voted for themselves, though
+                            if user == ctx.author and user == submission.author:
+                                await ctx.message.remove_reaction(reaction, user)
+                                reminder_message = await ctx.send(f"**Shame, {user.mention}, you tried to vote "
+                                                                  f"for yourself!** Self voting is not allowed.")
+                                await reminder_message.delete(delay=5.0)
 
-    @commands.Cog.listener()
-    async def on_raw_reaction_remove(self, payload):
-        context_channel = self.bot.get_channel(payload.channel_id)
-        context_message = await context_channel.fetch_message(payload.message_id)
+                                return
+
+                await self.bot.db.execute("""INSERT INTO event_votes
+                                            VALUES (?, ?, ?)
+                                            ON CONFLICT(user_id, season_number)
+                                            DO UPDATE SET votes = votes + 1""",
+                                          (ctx.author.id, self.bot.season_number, 1,))
+
+                await self.bot.db.commit()
+                return
+
+    @commands.Cog.listener('on_raw_reaction_remove')
+    async def vote_removal(self, payload):
+
+        if payload.guild_id is None:
+            return
+
+        channel = self.bot.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
         context_emoji = str(payload.emoji)
-        voting_emoji = "<:blobFingerGuns:833076453050023987>"
+        ctx = await self.bot.get_context(message)
 
-        if context_channel.id != constants.events:
+        if ctx.channel.id not in [constants.events, constants.testing]:
             return
 
-        if datetime.now() - context_message.created_at > timedelta(days=8):
+        if datetime.now() - ctx.message.created_at > timedelta(days=8):
             return
 
-        if context_emoji != voting_emoji:
+        if context_emoji != self.vote_emoji:
             return
 
-        result = collection.find_one({"_id": int(context_message.author.id)})
-        collection.update_one(
-            {"_id": int(context_message.author.id)},
-            {"$set": {f"season_{season_number}": int(result[f"season_{season_number}"]) - 1}},
-            upsert=True
-        )
+        await self.bot.db.execute("""UPDATE event_votes
+                                     SET votes = votes - 1
+                                     WHERE user_id = (?) AND season_number = (?)""",
+                                  (ctx.author.id, self.bot.season_number,))
+
+        await self.bot.db.commit()
         return
+
+    @commands.Cog.listener('on_raw_message_delete')
+    async def submission_deletion(self, payload):
+
+        if payload.guild_id is None:
+            return
+
+        if payload.cached_message is None:
+            return
+
+        if payload.cached_message.author.bot:
+            return
+
+        if not payload.cached_message.reactions:
+            return
+
+        for react in payload.cached_message.reactions:
+            if react.emoji == '⭐':
+                await self.bot.db.execute("""UPDATE event_votes
+                                             SET votes = votes - (?)
+                                             WHERE user_id = (?) AND season_number = (?)""",
+                                          (react.count, payload.cached_message.author.id, self.bot.season_number,))
+
+            await self.bot.db.commit()
+            return
 
 
 def setup(bot):
