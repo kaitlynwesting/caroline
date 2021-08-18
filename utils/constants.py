@@ -7,9 +7,18 @@ server_id = 777207888846389270
 # Server colours
 red = 0xED4245
 yellow = 0xFEE75C
-gold = 0xf1c40f
 green = 0x57F287
 blurple = 0x5865F2
+gold = 0xf1c40f
+silver = 0xe3e3e3
+bronze = 0xa46628
+
+medal_colours = {
+    4: gold,
+    3: gold,
+    2: silver,
+    1: bronze
+}
 
 # Bot early feature testers
 early_testers = [

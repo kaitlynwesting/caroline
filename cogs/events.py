@@ -181,8 +181,9 @@ class Events(commands.Cog):
             embed = discord.Embed.from_dict({'title': f'Oups! IndexError with !{ctx.command}',
                                              'fields': [
                                                  {'inline': True,
-                                                  'name': 'New value',
-                                                  'value': f'Make sure to pick a valid season number.'
+                                                  'name': 'Bad number',
+                                                  'value': f'Make sure to pick a valid season number. '
+                                                           f'The latest season available is {self.bot.season_number}'
                                                            f'```py\n{type(error).__name__}: {error}```'}
                                              ],
                                              'footer': {'text': 'React with 👍 to this message within the next 60s '

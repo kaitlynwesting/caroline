@@ -1,3 +1,4 @@
+import asyncio
 import discord
 import time
 from aiosqlite import OperationalError, IntegrityError
@@ -17,12 +18,20 @@ class MyMenu(menus.MenuPages):
 
 class EmbedPageSource(menus.ListPageSource):
     async def format_page(self, menu, data):
-        embed = discord.Embed(
-            title=data[0],
-            description=data[1]
-        )
-        embed.set_image(url=data[2])
-        embed.set_footer(text=f'Page {menu.current_page + 1} out of {self.get_max_pages()}')
+        # embed = discord.Embed(
+        #     title=data[0],
+        #     description=data[1]
+        # )
+        # embed.set_image(url=data[2])
+        # embed.set_footer(text=f'Page {menu.current_page + 1} out of {self.get_max_pages()}')
+
+        embed = discord.Embed.from_dict({'title': f'{data[0]}',
+                                         'description': f'{data[1]}',
+                                         'image': {'url': f'{data[2]}'},
+                                         'footer': {'text': f'Page {menu.current_page + 1} out of '
+                                                            f'{self.get_max_pages()}'},
+                                         'color': constants.medal_colours[data[-1]]
+                                         })
 
         return embed
 
@@ -128,11 +137,37 @@ class BadgesMeta(commands.Cog):
                                timeout=60.0,
                                clear_reactions_after=True)
 
+        embed = discord.Embed.from_dict({'title': f'A wild present appeared!',
+                                         'fields': [
+                                             {'inline': True,
+                                              'name': 'You\'ve received a present from Photoshop Discord!',
+                                              'value': f'The gift box, coated in grey matte paper and neatly '
+                                                       f'secured with blue ribbon, gave no indication of what '
+                                                       f'might reside inside. It glows faintly as you pick it up. \n'
+                                                       f'A huge blue bowtie knot adorns the lid of '
+                                                       f'the box, waiting to be unravelled.'}
+                                         ],
+                                         'thumbnail': {'url': 'https://media.discordapp.net/attachments/'
+                                                              '819766454035152896/877218700363706378/'
+                                                              'IREALLYSWEAR2.png?width=540&height=676'},
+                                         'footer': {'text': 'React with 🤏 to this message within the next 60s '
+                                                            'to pull the ribbon on the box.'},
+                                         'color': constants.blurple
+                                         })
+
         dms = await member.create_dm()
 
-        await dms.send("Congratulations!")
-        
-        await menu.start(ctx, channel=dms)
+        await dms.send(embed=embed)
+
+        def check(reaction, user):
+            return str(reaction.emoji) == '🤏' and user == ctx.author
+        try:
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+        except asyncio.TimeoutError:
+            await ctx.send('Well, you missed the present elves. Not to worry, though, you can still check presents '
+                           'with `!badges`.')
+        else:
+            await menu.start(ctx, channel=dms)
 
     @give.error
     async def on_error(self, ctx, error):
