@@ -2,7 +2,7 @@ import asyncio
 import discord
 from discord.ext import commands
 from discord.utils import get
-from utils import constants
+from cogs.utils import constants
 
 
 # COG FOR NEW ARRIVALS AND DEPARTS

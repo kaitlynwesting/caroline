@@ -51,7 +51,10 @@ welcome_keywords = [', welcome',
                     '> welcome',
                     'hi welcome',
                     'hey welcome',
-                    'greetings welcome']
+                    'greetings welcome',
+                    'big welcome',
+                    'warm welcome',
+                    'a welcome']
 
 # Server roles - subscriptions
 announcements_role = 787092272570171392

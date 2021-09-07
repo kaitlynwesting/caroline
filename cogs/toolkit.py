@@ -1,5 +1,5 @@
 from discord.ext import commands
-from utils import constants, embed_template
+from cogs.utils import constants, embed_template
 
 
 class Rules(commands.Cog):

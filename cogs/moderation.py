@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from moderation_tools import warn, animalise, unanimalise, mute, unmute, kick, ban, unban
-from utils import constants, embed_template
+from cogs.utils import constants, embed_template
 
 
 class Snipe(commands.Cog):

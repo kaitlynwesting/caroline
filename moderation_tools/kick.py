@@ -1,6 +1,5 @@
 import discord
-from utils import constants
-from utils import embed_template
+from cogs.utils import constants, embed_template
 
 
 # A file for kicking.

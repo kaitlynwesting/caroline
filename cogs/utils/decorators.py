@@ -1,5 +1,5 @@
 from discord.ext import commands
-from utils import constants
+from cogs.utils import constants
 
 
 def staff_only():

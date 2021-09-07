@@ -3,8 +3,8 @@ import sys
 import traceback
 
 from discord.ext import commands
-from utils import constants
-from utils.embed_template import error_embed
+from cogs.utils import constants
+from cogs.utils.embed_template import error_embed
 
 
 class Handler(commands.Cog):

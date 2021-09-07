@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
-from utils import constants
-import datetime
+from cogs.utils import constants
 
 
 class User(commands.Cog):

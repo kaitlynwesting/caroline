@@ -1,7 +1,7 @@
 from discord.ext import commands
 from discord import Embed
 from pymongo import MongoClient
-from utils import constants, helpers
+from cogs.utils import constants
 
 cluster = MongoClient(
     "mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01."
@@ -27,7 +27,7 @@ class Starboard(commands.Cog):
             return
 
         star_result = collection.find_one({"_id": 1})
-        star_min = int(star_result["value"])
+        star_min = 5
 
         for react in context_message.reactions:
             if react.emoji == '⭐' and react.count >= star_min:

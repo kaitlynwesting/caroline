@@ -1,6 +1,6 @@
 import asyncio
-from utils import constants, embed_template, time_converter
-from utils.constants import events
+from cogs.utils import constants, time_converter, embed_template
+
 
 # Temporary mute function.
 # If the muting period is not specified, the default is 7d.

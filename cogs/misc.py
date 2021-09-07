@@ -1,8 +1,7 @@
-import asyncio
 from discord.ext import commands
 from discord import Embed
 import discord
-from utils import constants
+from cogs.utils import constants
 
 
 class Misc(commands.Cog):

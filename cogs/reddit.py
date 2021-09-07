@@ -5,7 +5,7 @@ import pytz
 from datetime import datetime, timedelta
 from discord.ext import tasks, commands
 
-from utils import constants
+from cogs.utils import constants
 
 
 class RedditLoop(commands.Cog):

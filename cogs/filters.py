@@ -1,6 +1,6 @@
 from discord.ext import commands
 from moderation_tools import automute
-from utils import constants, filter_bypass
+from cogs.utils import constants, filter_bypass
 
 
 # A server advertisements filter.

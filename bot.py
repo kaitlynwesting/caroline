@@ -25,8 +25,6 @@ initial_extensions = (
 
 testing_extensions = (
     "cogs.badges",
-    "cogs.events",
-    "cogs.handler"
 )
 
 intents = discord.Intents(
@@ -66,7 +64,7 @@ async def on_ready():
             name=settings.nowplaying)
     )
 
-    for extension in initial_extensions:
+    for extension in testing_extensions:
         try:
             print(str(extension))
             bot.load_extension(extension)

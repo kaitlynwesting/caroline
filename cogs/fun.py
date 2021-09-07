@@ -5,7 +5,7 @@ from discord.ext import commands
 
 import requests
 import string
-from utils import constants
+from cogs.utils import constants
 
 
 # COG FOR GENERAL "FUN" COMMANDS

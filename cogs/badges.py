@@ -2,38 +2,23 @@ import asyncio
 import discord
 import time
 from aiosqlite import OperationalError, IntegrityError
-from datetime import datetime
 from discord.ext import commands, menus
-from utils import constants
-from utils.decorators import staff_only, mod_only
-from utils.embed_template import error_embed
+from cogs.utils import constants
+from cogs.utils.buttons import PaginationView
+from cogs.utils.decorators import staff_only, mod_only
+from cogs.utils.embed_template import error_embed
 
 
-class MyMenu(menus.MenuPages):
+async def get_embed_list(data_list):
 
-    @menus.button('🔢', position=menus.First(-1))
-    async def stop(self, payload):
-        await self.stop()
+    embed_list = [discord.Embed.from_dict({'title': f'{data[0]}',
+                                           'description': f'{data[1]}, {i + 1} out of {len(data_list)}',
+                                           'image': {'url': f'{data[2]}'},
+                                           'footer': {'text': f'{i + 1} out of {len(data_list)}'},
+                                           'color': constants.medal_colours[data[-1]],
+                                           }) for i, data in enumerate(data_list)]
 
-
-class EmbedPageSource(menus.ListPageSource):
-    async def format_page(self, menu, data):
-        # embed = discord.Embed(
-        #     title=data[0],
-        #     description=data[1]
-        # )
-        # embed.set_image(url=data[2])
-        # embed.set_footer(text=f'Page {menu.current_page + 1} out of {self.get_max_pages()}')
-
-        embed = discord.Embed.from_dict({'title': f'{data[0]}',
-                                         'description': f'{data[1]}',
-                                         'image': {'url': f'{data[2]}'},
-                                         'footer': {'text': f'Page {menu.current_page + 1} out of '
-                                                            f'{self.get_max_pages()}'},
-                                         'color': constants.medal_colours[data[-1]]
-                                         })
-
-        return embed
+    return embed_list
 
 
 class BadgesMeta(commands.Cog):
@@ -66,16 +51,12 @@ class BadgesMeta(commands.Cog):
 
         question_placeholders = ','.join(['?'] * len(id_rows))
 
-        data = await self.bot.db.execute(f"""SELECT * FROM badges_master
+        data_list = await self.bot.db.execute(f"""SELECT * FROM badges_master
                                             WHERE badge_id IN ({question_placeholders})""", id_rows, )
-        data = await data.fetchall()
-        print(data)
+        data_list = await data_list.fetchall()
 
-        menu = menus.MenuPages(source=EmbedPageSource(data, per_page=1),
-                               timeout=60.0,
-                               clear_reactions_after=True)
-
-        await menu.start(ctx)
+        embed_list = await get_embed_list(data_list)
+        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=ctx)
 
     @badge.command()
     @commands.guild_only()
@@ -91,11 +72,8 @@ class BadgesMeta(commands.Cog):
                                             ORDER BY position ASC""")
         rows = await rows.fetchall()
 
-        menu = menus.MenuPages(source=EmbedPageSource(rows, per_page=1),
-                               timeout=60.0,
-                               clear_reactions_after=True)
-
-        await menu.start(ctx)
+        embed_list = await get_embed_list(rows)
+        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=ctx)
 
     @badge.command(aliases=["award, bestow", "giveth"])
     @commands.guild_only()
@@ -119,7 +97,9 @@ class BadgesMeta(commands.Cog):
             await self.bot.db.execute("""SELECT * FROM badges_users 
                                         WHERE user_id = (?) AND badge_id = (?)""", (member.id, badge_id))).fetchall()
 
+        # If the member already has this badge
         if rows:
+            await ctx.send("Member already has this badge.")
             return
 
         await self.bot.db.execute("""INSERT INTO badges_users (user_id, badge_id, date_earned)
@@ -133,10 +113,6 @@ class BadgesMeta(commands.Cog):
 
         await self.bot.db.commit()
 
-        menu = menus.MenuPages(source=EmbedPageSource(rows, per_page=1),
-                               timeout=60.0,
-                               clear_reactions_after=True)
-
         embed = discord.Embed.from_dict({'title': f'A wild present appeared!',
                                          'fields': [
                                              {'inline': True,
@@ -144,7 +120,7 @@ class BadgesMeta(commands.Cog):
                                               'value': f'The gift box, coated in grey matte paper and neatly '
                                                        f'secured with blue ribbon, gave no indication of what '
                                                        f'might reside inside. It glows faintly as you pick it up. \n'
-                                                       f'A huge blue bowtie knot adorns the lid of '
+                                                       f'A huge red bowtie knot adorns the lid of '
                                                        f'the box, waiting to be unravelled.'}
                                          ],
                                          'thumbnail': {'url': 'https://media.discordapp.net/attachments/'
@@ -161,13 +137,16 @@ class BadgesMeta(commands.Cog):
 
         def check(reaction, user):
             return str(reaction.emoji) == '🤏' and user == ctx.author
+
         try:
             reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
         except asyncio.TimeoutError:
-            await ctx.send('Well, you missed the present elves. Not to worry, though, you can still check presents '
+            await dms.send('Well, you missed the present elves. Not to worry, though, you can still check presents '
                            'with `!badges`.')
         else:
-            await menu.start(ctx, channel=dms)
+            # await menu.start(ctx, channel=dms)
+            embed_list = await get_embed_list(rows)
+            await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=dms)
 
     @give.error
     async def on_error(self, ctx, error):
@@ -224,8 +203,8 @@ class BadgesFilters(commands.Cog):
     @commands.Cog.listener('on_message')
     async def messages_sent(self, message):
 
-        if message.author.id not in constants.early_testers:
-            return
+        # if message.author.id not in constants.early_testers:
+        #     return
 
         if message.author.bot:
             return
@@ -257,8 +236,8 @@ class BadgesFilters(commands.Cog):
     @commands.Cog.listener('on_message')
     async def artworks_sent(self, message):
 
-        if message.author.id not in constants.early_testers:
-            return
+        # if message.author.id not in constants.early_testers:
+        #     return
 
         if message.author.bot:
             return
@@ -301,8 +280,8 @@ class BadgesFilters(commands.Cog):
     @commands.Cog.listener('on_message')
     async def welcomes_sent(self, message):
 
-        if message.author.id not in constants.early_testers:
-            return
+        # if message.author.id not in constants.early_testers:
+        #     return
 
         if message.author.bot:
             return
@@ -310,7 +289,7 @@ class BadgesFilters(commands.Cog):
         if message.guild is None:
             return
 
-        if message.channel.id not in [constants.testing, constants.introduce_yourself, constants.lobby]:
+        if message.channel.id not in [constants.introduce_yourself, constants.lobby]:
             return
 
         content = message.content.lower()

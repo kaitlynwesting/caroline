@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from discord.ext import commands
-from utils import constants
-from utils.decorators import staff_only
+from cogs.utils import constants
+from cogs.utils.decorators import staff_only
 
 from pymongo import MongoClient
 
