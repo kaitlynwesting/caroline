@@ -6,6 +6,7 @@
 dusty_archive
 Dockerfile
 .devcontainer
+identifier.sqlite
 
 # Caches
 __pycache__/

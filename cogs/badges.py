@@ -10,9 +10,8 @@ from cogs.utils.embed_template import error_embed
 
 
 async def get_embed_list(data_list):
-
     embed_list = [discord.Embed.from_dict({'title': f'{data[0]}',
-                                           'description': f'{data[1]}, {i + 1} out of {len(data_list)}',
+                                           'description': f'{data[1]}',
                                            'image': {'url': f'{data[2]}'},
                                            'footer': {'text': f'{i + 1} out of {len(data_list)}'},
                                            'color': constants.medal_colours[data[-1]],
@@ -78,13 +77,15 @@ class BadgesMeta(commands.Cog):
     @badge.command(aliases=["award, bestow", "giveth"])
     @commands.guild_only()
     @mod_only()
-    async def give(self, ctx, badge_id: int, member: discord.Member = None):
+    async def give(self, ctx, badge_id: int, member: discord.Member = None, give_mode=None):
         """
         Manually give a badge to yourself, or to someone else.
+        Unless you know what you're doing, do not pass an argument to the give_mode parameter!
 
         :param ctx: commands.Context
         :param badge_id: int
         :param member: discord.Member
+        :param give_mode: Any
         :return:
         """
         if member is None:
@@ -97,9 +98,9 @@ class BadgesMeta(commands.Cog):
             await self.bot.db.execute("""SELECT * FROM badges_users 
                                         WHERE user_id = (?) AND badge_id = (?)""", (member.id, badge_id))).fetchall()
 
-        # If the member already has this badge
-        if rows:
-            await ctx.send("Member already has this badge.")
+        if rows != [] and give_mode is None:
+            return await ctx.send(f"{member.display_name} already has this badge.")
+        elif rows:
             return
 
         await self.bot.db.execute("""INSERT INTO badges_users (user_id, badge_id, date_earned)
@@ -136,17 +137,17 @@ class BadgesMeta(commands.Cog):
         await dms.send(embed=embed)
 
         def check(reaction, user):
-            return str(reaction.emoji) == '🤏' and user == ctx.author
+            return str(reaction.emoji) == '🤏'
 
         try:
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
         except asyncio.TimeoutError:
             await dms.send('Well, you missed the present elves. Not to worry, though, you can still check presents '
                            'with `!badges`.')
-        else:
-            # await menu.start(ctx, channel=dms)
-            embed_list = await get_embed_list(rows)
-            await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=dms)
+            return
+
+        embed_list = await get_embed_list(rows)
+        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=dms)
 
     @give.error
     async def on_error(self, ctx, error):
@@ -228,7 +229,7 @@ class BadgesFilters(commands.Cog):
         for count, row in enumerate(series_list):
             if int(messages_sent_qty) >= int(row[6]):
                 ctx = await self.bot.get_context(message)
-                await BadgesMeta.give(self, ctx, int(row[4]), message.author)
+                await BadgesMeta.give(self, ctx, int(row[4]), message.author, 0)
                 # row[6] and row[4] are the thresholds and the ids respectively
 
         await self.bot.db.commit()
@@ -275,7 +276,7 @@ class BadgesFilters(commands.Cog):
         for count, row in enumerate(series_list):
             if artworks_sent_qty >= row[6]:
                 ctx = await self.bot.get_context(message)
-                await BadgesMeta.give(self, ctx, int(row[4]), message.author)
+                await BadgesMeta.give(self, ctx, int(row[4]), message.author, 0)
 
     @commands.Cog.listener('on_message')
     async def welcomes_sent(self, message):
@@ -320,7 +321,7 @@ class BadgesFilters(commands.Cog):
         for count, row in enumerate(series_list):
             if welcomes_sent_qty >= row[6]:
                 ctx = await self.bot.get_context(message)
-                await BadgesMeta.give(self, ctx, int(row[4]), message.author)
+                await BadgesMeta.give(self, ctx, int(row[4]), message.author, 0)
 
     @commands.Cog.listener('on_member_remove')
     async def delete_leaves(self, member):

@@ -3,15 +3,6 @@ from discord import Embed
 from pymongo import MongoClient
 from cogs.utils import constants
 
-cluster = MongoClient(
-    "mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01."
-    "ilbju.mongodb.net:27017,buttercream-shard-00-02.ilbju.mongodb.net:27017/Discord?"
-    "ssl=true&replicaSet=atlas-65nepc-shard-0&authSource=admin&retryWrites=true&w=majority"
-)
-
-db = cluster["Discord"]
-collection = db["Stars"]
-
 
 class Starboard(commands.Cog):
     def __init__(self, bot):

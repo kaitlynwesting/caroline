@@ -50,25 +50,6 @@ class Welcome(commands.Cog):
                 print(f"Tried to DM {member.name} a welcome message, but their DMs were disabled. Aborting.")
                 return
 
-            await asyncio.sleep(180)
-
-            user_message = (
-                f"**How very silly of me!** \n\n"
-                f"I was instructed to tell you this: \n"
-                f"• If you'd like to stay tuned on important updates and features from the Photoshop server, "
-                f"you can subscribe to announcements by doing `!sub announcements` in <#{constants.bot_commands}>. \n"
-                f"• If you'd like to get notified each week for our new weekly events, you can subscribe, similarly, "
-                f"by doing `!sub events` in <#{constants.bot_commands}>. (The events are fun, I promise!) \n\n"
-                f"Okay, that's all, for real this time."
-            )
-
-            embed = discord.Embed(
-                title=f'I forgot to tell you something!',
-                color=constants.blurple,
-                description=' '.join(user_message)
-            )
-
-            embed.set_thumbnail(url="https://i.pinimg.com/originals/e4/43/4c/e4434c1d99dd02a12daef6fcf05be9d9.gif")
 
 class Joins(commands.Cog):
 

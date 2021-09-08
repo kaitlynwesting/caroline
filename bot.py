@@ -8,18 +8,19 @@ import settings
 
 initial_extensions = (
     "cogs.arrivals",
+    "cogs.badges",
     "cogs.events",
     "cogs.filters",
     "cogs.fun",
     "cogs.jail",
     "cogs.misc",
     "cogs.moderation",
+    "cogs.rtd",
     "cogs.reddit",
     "cogs.starboard",
-    "cogs.subscription",
     "cogs.tags",
     "cogs.user",
-    "cogs.rules",
+    "cogs.toolkit",
     "cogs.handler",
 )
 
@@ -64,7 +65,7 @@ async def on_ready():
             name=settings.nowplaying)
     )
 
-    for extension in testing_extensions:
+    for extension in initial_extensions:
         try:
             print(str(extension))
             bot.load_extension(extension)

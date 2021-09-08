@@ -39,5 +39,62 @@ class Rules(commands.Cog):
             ctx.error_handled = False
 
 
+class Subscription(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.guild_only()
+    @commands.command(aliases=["sub"])
+    async def subscribe(self, ctx, subscription: str = None):
+        """
+        A commands for adding subscription role pings.
+
+        :param ctx:
+        :param subscription: str
+        :return:
+        """
+        subscription_mapping = {'announcements': [constants.announcements_role],
+                                'events': [constants.weekly_events_role]}
+
+        if subscription is None:
+            await ctx.send("What do you want to subscribe to? ")
+
+        subscription_role = ctx.guild.get_role(subscription_mapping[subscription])
+
+        if subscription_role in ctx.author.roles:
+            return await ctx.send("You are already subscribed.")
+
+        await ctx.author.add_roles(subscription_role)
+        await ctx.send(f"{ctx.author.display_name}, you've joined our {subscription} subscription. Hurrah! \n"
+                       f"You're able to unsubscribe at any time with `!unsubscribe`.")
+
+    @commands.guild_only()
+    @commands.command(aliases=["unsub"])
+    async def unsubscribe(self, ctx, subscription: str = None):
+        """
+        A command to unsubscribe from a role ping.
+
+        :param ctx:
+        :param subscription: str
+        :return:
+        """
+        subscription_mapping = {'announcements': [constants.announcements_role],
+                                'events': [constants.weekly_events_role]}
+
+        if subscription is None:
+            await ctx.send("What do you want to unsubscribe from? ")
+
+        subscription_role = ctx.guild.get_role(subscription_mapping[subscription])
+
+        if subscription_role in ctx.author.roles:
+            return await ctx.send("You are already subscribed.")
+
+        await ctx.author.add_roles(subscription_role)
+        await ctx.send(f"{ctx.author.display_name}, you've joined our {subscription} subscription. Hurrah! \n"
+                       f"You're able to unsubscribe at any time with `!unsubscribe`.")
+
+
 def setup(bot):
     bot.add_cog(Rules(bot))
+    bot.add_cog(Subscription(bot))
