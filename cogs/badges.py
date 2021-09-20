@@ -13,7 +13,7 @@ async def get_embed_list(data_list):
     embed_list = [discord.Embed.from_dict({'title': f'{data[0]}',
                                            'description': f'{data[1]}',
                                            'image': {'url': f'{data[2]}'},
-                                           'footer': {'text': f'{i + 1} out of {len(data_list)}'},
+                                           'footer': {'text': f'Badge {i + 1} out of {len(data_list)}'},
                                            'color': constants.medal_colours[data[-1]],
                                            }) for i, data in enumerate(data_list)]
 
@@ -55,7 +55,7 @@ class BadgesMeta(commands.Cog):
         data_list = await data_list.fetchall()
 
         embed_list = await get_embed_list(data_list)
-        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=ctx)
+        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=ctx, notification_context=ctx)
 
     @badge.command()
     @commands.guild_only()
@@ -72,7 +72,7 @@ class BadgesMeta(commands.Cog):
         rows = await rows.fetchall()
 
         embed_list = await get_embed_list(rows)
-        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=ctx)
+        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=ctx, notification_context=ctx)
 
     @badge.command(aliases=["award, bestow", "giveth"])
     @commands.guild_only()
@@ -80,7 +80,7 @@ class BadgesMeta(commands.Cog):
     async def give(self, ctx, badge_id: int, member: discord.Member = None, give_mode=None):
         """
         Manually give a badge to yourself, or to someone else.
-        Unless you know what you're doing, do not pass an argument to the give_mode parameter!
+        Do not pass an argument to the give_mode parameter!
 
         :param ctx: commands.Context
         :param badge_id: int
@@ -147,7 +147,58 @@ class BadgesMeta(commands.Cog):
             return
 
         embed_list = await get_embed_list(rows)
-        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=dms)
+        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=ctx, notification_context=dms)
+
+    @badge.command(aliases=["gb", "massgive", "mg"])
+    @commands.guild_only()
+    @mod_only()
+    async def givebatch(self, ctx, member: discord.Member, *, badge_ids: str):
+        """
+        Manually give a badge to yourself, or to someone else.
+        Do not pass an argument to the give_mode parameter!
+
+        :param ctx: commands.Context
+        :param member: discord.Member
+        :param badge_ids: str
+        :return:
+        """
+        if member.bot:
+            return
+
+        badge_ids = badge_ids.split()
+        data_list = []
+
+        for badge_id in badge_ids:
+            data_item = (member.id, badge_id, time.time())
+            data_list.append(data_item)
+
+        await self.bot.db.executemany("""INSERT INTO badges_users (user_id, badge_id, date_earned)
+                                        VALUES (?, ?, ?)
+                                        ON CONFLICT(user_id, badge_id)
+                                        DO NOTHING""", data_list)
+        #
+        # rows = await(
+        #     await self.bot.db.execute("""SELECT * FROM badges_master
+        #                                 WHERE badge_id = (?)""", (badge_id,))).fetchall()
+
+        # await self.bot.db.commit()
+        #
+        # dms = await member.create_dm()
+        #
+        # await dms.send(embed=embed)
+        #
+        # def check(reaction, user):
+        #     return str(reaction.emoji) == '🤏'
+        #
+        # try:
+        #     await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+        # except asyncio.TimeoutError:
+        #     await dms.send('Well, you missed the present elves. Not to worry, though, you can still check presents '
+        #                    'with `!badges`.')
+        #     return
+        #
+        # embed_list = await get_embed_list(rows)
+        # await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=dms)
 
     @give.error
     async def on_error(self, ctx, error):
