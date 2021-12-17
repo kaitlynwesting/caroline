@@ -8,7 +8,6 @@ class Rules(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # TOGGLE RULES FOR DUMMIES
     @commands.command(aliases=["rule"])
     async def rules(
             self,

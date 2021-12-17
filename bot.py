@@ -25,7 +25,7 @@ initial_extensions = (
 )
 
 testing_extensions = (
-    "cogs.toolkit",
+    "cogs.misc",
 )
 
 intents = discord.Intents(
@@ -46,7 +46,7 @@ print(f"discord.py, version {discord.__version__}")
 
 @bot.event
 async def on_connect():
-    bot.db = await aiosqlite.connect('sql/guild.db')
+    bot.db = await aiosqlite.connect('data/guild.db')
     bot.season_number = int((await(
         await bot.db.execute("""SELECT value FROM config
                                 WHERE name = (?)""", ('season_number',))).fetchone())[0])

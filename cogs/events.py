@@ -6,6 +6,17 @@ from datetime import datetime, timedelta
 from cogs.utils import constants, decorators, helpers
 
 
+async def get_embed_list(data_list):
+    embed_list = [discord.Embed.from_dict({'title': f'Seasonal Leaderboard - Season {data[0][-1]}',
+                                           'description': f'{description}',
+                                           'footer': {'text': f'Page {menu.current_page + 1} out of '
+                                                              f'{self.get_max_pages()}'},
+                                           'color': constants.blurple
+                                           }) for i, data in enumerate(data_list)]
+
+    return embed_list
+
+
 class EmbedPageSource(menus.ListPageSource):
     def __init__(self, bot, entries, *args, **kwargs):
         self.bot = bot
@@ -89,7 +100,7 @@ class Events(commands.Cog):
         prev = None
         rank = 0
         incr = 1
-        positions = []
+        positions_data = []
 
         for user_id, value, season_number in ranking_info:
             if value != prev:
@@ -97,14 +108,11 @@ class Events(commands.Cog):
                 incr = 1
             else:
                 incr += 1
-            positions.append((rank, user_id, value, season))
+            positions_data.append((rank, user_id, value, season))
             prev = value
 
-        menu = menus.MenuPages(source=EmbedPageSource(self.bot, positions, per_page=5),
-                               timeout=60.0,
-                               clear_reactions_after=True)
+        embed_list = await get_embed_list(positions_data)
 
-        await menu.start(ctx)
 
     @votes.command()
     @commands.guild_only()

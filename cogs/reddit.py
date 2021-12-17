@@ -19,7 +19,7 @@ class RedditLoop(commands.Cog):
 
         channel = self.bot.get_channel(constants.reddit)
 
-        async for message in channel.history(limit=2):
+        async for message in channel.history(limit=1):
             message_time = message.created_at
             time_now = datetime.now(pytz.utc)
             time_difference = time_now - message_time

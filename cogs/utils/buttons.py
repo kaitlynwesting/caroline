@@ -10,7 +10,6 @@ class PaginationView(discord.ui.View):
         *,
         ctx: commands.Context,
     ):
-
         super().__init__(timeout=60.0)
         self.ctx: commands.Context = ctx
         self.current = 0
