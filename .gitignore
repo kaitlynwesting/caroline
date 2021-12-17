@@ -1,11 +1,14 @@
 *.code-workspace
 
-#Temp
+# Caroline Project
+.env
 .code-workspace
 .vscode
-dusty_archive
-Dockerfile
+.idea
 .devcontainer
+data
+
+Dockerfile
 identifier.sqlite
 
 # Caches
