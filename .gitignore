@@ -7,6 +7,7 @@
 .idea
 .devcontainer
 data
+wip
 
 Dockerfile
 identifier.sqlite
