@@ -1,67 +1,9 @@
 import discord
 from discord.ext import commands
-from moderation_tools import warn, animalise, unanimalise, mute, unmute, kick, ban, unban
 from cogs.utils import constants, embed_template
 
 
-class Snipe(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-        self.bot.snipes = {}
-
-    @commands.Cog.listener()
-    async def on_message_delete(self, message):
-        self.bot.snipes[message.channel.id] = message
-
-    @commands.command(aliases=["deleted"])
-    @commands.has_permissions(kick_members=True)
-    async def snipe(self,
-                    ctx,
-                    *,
-                    channel: discord.TextChannel = None
-                    ):
-
-        channel = ctx.channel if channel is None else channel
-
-        try:
-            message = self.bot.snipes[channel.id]
-        except KeyError:
-            return await ctx.send(f"Nothing to snipe from <#{channel.id}> since most recent deployment.")
-
-        if not message.attachments:  # if there are no attachments
-
-            await embed_template.server_embed_full(
-                ctx.channel,
-                f"{message.author.avatar_url}",
-                f"Message author: {message.author}",
-                f'',
-                f"Last message deleted from: #{message.channel}:",
-                f"{message.content}",
-                f"",
-                f"Deleted message was sent",
-                message.created_at,
-                constants.blurple,
-            )
-        else:
-            attachments = message.attachments[0]
-
-            await embed_template.server_embed_full(
-                ctx.channel,
-                f"{message.author.avatar_url}",
-                f"Message author: {message.author}",
-                f'',
-                f"Last message deleted from: #{message.channel}:",
-                f"{message.content}\n\n**Urls of attachments found:**\n{attachments.url}",
-                f"{attachments.url}",
-                f"Deleted message was sent",
-                message.created_at,
-                constants.blurple,
-            )
-
-
 class Cleaner(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
@@ -70,8 +12,10 @@ class Cleaner(commands.Cog):
             await ctx.send(f"Invalid amount.")
             return False
         elif limit > standard_limit:
-            await ctx.send(f"Can't do that. Maximum limit set for this mode is {standard_limit}.\n"
-                           f"But check `!help purge` or its subcommands if you need.")
+            await ctx.send(
+                f"Can't do that. Maximum limit set for this mode is {standard_limit}.\n"
+                f"But check `!help purge` or its subcommands if you need."
+            )
             return False
         else:
             return True
@@ -94,7 +38,9 @@ class Cleaner(commands.Cog):
         return
 
     @commands.guild_only()
-    @commands.group(invoke_without_command=True, aliases=["clean", "scrub", "delete", "deletus"])
+    @commands.group(
+        invoke_without_command=True, aliases=["clean", "scrub", "delete", "deletus"]
+    )
     @commands.has_permissions(kick_members=True)
     async def purge(self, ctx, limit: int = 2):
         """
@@ -110,30 +56,35 @@ class Cleaner(commands.Cog):
             return
 
         try:
-            deleted_amount = await ctx.channel.purge(limit=limit+1)
-            notification = await ctx.channel.send(f'👌 Deleted {len(deleted_amount)} message(s).')
+            deleted_amount = await ctx.channel.purge(limit=limit + 1)
+            notification = await ctx.channel.send(
+                f"👌 Deleted {len(deleted_amount)} message(s)."
+            )
             await notification.delete(delay=5)
         except Exception as e:
-            notification = await ctx.channel.send(f'👌 Deleted messages. Caught an exception - {e} - for you.')
+            notification = await ctx.channel.send(
+                f"👌 Deleted messages. Caught an exception - {e} - for you."
+            )
             await notification.delete(delay=5)
 
-    @commands.dm_only()
-    @purge.command(invoke_without_command=True, aliases=["clean", "scrub", "delete", "deletus"])
+    @purge.command(
+        invoke_without_command=True, aliases=["clean", "scrub", "delete", "deletus"]
+    )
     @commands.has_permissions(kick_members=True)
     async def user(self, ctx, purged_user: discord.User, limit: int = None):
         """
-                Purges messages from a specific user.
-                Note: limit refers to HOW MANY messages the bot should scan. It does not refer to how many messages to delete
-                from a person.
-                Note: if target_member is not specified, the bot will delete messages from a channel regardless of the author.
-                Example: !purge 100 669977303584866365 # Scans last 100 messages in a channel, and delete any messages from
-                user with ID 669977303584866365
+        Purges messages from a specific user.
+        Note: limit refers to HOW MANY messages the bot should scan. It does not refer to how many messages to delete
+        from a person.
+        Note: if target_member is not specified, the bot will delete messages from a channel regardless of the author.
+        Example: !purge 100 669977303584866365 # Scans last 100 messages in a channel, and delete any messages from
+        user with ID 669977303584866365
 
-                :param ctx:
-                :param purged_user: discord.Member
-                :param limit: int
-                :return:
-                """
+        :param ctx:
+        :param purged_user: discord.Member
+        :param limit: int
+        :return:
+        """
 
         if await self.purge_limit(ctx, limit, standard_limit=50) is False:
             return
@@ -142,106 +93,51 @@ class Cleaner(commands.Cog):
             return m.author.id == purged_user.id
 
         try:
-            deleted_amount = await ctx.channel.purge(limit=limit+1, check=checker)
-            notification = await ctx.channel.send(f'👌 Deleted {len(deleted_amount)} message(s).')
+            deleted_amount = await ctx.channel.purge(limit=limit + 1, check=checker)
+            notification = await ctx.channel.send(
+                f"👌 Deleted {len(deleted_amount)} message(s)."
+            )
             await notification.delete(delay=5)
         except Exception as e:
-            notification = await ctx.channel.send(f'👌 Deleted messages. Caught an exception - {e} - for you.')
+            notification = await ctx.channel.send(
+                f"👌 Deleted messages. Caught an exception - {e} - for you."
+            )
             await notification.delete(delay=5)
 
 
 class Moderation(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.guild_only()
-    @commands.command(aliases=["animalize", "anim", "forcenick", "fnick", "randimal", "jail", "imprison"])
-    @commands.has_permissions(kick_members=True)
-    async def animalise(
-            self,
-            ctx,
-            infraction_member: discord.Member,
-            infraction_time: str = '1d',
-            *,
-            infraction_reason: str = 'Your nickname was simply too terrible.'
-    ):
-        """
-        Forcefully nicknames a member and prevents them from changing it for a period of time.
-        Note: time defaults to 1 day if not specified.
-        Example: !animalise 678576419596402691 10m Your name is too inappropriate
-
-        :param ctx:
-        :param infraction_member:
-        :param infraction_time:
-        :param infraction_reason: str
-        :return:
-        """
-
-        await animalise.animalise(
-            ctx,
-            infraction_member,
-            infraction_time,
-            infraction_reason,
-        )
-
-    @commands.guild_only()
-    @commands.command(aliases=["unanimalize", "unanim", "unjail", "release"])
-    @commands.has_permissions(kick_members=True)
-    async def unanimalise(
-            self,
-            ctx,
-            pardoned_member: discord.Member,
-    ):
-        """
-        Releases a member from nickname jail.
-        Example: !unanimalise 678576419596402691
-
-        :param ctx:
-        :param pardoned_member: discord.Member
-        :return:
-        """
-
-        await unanimalise.unanimalise(
-            ctx,
-            pardoned_member
-        )
 
     @commands.guild_only()
     @commands.command(aliases=["w"])
     @commands.has_permissions(kick_members=True)
     async def warn(
-            self,
-            ctx,
-            infraction_member: discord.Member,
-            *,
-            infraction_reason: str = None
+            self, ctx, infraction_member: discord.Member, *, infraction_reason: str = None
     ):
         """
-            Distributes a warning to a member.
+        Warns a member.
 
-            :param ctx: Context
-            :param infraction_member: The member receiving the infraction. Discord object or ID
-            :param infraction_reason: The infraction description and reason
-            :return: None
+        :param ctx: Context
+        :param infraction_member: The member receiving the infraction. Discord object or ID
+        :param infraction_reason: The infraction description and reason
+        :return: None
         """
 
-        await warn.warn(
-            ctx,
-            infraction_member,
-            infraction_reason
-        )
+        await warn.warn(ctx, infraction_member, infraction_reason)
 
     @commands.guild_only()
     @commands.command(aliases=["m"])
-    @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
+    @commands.check_any(
+        commands.has_role(constants.helper), commands.has_permissions(kick_members=True)
+    )
     async def mute(
             self,
             ctx,
             infraction_member: discord.Member,
             infraction_time="7d",
             *,
-            infraction_reason="Being an idiot."
+            infraction_reason="Being an idiot.",
     ):
         """
         Mutes a member for a specified amount of time.
@@ -263,15 +159,14 @@ class Moderation(commands.Cog):
             infraction_time = "7d"
 
         await mute.mute(
-            ctx,
-            infraction_member,
-            infraction_time.lower(),
-            infraction_reason
+            ctx, infraction_member, infraction_time.lower(), infraction_reason
         )
 
     @commands.guild_only()
     @commands.command(aliases=["um"])
-    @commands.check_any(commands.has_role(constants.helper), commands.has_permissions(kick_members=True))
+    @commands.check_any(
+        commands.has_role(constants.helper), commands.has_permissions(kick_members=True)
+    )
     async def unmute(
             self,
             ctx,
@@ -286,36 +181,27 @@ class Moderation(commands.Cog):
         :return:
         """
 
-        await unmute.unmute(
-            ctx,
-            pardoned_member
-        )
+        await unmute.unmute(ctx, pardoned_member)
 
+    @commands.command()
     @commands.guild_only()
-    @commands.command(aliases=["k"])
     @commands.has_permissions(kick_members=True)
     async def kick(
             self,
             ctx,
-            infraction_member: discord.Member,
+            member: discord.Member,
             *,
-            infraction_reason="Your asshattery is not welcome here. Bye."
+            reason=None,
     ):
         """
-        Kicks a member in the server.
-        Example: !kick Kat Too cool
-
-        :param ctx:
-        :param infraction_member: discord.Member
-        :param infraction_reason: str
-        :return:
+        Kicks a member from the server.
         """
 
-        await kick.kick(
-            ctx,
-            infraction_member,
-            infraction_reason
-        )
+        if reason is None:
+            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+
+        await ctx.guild.kick(member, reason=reason)
+        await ctx.send("\N{OK HAND SIGN}")
 
     @commands.guild_only()
     @commands.command(aliases=["b"])
@@ -323,25 +209,56 @@ class Moderation(commands.Cog):
     async def ban(
             self,
             ctx,
-            infraction_member: discord.Member,
+            member: discord.User,
             *,
-            infraction_reason="Your asshattery is not welcome here. Bye."
+            delete_message_days: int = 1,
+            reason=None,
     ):
         """
-        Bans a member in the server.
-        Note: by default, this will also delete all of their messages.
-        Example: !ban Kat Too cool
+        Bans a member from the server.
 
-        :param ctx:
-        :param infraction_member: discord.Member
-        :param infraction_reason: str
-        :return:
+        You can also ban from ID to ban regardless whether they're
+        in the server or not.
         """
-        await ban.ban(
-            ctx,
-            infraction_member,
-            infraction_reason
+
+        if reason is None:
+            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+
+        await ctx.guild.ban(member, delete_message_days, reason=reason)
+        await ctx.send('\N{OK HAND SIGN}')
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_permissions(ban_members=True)
+    async def multiban(self, ctx, members: commands.Greedy[discord.User], *, reason=None):
+        """Bans multiple members from the server.
+        This only works through banning via ID.
+        In order for this to work, the bot must have Ban Member permissions.
+        To use this command you must have Ban Members permission.
+        """
+
+        if reason is None:
+            reason = f"Action done by {ctx.author} (ID: {ctx.author.id})"
+
+        total_members = len(members)
+        if total_members == 0:
+            return await ctx.send("Missing members to ban.")
+
+        confirm = await ctx.prompt(
+            f"This will ban **{(total_members):member}**. Are you sure?",
+            reacquire=False,
         )
+        if not confirm:
+            return await ctx.send("Aborting.")
+
+        failed = 0
+        for member in members:
+            try:
+                await ctx.guild.ban(member, reason=reason)
+            except discord.HTTPException:
+                failed += 1
+
+        await ctx.send(f"Banned {total_members - failed}/{total_members} members.")
 
     @commands.guild_only()
     @commands.command(aliases=["ub"])
@@ -360,10 +277,7 @@ class Moderation(commands.Cog):
         :param pardoned_member:
         :return:
         """
-        await unban.unban(
-            ctx,
-            pardoned_member
-        )
+        await unban.unban(ctx, pardoned_member)
 
     @commands.guild_only()
     @commands.command(aliases=["hb"])
@@ -383,7 +297,7 @@ class Moderation(commands.Cog):
         :return:
         """
 
-        await(ctx.guild.ban(discord.Object(id=infraction_member_id)))
+        await (ctx.guild.ban(discord.Object(id=infraction_member_id)))
         await ctx.send("Done.")
 
 
