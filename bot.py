@@ -4,13 +4,13 @@ import traceback
 from discord.ext import commands
 import settings
 from cogs.dropdowns import DropdownView
+from cogs.help import MyHelp
 
 initial_extensions = (
     "cogs.events",
     "cogs.misc",
     "cogs.moderation",
     "cogs.rtd",
-    "cogs.reddit",
     "cogs.starboard",
     "cogs.toolkit",
     "cogs.handler",
@@ -65,10 +65,10 @@ class Caroline(commands.Bot):
         super().__init__(
             command_prefix=commands.when_mentioned_or(settings.prefix),
             intents=intents,
-            activity=discord.Activity(name=settings.activity, type=discord.ActivityType.listening),
-            status=discord.Status.idle,
+            help_command=MyHelp(),
+            activity=discord.Activity(type=discord.ActivityType.listening, name=settings.activity),
+            status=discord.Status.idle
         )
-
         self.persistent_views_added = False
 
     async def on_connect(self):
@@ -116,5 +116,4 @@ class Caroline(commands.Bot):
 
 
 bot = Caroline()
-
 bot.run(settings.token)
