@@ -66,7 +66,7 @@ class Caroline(commands.Bot):
         super().__init__(
             command_prefix=commands.when_mentioned_or(settings.prefix),
             intents=intents,
-            activity=discord.Activity(name="Last.fm", type=discord.ActivityType.listening),
+            activity=discord.Activity(name=settings.activity, type=discord.ActivityType.listening),
             status=discord.Status.idle,
         )
 
