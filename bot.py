@@ -7,12 +7,11 @@ from cogs.dropdowns import DropdownView
 from cogs.help import MyHelp
 
 initial_extensions = (
-    "cogs.events",
     "cogs.misc",
     "cogs.moderation",
     "cogs.rtd",
     "cogs.starboard",
-    "cogs.toolkit",
+    "cogs.meta",
     "cogs.handler",
 )
 
@@ -73,17 +72,6 @@ class Caroline(commands.Bot):
 
     async def on_connect(self):
         bot.db = await aiosqlite.connect("data/guild.db")
-        bot.season_number = int(
-            (
-                await (
-                    await bot.db.execute(
-                        """SELECT value FROM config
-                                    WHERE name = (?)""",
-                        ("season_number",),
-                    )
-                ).fetchone()
-            )[0]
-        )
 
     async def on_ready(self):
         if not self.persistent_views_added:
