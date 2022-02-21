@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.utils import constants, embed_template
+from cogs.utils import constants
 
 
 class Cleaner(commands.Cog):
@@ -19,23 +19,6 @@ class Cleaner(commands.Cog):
             return False
         else:
             return True
-
-    async def purge_logger(self, ctx, limit):
-        logs = self.bot.get_channel(constants.logs)
-        kat = self.bot.get_user(constants.kat_id)
-        purged_messages_raw = await ctx.channel.history(limit=limit).flatten()
-
-        def content(raw_message):
-            return f"**{raw_message.author}**: {raw_message.content}"
-
-        purged_messages = list(map(content, purged_messages_raw))
-
-        await kat.send(f"**Purged message log**")
-        for message in purged_messages[::-1]:
-            await kat.send(message)
-        await kat.send(f"**Fin**")
-
-        return
 
     @commands.guild_only()
     @commands.group(
@@ -106,60 +89,37 @@ class Cleaner(commands.Cog):
 
 
 class Moderation(commands.Cog):
+    """Moderation related commands."""
+
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.guild_only()
     @commands.command(aliases=["w"])
+    @commands.guild_only()
     @commands.has_permissions(kick_members=True)
     async def warn(
-            self, ctx, infraction_member: discord.Member, *, infraction_reason: str = None
+        self, ctx, infraction_member: discord.Member, *, infraction_reason: str = None
     ):
         """
         Warns a member.
-
-        :param ctx: Context
-        :param infraction_member: The member receiving the infraction. Discord object or ID
-        :param infraction_reason: The infraction description and reason
-        :return: None
         """
 
-        await warn.warn(ctx, infraction_member, infraction_reason)
+        await ctx.send(ctx, infraction_member, infraction_reason)
 
-    @commands.guild_only()
     @commands.command(aliases=["m"])
-    @commands.check_any(
-        commands.has_role(constants.helper), commands.has_permissions(kick_members=True)
-    )
-    async def mute(
-            self,
-            ctx,
-            infraction_member: discord.Member,
-            infraction_time="7d",
-            *,
-            infraction_reason="Being an idiot.",
+    @commands.guild_only()
+    @commands.has_permissions(kick_members=True)
+    async def mute(self, ctx, member: discord.Member, time="7d", *, reason=None,
     ):
         """
         Mutes a member for a specified amount of time.
-        Note: time defaults to 7 days if not specified.
-        Example: !mute Kat 10m Too cool
-
-        :param ctx: Context
-        :param infraction_member: discord.Member
-        :param infraction_time: str
-        :param infraction_reason: str
-        :return:
         """
 
-        # If there is no number in the infraction_time parameter, one can assume that no argument has been passed
-        # to infraction_time. Therefore, the default infraction_time would then be 7d.
+        if reason is None:
+            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
-        if not any(char.isdigit() for char in infraction_time):
-            infraction_reason = f"{infraction_time} {infraction_reason}"
-            infraction_time = "7d"
-
-        await mute.mute(
-            ctx, infraction_member, infraction_time.lower(), infraction_reason
+        await member.add_roles(role, reason=reason)(
+            ctx, member, time.lower(), reason
         )
 
     @commands.guild_only()
@@ -168,9 +128,9 @@ class Moderation(commands.Cog):
         commands.has_role(constants.helper), commands.has_permissions(kick_members=True)
     )
     async def unmute(
-            self,
-            ctx,
-            pardoned_member: discord.Member,
+        self,
+        ctx,
+        pardoned_member: discord.Member,
     ):
         """
         Unmutes a currently muted member.
@@ -187,18 +147,18 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
     async def kick(
-            self,
-            ctx,
-            member: discord.Member,
-            *,
-            reason=None,
+        self,
+        ctx,
+        member: discord.Member,
+        *,
+        reason=None,
     ):
         """
         Kicks a member from the server.
         """
 
         if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+            reason = f"Action done by {ctx.author} (ID: {ctx.author.id})"
 
         await ctx.guild.kick(member, reason=reason)
         await ctx.send("\N{OK HAND SIGN}")
@@ -207,12 +167,12 @@ class Moderation(commands.Cog):
     @commands.command(aliases=["b"])
     @commands.has_permissions(kick_members=True)
     async def ban(
-            self,
-            ctx,
-            member: discord.User,
-            *,
-            delete_message_days: int = 1,
-            reason=None,
+        self,
+        ctx,
+        member: discord.User,
+        *,
+        delete_message_days: int = 1,
+        reason=None,
     ):
         """
         Bans a member from the server.
@@ -222,15 +182,17 @@ class Moderation(commands.Cog):
         """
 
         if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+            reason = f"Action done by {ctx.author} (ID: {ctx.author.id})"
 
         await ctx.guild.ban(member, delete_message_days, reason=reason)
-        await ctx.send('\N{OK HAND SIGN}')
+        await ctx.send("\N{OK HAND SIGN}")
 
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
-    async def multiban(self, ctx, members: commands.Greedy[discord.User], *, reason=None):
+    async def multiban(
+        self, ctx, members: commands.Greedy[discord.User], *, reason=None
+    ):
         """Bans multiple members from the server.
         This only works through banning via ID.
         In order for this to work, the bot must have Ban Member permissions.
@@ -264,9 +226,9 @@ class Moderation(commands.Cog):
     @commands.command(aliases=["ub"])
     @commands.has_permissions(kick_members=True)
     async def unban(
-            self,
-            ctx,
-            pardoned_member,
+        self,
+        ctx,
+        pardoned_member,
     ):
         """
         Unbans a banned member.
@@ -283,9 +245,9 @@ class Moderation(commands.Cog):
     @commands.command(aliases=["hb"])
     @commands.has_permissions(kick_members=True)
     async def hackban(
-            self,
-            ctx,
-            infraction_member_id,
+        self,
+        ctx,
+        infraction_member_id,
     ):
         """
         Bans a member not in the server.
@@ -302,6 +264,5 @@ class Moderation(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Snipe(bot))
     bot.add_cog(Cleaner(bot))
     bot.add_cog(Moderation(bot))
