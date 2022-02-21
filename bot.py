@@ -12,7 +12,6 @@ initial_extensions = (
     "cogs.rtd",
     "cogs.reddit",
     "cogs.starboard",
-    "cogs.user",
     "cogs.toolkit",
     "cogs.handler",
 )
