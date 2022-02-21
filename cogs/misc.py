@@ -1,7 +1,18 @@
+import asyncio
 from discord.ext import commands
 from discord import Embed
 import discord
+import traceback
 from cogs.utils import constants
+from cogs.utils.buttons import PaginationView
+
+
+class EmbedFlags(commands.FlagConverter, prefix='--', delimiter=' '):
+    title: str = ""
+    description: str = ""
+    image: str = ""
+    footer: str = ""
+    colour: str = constants.blurple
 
 
 class Misc(commands.Cog):
@@ -9,26 +20,58 @@ class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # [INACTIVE] For editing the rule embed.
-    # @commands.command()
+    @commands.command()
+    async def embed(self, ctx, *, flags: EmbedFlags):
+        """
+        A utility to create embeds via command.
+
+        :param ctx:
+        :param flags:
+        :return:
+        """
+
+        if type(flags.colour) == str:
+            flags.colour = int(f"{flags.colour}", 16)
+
+        embed = discord.Embed()
+
+        try:
+            embed = embed.from_dict({'title': f'{flags.title}',
+                                     'description': f'{flags.description}',
+                                     'image': {'url': f'{flags.image}'},
+                                     'footer': {'text': f'{flags.footer}'},
+                                     'color': flags.colour,
+                                     })
+            await ctx.send("**This is a preview of your embed. Which channel do you want to send it in?**", embed=embed)
+        except discord.errors.HTTPException as error:
+            if error.code == 50035:  # cannot send nothing
+                traceback.print_exception(type(error), error, error.__traceback__)
+                return await ctx.send("Embed cannot be empty. Aborted.")
+            else:
+                raise
+
+        def check(message):
+            return message.author.id == ctx.author.id and \
+                   message.channel.id == ctx.channel.id
+
+        try:
+            response = await self.bot.wait_for('message', check=check, timeout=60)
+            channel = await commands.TextChannelConverter.convert(self.bot, ctx, response.content)
+            await channel.send(embed=embed)
+
+        except Exception as error:
+            if type(error) == commands.errors.ChannelNotFound:
+                return await ctx.send("Could not convert to a text channel. Aborted.")
+            elif type(error) == asyncio.exceptions.TimeoutError:
+                return await ctx.send("Took too long. Aborted.")
+            else:
+                raise
+
+    # @commands.command(aliases=["ce"])
     # @commands.has_permissions(administrator=True)
-    # async def change(self, ctx):
-    #     rules = self.bot.get_channel(constants.rules)
-    #     msg = await rules.fetch_message(791682685515857920)
-    #
-    #     rule = f"We expect all members of our community to adhere by our rules below. " \
-    #            f"Please ensure that you understand what they mean. \n" \
-    #            f"If you would like to report an incident or have questions concerning our rules, " \
-    #            f"please message <@575252669443211264>. \n\n" \
-    #            f"**Rule 1**\n{constants.rule1}\n" \
-    #            f"**Rule 2**\n{constants.rule2}\n" \
-    #            f"**Rule 3**\n{constants.rule3}\n" \
-    #            f"**Rule 4**\n{constants.rule4}\n" \
-    #            f"**Rule 5**\n{constants.rule5}\n" \
-    #            f"**Rule 6**\n{constants.rule6}\n" \
-    #            f"**Rule 7**\n{constants.rule7}\n"
-    #
-    #     print(rule)
+    # async def change_existing(self, ctx, target_channel, target_message_id):
+    #     rules = self.bot.get_channel(target_channel)
+    #     msg = await rules.fetch_message(target_message_id)
     #
     #     embed = Embed(
     #         title=f"Photoshop Discord Rules",
@@ -67,59 +110,50 @@ class Misc(commands.Cog):
     #                           f"(No, there is no difference between <#{constants.alpha}> and <#{constants.beta}>)",
     #                     inline=False)
 
-        # embed = Embed(
-        #         title=f"Unsupported help topics",
-        #         color=constants.blurple)
-        #
-        # embed.add_field(name=f"Editing requests of any nature ",
-        #                 value=f"As per the server rules, we have no interest in maintaining such a feature, nor "
-        #                       f"do we have the resources necessary to facilitate commissions and protect both the "
-        #                       f"buyer and seller. ",
-        #                 inline=False)
-        #
-        # embed.add_field(name=f"Demands of needing a private, one-on-one tutor  ",
-        #                 value=f"In addition to technical expertise, one of the crucial skills of being a good "
-        #                       f"Photoshopper is self-sufficiency. We will be happy to answer any technical questions, "
-        #                       f"but we believe Photoshop is absolutely a software anyone can master "
-        #                       f"on their own. \n",
-        #                 inline=False)
-        #
-        # embed.add_field(name=f"Asking for help finding step-by-step video tutorials, or asking for spoonfeeding",
-        #                 value=f"We're not a YouTube search bar. If you want to know what an effect is called or how "
-        #                       f"to replicate it, we will give you our suggestions. It is up to you to find and "
-        #                       f"learn from those suggestions, preferably from the docs first. ",
-        #                 inline=False)
-        #
-        # embed.add_field(name=f"Inappropriate works ",
-        #                 value=f"As per the server rules, anything that may be considered illicit, malicious, or "
-        #                       f"downright not safe for work (NSFW) does not belong here.",
-        #                 inline=False)
-        #
-        # embed.add_field(name=f"Assistance with closed assessments",
-        #                 value=f"We will not help with closed assessments, such as quizzes, tests, and exams. "
-        #                       f"General guidance on homework and assignments is allowed.",
-        #                 inline=False)
-        #
-        # embed.add_field(name=f"Recognition of fonts",
-        #                 value=f"We are not a font recognition engine. Please see `!tag wfit` instead.",
-        #                 inline=False)
-        #
-        # embed.add_field(name=f"Recognition of whether an image is Photoshopped",
-        #                 value=f"Who knows?",
-        #                 inline=False)
+    # embed = Embed(
+    #         title=f"Unsupported help topics",
+    #         color=constants.blurple)
+    #
+    # embed.add_field(name=f"Editing requests of any nature ",
+    #                 value=f"As per the server rules, we have no interest in maintaining such a feature, nor "
+    #                       f"do we have the resources necessary to facilitate commissions and protect both the "
+    #                       f"buyer and seller. ",
+    #                 inline=False)
+    #
+    # embed.add_field(name=f"Demands of needing a private, one-on-one tutor  ",
+    #                 value=f"In addition to technical expertise, one of the crucial skills of being a good "
+    #                       f"Photoshopper is self-sufficiency. We will be happy to answer any technical questions, "
+    #                       f"but we believe Photoshop is absolutely a software anyone can master "
+    #                       f"on their own. \n",
+    #                 inline=False)
+    #
+    # embed.add_field(name=f"Asking for help finding step-by-step video tutorials, or asking for spoonfeeding",
+    #                 value=f"We're not a YouTube search bar. If you want to know what an effect is called or how "
+    #                       f"to replicate it, we will give you our suggestions. It is up to you to find and "
+    #                       f"learn from those suggestions, preferably from the docs first. ",
+    #                 inline=False)
+    #
+    # embed.add_field(name=f"Inappropriate works ",
+    #                 value=f"As per the server rules, anything that may be considered illicit, malicious, or "
+    #                       f"downright not safe for work (NSFW) does not belong here.",
+    #                 inline=False)
+    #
+    # embed.add_field(name=f"Assistance with closed assessments",
+    #                 value=f"We will not help with closed assessments, such as quizzes, tests, and exams. "
+    #                       f"General guidance on homework and assignments is allowed.",
+    #                 inline=False)
+    #
+    # embed.add_field(name=f"Recognition of fonts",
+    #                 value=f"We are not a font recognition engine. Please see `!tag wfit` instead.",
+    #                 inline=False)
+    #
+    # embed.add_field(name=f"Recognition of whether an image is Photoshopped",
+    #                 value=f"Who knows?",
+    #                 inline=False)
 
-        # embed.set_thumbnail(url="https://i.postimg.cc/hj4bVZwg/ISW-EAR.png")
+    # embed.set_thumbnail(url="https://i.postimg.cc/hj4bVZwg/ISW-EAR.png")
 
-        # await ctx.send(embed=embed)
-
-    @commands.command()
-    async def just(self, ctx):
-        showcase = self.bot.get_channel(constants.showcase)
-        msg = await showcase.fetch_message(873283487841529906)
-        await msg.delete()
-        await showcase.send(f"<@756906081829126245>, direct social media links are not permitted. If you have "
-                            f"pictures, you should send them here directly instead of compelling others to visit "
-                            f"an external site.")
+    # await ctx.send(embed=embed)
 
     @commands.command()
     async def promote(self, ctx: commands.Context, member: discord.Member):
@@ -140,17 +174,50 @@ class Misc(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def reject(self, ctx, member: discord.Member, *, reason):
+    async def reject(self, ctx):
+        # embed = Embed(
+        #     title=f"Not quite a helper... yet?",
+        #     color=constants.blurple,
+        #     description=f"**We're glad that you took the time to apply, but we can't add you as a helper just yet.**\n"
+        #                 f"{reason}")
+        #
+        # embed.set_thumbnail(url="https://i.pinimg.com/originals/8d/66/f0/8d66f0431f5cf4229750749c13b005af.gif")
+        #
+        # await member.send(embed=embed)
 
-        embed = Embed(
-            title=f"Not quite a helper... yet?",
-            color=constants.blurple,
-            description=f"**We're glad that you took the time to apply, but we can't add you as a helper just yet.**\n"
-                        f"{reason}")
+        await Test.start(ctx)
 
-        embed.set_thumbnail(url="https://i.pinimg.com/originals/8d/66/f0/8d66f0431f5cf4229750749c13b005af.gif")
 
-        await member.send(embed=embed)
+class Test(discord.ui.View):
+    def __init__(self, author):
+        super().__init__(timeout=2)
+        self.user = author
+
+    async def on_timeout(self) -> None:
+        self.foo.disabled = True
+        self.boo.disabled = True
+        await self.message.edit(view=self)
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if self.user == interaction.user:
+            return True
+        await interaction.response.send_message(f'Only {self.user.name} can react. Start new if you want to.',
+                                                ephemeral=True)
+        return False
+
+    @discord.ui.button(label="Label 1", style=discord.ButtonStyle.green)
+    async def foo(self, _, interaction: discord.Interaction) -> None:
+        await interaction.response.edit_message(content='Message for Label 1 here')
+
+    @discord.ui.button(label="Label 2", style=discord.ButtonStyle.danger)
+    async def boo(self, _, interaction: discord.Interaction) -> None:
+        await interaction.response.edit_message(content='Message for Label 2 here')
+
+    @classmethod
+    async def start(cls, ctx):
+        self = cls(ctx.author)
+        self.message = await ctx.channel.send('Button looks something like this: ', view=self)
+        return self
 
 
 def setup(bot):
