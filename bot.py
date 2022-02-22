@@ -5,6 +5,7 @@ from discord.ext import commands
 import settings
 from cogs.dropdowns import DropdownView
 from cogs.help import MyHelp
+from cogs.utils.buttons import Context
 
 initial_extensions = (
     "cogs.misc",
@@ -69,6 +70,9 @@ class Caroline(commands.Bot):
             status=discord.Status.idle
         )
         self.persistent_views_added = False
+
+    async def get_context(self, message, *, cls=Context):
+        return await super().get_context(message, cls=cls)
 
     async def on_connect(self):
         bot.db = await aiosqlite.connect("data/guild.db")

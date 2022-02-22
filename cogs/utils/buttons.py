@@ -1,14 +1,96 @@
 import asyncio
 import discord
 from discord.ext import commands
+from typing import Optional
+
+
+class Context(commands.Context):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    async def prompt(
+            self,
+            message: str,
+            *,
+            timeout: float = 60.0,
+            delete_after: bool = True,
+            author_id: Optional[int] = None,
+    ) -> Optional[bool]:
+        """An interactive reaction confirmation dialog.
+        Parameters
+        -----------
+        message: str
+            The message to show along with the prompt.
+        timeout: float
+            How long to wait before returning.
+        delete_after: bool
+            Whether to delete the confirmation message after we're done.
+        author_id: Optional[int]
+            The member who should respond to the prompt. Defaults to the author of the
+            Context's message.
+        Returns
+        --------
+        Optional[bool]
+            ``True`` if explicit confirm,
+            ``False`` if explicit deny,
+            ``None`` if deny due to timeout
+        """
+
+        author_id = author_id or self.author.id
+        view = ConfirmationView(
+            timeout=timeout,
+            delete_after=delete_after,
+            ctx=self,
+            author_id=author_id,
+        )
+        view.message = await self.send(message, view=view)
+        await view.wait()
+        return view.value
+
+
+class ConfirmationView(discord.ui.View):
+    def __init__(self, *, timeout: float, author_id: int, ctx: Context, delete_after: bool) -> None:
+        super().__init__(timeout=timeout)
+        self.value: Optional[bool] = None
+        self.delete_after: bool = delete_after
+        self.author_id: int = author_id
+        self.ctx: Context = ctx
+        self.message: Optional[discord.Message] = None
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user and interaction.user.id == self.author_id:
+            return True
+        else:
+            await interaction.response.send_message('This confirmation dialogue is not for you.', ephemeral=True)
+            return False
+
+    async def on_timeout(self) -> None:
+        if self.delete_after:
+            await self.message.delete()
+
+    @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
+    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+        self.value = True
+        await interaction.response.defer()
+        if self.delete_after:
+            await interaction.delete_original_message()
+        self.stop()
+
+    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
+    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
+        self.value = False
+        await interaction.response.defer()
+        if self.delete_after:
+            await interaction.delete_original_message()
+        self.stop()
 
 
 class PaginationView(discord.ui.View):
     def __init__(
-        self,
-        embed_list,
-        *,
-        ctx: commands.Context,
+            self,
+            embed_list,
+            *,
+            ctx: commands.Context,
     ):
         super().__init__(timeout=60.0)
         self.ctx: commands.Context = ctx
@@ -28,8 +110,7 @@ class PaginationView(discord.ui.View):
         if self.user == interaction.user:
             return True
         await interaction.response.send_message(
-            f"Only {self.user.name} can react. Start a new instance if you want"
-            f"to be able to browse.",
+            f"Only {self.user.name} can react. Start a new instance if you want browse.",
             ephemeral=True,
         )
         return False
@@ -78,7 +159,7 @@ class PaginationView(discord.ui.View):
 
     @discord.ui.button(label="Back", style=discord.ButtonStyle.blurple, disabled=True)
     async def previous(
-        self, button: discord.ui.Button, interaction: discord.Interaction
+            self, button: discord.ui.Button, interaction: discord.Interaction
     ):
         self.update_buttons(button)
         await interaction.response.edit_message(
@@ -96,9 +177,9 @@ class PaginationView(discord.ui.View):
 
         def check(message):
             return (
-                author_id == message.author.id
-                and channel.id == message.channel.id
-                and message.content.isdigit()
+                    author_id == message.author.id
+                    and channel.id == message.channel.id
+                    and message.content.isdigit()
             )
 
         try:
