@@ -12,12 +12,6 @@ class Handler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        """
-
-        :param ctx:
-        :param error: commands.CommandError
-        :return:
-        """
 
         if getattr(ctx, 'error_handled', False):  # or just hasattr
             return

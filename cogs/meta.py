@@ -109,7 +109,7 @@ class Meta(commands.Cog):
     @profile.command()
     @commands.guild_only()
     async def about(self, ctx, *, about: LengthLimiter):
-        """Edit your About Me profile."""
+        """Edit your About Me section of your profile."""
 
         query = """UPDATE users 
                    SET about = (?)
@@ -119,7 +119,7 @@ class Meta(commands.Cog):
         await self.bot.db.execute(query, (about, ctx.author.id,))
         await self.bot.db.commit()
 
-        await ctx.send("Done.")
+        await ctx.send("Updated your About Me.")
 
 
 def setup(bot):
