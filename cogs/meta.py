@@ -93,7 +93,7 @@ class Meta(commands.Cog):
         if rows[0][3] is not None:  # instagram column
             embed.add_field(
                 name=f"Verified social accounts",
-                value=f"Instagram: @{rows[0][3]}\n",
+                value=f"Instagram: [@{rows[0][3]}](https://www.instagram.com/{rows[0][3]})\n",
                 inline=False)
 
         await ctx.send(embed=embed)
