@@ -4,7 +4,7 @@ from cogs.utils import constants
 
 
 class ActionReason(commands.Converter):
-    """Appends mod name and delimits mod command reasons."""
+    """Appends mod name and limits mod command reasons."""
 
     async def convert(self, ctx, argument):
         reason = f'{ctx.author} (ID: {ctx.author.id}): {argument}'
@@ -25,10 +25,26 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
     async def mute(self, ctx, members: commands.Greedy[discord.Member], *, reason=None):
-        """Mutes a members for a specified amount of time."""
+        """Mutes a list of members."""
 
-        if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+        role = discord.Object(id=constants.muted)
+
+        total = len(members)
+
+        if total == 0:
+            return await ctx.send('Missing members to mute.')
+
+        failed = 0
+        for member in members:
+            try:
+                await member.add_roles(role, reason=reason)
+            except discord.HTTPException:
+                failed += 1
+
+        if failed == 0:
+            await ctx.send('\N{THUMBS UP SIGN}')
+        else:
+            await ctx.send(f'Muted [{total - failed}/{total}] members.')
 
     @commands.command()
     @commands.guild_only()
@@ -75,6 +91,7 @@ class Moderation(commands.Cog):
     ):
         """
         Bans multiple members from the server.
+
         This only works through banning via ID.
         """
 
@@ -100,45 +117,12 @@ class Moderation(commands.Cog):
 
         await ctx.send(f"Banned {total_members - failed}/{total_members} members.")
 
+    @commands.command()
     @commands.guild_only()
-    @commands.command(aliases=["ub"])
-    @commands.has_permissions(kick_members=True)
-    async def unban(
-            self,
-            ctx,
-            pardoned_member,
-    ):
-        """
-        Unbans a banned member.
-        Note: directly insert ONLY the member's ID, otherwise the bot cannot convert.
-        Example: !unban 669977303584866365
+    @commands.has_permissions(ban_members=True)
+    async def unban(self, ctx, member):
 
-        :param ctx:
-        :param pardoned_member:
-        :return:
-        """
-        await unban.unban(ctx, pardoned_member)
-
-    @commands.guild_only()
-    @commands.command(aliases=["hb"])
-    @commands.has_permissions(kick_members=True)
-    async def hackban(
-            self,
-            ctx,
-            infraction_member_id,
-    ):
-        """
-        Bans a member not in the server.
-        Note: directly insert ONLY the member's ID, otherwise the bot cannot convert.
-        Example: !hackban 669977303584866365
-
-        :param ctx:
-        :param infraction_member_id: int
-        :return:
-        """
-
-        await (ctx.guild.ban(discord.Object(id=infraction_member_id)))
-        await ctx.send("Done.")
+        await ctx.guild.unban(member)
 
 
 def setup(bot):
