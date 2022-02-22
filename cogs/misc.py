@@ -20,7 +20,8 @@ class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(hidden=True)
+    @commands.has_permissions(manage_server=True)
     async def embed(self, ctx, *, flags: EmbedFlags):
         """
         A utility to create embeds via command.
@@ -154,71 +155,6 @@ class Misc(commands.Cog):
     # embed.set_thumbnail(url="https://i.postimg.cc/hj4bVZwg/ISW-EAR.png")
 
     # await ctx.send(embed=embed)
-
-    @commands.command()
-    async def promote(self, ctx: commands.Context, member: discord.Member):
-        print(ctx.channel)
-
-        content = f"**We're very glad that you could join us as a new helper!\n**" \
-                  f"We have all sorts of exciting things planned. For now, why not pop in " \
-                  f"the <#{constants.helpers_chat}> and say hello?"
-
-        embed = Embed(
-            title=f"Welcome to the Photoshop helpers team!",
-            color=constants.blurple,
-            description=content)
-
-        embed.set_thumbnail(url="https://media.giphy.com/media/QG2bT1r0cDC6I/giphy.gif")
-
-        await member.send(embed=embed)
-
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def reject(self, ctx):
-        # embed = Embed(
-        #     title=f"Not quite a helper... yet?",
-        #     color=constants.blurple,
-        #     description=f"**We're glad that you took the time to apply, but we can't add you as a helper just yet.**\n"
-        #                 f"{reason}")
-        #
-        # embed.set_thumbnail(url="https://i.pinimg.com/originals/8d/66/f0/8d66f0431f5cf4229750749c13b005af.gif")
-        #
-        # await member.send(embed=embed)
-
-        await Test.start(ctx)
-
-
-class Test(discord.ui.View):
-    def __init__(self, author):
-        super().__init__(timeout=2)
-        self.user = author
-
-    async def on_timeout(self) -> None:
-        self.foo.disabled = True
-        self.boo.disabled = True
-        await self.message.edit(view=self)
-
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        if self.user == interaction.user:
-            return True
-        await interaction.response.send_message(f'Only {self.user.name} can react. Start new if you want to.',
-                                                ephemeral=True)
-        return False
-
-    @discord.ui.button(label="Label 1", style=discord.ButtonStyle.green)
-    async def foo(self, _, interaction: discord.Interaction) -> None:
-        await interaction.response.edit_message(content='Message for Label 1 here')
-
-    @discord.ui.button(label="Label 2", style=discord.ButtonStyle.danger)
-    async def boo(self, _, interaction: discord.Interaction) -> None:
-        await interaction.response.edit_message(content='Message for Label 2 here')
-
-    @classmethod
-    async def start(cls, ctx):
-        self = cls(ctx.author)
-        self.message = await ctx.channel.send('Button looks something like this: ', view=self)
-        return self
-
 
 def setup(bot):
     bot.add_cog(Misc(bot))
