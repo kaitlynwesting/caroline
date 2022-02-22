@@ -7,8 +7,7 @@ from discord.ext import commands
 class HelpEmbed(discord.Embed):  # Our embed with some preset attributes to avoid setting it multiple times
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.timestamp = datetime.datetime.utcnow()
-        text = "Use help [command] or help [category] for more information | <> is required | [] is optional"
+        text = "Use help [command] or help [category] for more information | <> required | [] optional"
         self.set_footer(text=text)
         self.color = discord.Color.blurple()
 
