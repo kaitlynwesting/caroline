@@ -116,9 +116,7 @@ class Meta(commands.Cog):
     @profile.command(aliases=['ig'])
     async def instagram(self, ctx):
         """
-        Verify your Instagram account with oauth.
-
-        Currently working, but a temporary implementation with little error handling.
+        Verify your Instagram account with oauth. (Temporary implementation)
         """
 
         # Optimistically, we would have a Django website also connected to the same db on the same server;
@@ -126,9 +124,14 @@ class Meta(commands.Cog):
 
         try:
             dms = await ctx.author.create_dm()  # use this DM ctx object
-            await ctx.author.send(f'We will verify your Instagram account with oauth. Send token back here.'
-                                  f'https://oauth.net/about/introduction/'
-                                  f'https://photoshoppark.herokuapp.com/instagram-auth')
+            await ctx.author.send(f'We will verify your Instagram account with oauth. By signing in to Instagram and '
+                                  f'granting us permission to view basic account information, we will be able to '
+                                  f'verify that you own the account. Authentication is handled through Instagram; '
+                                  f'we cannot see your password. \n\n'
+                                  f'**Use the following link to sign in: **'
+                                  f'https://photoshoppark.herokuapp.com/instagram-auth \n'
+                                  f'**A detailed introduction to oauth: **'
+                                  f'Introduction to oauth: https://oauth.net/about/introduction/')
         except discord.Forbidden:
             raise NoDmsEnabled from None
 
@@ -138,7 +141,7 @@ class Meta(commands.Cog):
         try:
             cat = await self.bot.wait_for('message', timeout=300.0, check=check)
         except TimeoutError:
-            return await ctx.send('You took long to verify. Aborting.')
+            return await dms.send('You took long to verify. Aborting.')
 
         cat = cat.content.split('.')
 
