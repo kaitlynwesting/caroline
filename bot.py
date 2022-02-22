@@ -9,7 +9,7 @@ from cogs.help import MyHelp
 initial_extensions = (
     "cogs.misc",
     "cogs.moderation",
-    "cogs.rtd",
+    "cogs.photoshop",
     "cogs.starboard",
     "cogs.meta",
     "cogs.handler",
