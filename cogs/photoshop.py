@@ -1,7 +1,6 @@
 import aiohttp
 import discord
 from discord.ext import commands
-from cogs.utils import constants
 
 
 class Photoshop(commands.Cog):
@@ -81,7 +80,7 @@ class Photoshop(commands.Cog):
             {
                 "title": f"Search",
                 "description": f"{description}",
-                "color": constants.blurple,
+                "color": discord.Color.og_blurple().value,
             }
         )
 
