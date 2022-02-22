@@ -25,6 +25,11 @@ class Meta(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command()
+    async def ping(self, ctx):
+        """Check the latency of the bot."""
+        await ctx.send(f"Pong! Latency is {round(self.bot.latency * 1000, 2)} ms.")
+
     @commands.command(aliases=["rule"])
     async def rules(self, ctx, rule_number=0):
         """Check the rules of the server."""
