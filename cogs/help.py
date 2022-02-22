@@ -9,7 +9,7 @@ class HelpEmbed(discord.Embed):  # Our embed with some preset attributes to avoi
         super().__init__(**kwargs)
         text = "Use help [command] or help [category] for more information | <> required | [] optional"
         self.set_footer(text=text)
-        self.color = discord.Color.blurple()
+        self.color = discord.Color.og_blurple()
 
 
 class MyHelp(commands.HelpCommand):

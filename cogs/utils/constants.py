@@ -130,7 +130,7 @@ rule7 = f"The primary language of the server is English. Please speak English to
 rule8 = f"No advertising or self-promotion without explicit approval. Post artwork you want to display as direct " \
         f"files and not as social media handles or external links. "
 
-rule9 = f"**No requests or offers of work, paid or unpaid, will be permitted within the server.**"
+rule9 = f"No requests or offers of work, paid or unpaid, will be permitted within the server."
 
 rule10 = f"All users must comply with the Discord Terms of Service and Community Guidelines.\n" \
          f"> ToS: https://discord.com/new/terms \n" \

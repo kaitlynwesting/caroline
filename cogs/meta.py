@@ -3,13 +3,14 @@ import aiohttp
 from asyncio import TimeoutError
 from discord import Embed
 from discord.ext import commands
-from cogs.utils import constants, embed_template
+from cogs.utils import constants
 from cogs.utils.formats import LengthLimiter
 
 
 class NoDmsEnabled(commands.CommandError):
     def __init__(self):
-        super().__init__('I could not DM you. Please consider enabling it temporarily and retrying.')
+        super().__init__('I could not DM you. Please consider enabling DMs temporarily for this server and retrying.')
+
 
 # class NoWork(HTTPException):
 #     """All kinds of reasons for why this request is not working."""
@@ -26,16 +27,22 @@ class Meta(commands.Cog):
 
     @commands.command(aliases=["rule"])
     async def rules(self, ctx, rule_number=0):
+        """Check the rules of the server."""
+
+        # Works ok but I don't really like this
 
         rule_text = getattr(constants, f"rule{rule_number}")
 
-        await embed_template.server_embed(
-            ctx.channel,
-            f"Photoshop Discord Rules",
-            f"**Rule {rule_number}**:\n" f"{rule_text}",
-            f"",
-            constants.blurple,
-        )
+        embed = Embed.from_dict({'title': f"{ctx.guild.name} Rules",
+                                 # 'description': f'**Rule {rule_number}**: \n'
+                                 #                f'{rule_text}',
+                                 'fields': [{'name': f'Rule {rule_number}',
+                                             'value': f'{rule_text}',
+                                             'inline': True}],
+                                 'color': discord.Color.og_blurple().value
+                                 })
+
+        await ctx.send(embed=embed)
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
@@ -68,7 +75,7 @@ class Meta(commands.Cog):
 
         embed = Embed.from_dict({'title': f"{member.display_name}'s {ctx.guild.name} profile",
                                  'thumbnail': {'url': f'{member.avatar.url}'},
-                                 'color': constants.blurple,
+                                 'color': discord.Color.og_blurple().value,
                                  'fields': [
                                      {'name': 'About me',
                                       'value': f'{rows[0][1]}',
@@ -106,7 +113,7 @@ class Meta(commands.Cog):
 
         await ctx.send("Updated About Me in your server profile.")
 
-    @profile.command(hidden=True, aliases=['ig'])
+    @profile.command(aliases=['ig'])
     async def instagram(self, ctx):
         """
         Verify your Instagram account with oauth.
@@ -114,11 +121,14 @@ class Meta(commands.Cog):
         Currently working, but a temporary implementation with little error handling.
         """
 
+        # Optimistically, we would have a Django website also connected to the same db on the same server;
+        # too much room for user error by outsourcing work to the human
+
         try:
             dms = await ctx.author.create_dm()  # use this DM ctx object
             await ctx.author.send(f'We will verify your Instagram account with oauth. Send token back here.'
-                                        f'https://oauth.net/about/introduction/'
-                                        f'https://photoshoppark.herokuapp.com/instagram-auth')
+                                  f'https://oauth.net/about/introduction/'
+                                  f'https://photoshoppark.herokuapp.com/instagram-auth')
         except discord.Forbidden:
             raise NoDmsEnabled from None
 
@@ -154,16 +164,6 @@ class Meta(commands.Cog):
 
         except IndexError:
             await dms.send('```Bad format. Make sure to copy the entire code.```')
-
-        # query = """UPDATE users
-        #            SET about = (?)
-        #            WHERE user_id = (?)
-        #         """
-        #
-        # await self.bot.db.execute(query, (about, ctx.author.id,))
-        # await self.bot.db.commit()
-        #
-        # await ctx.send("Updated your About Me.")
 
 
 def setup(bot):
