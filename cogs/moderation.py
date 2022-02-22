@@ -15,6 +15,17 @@ class ActionReason(commands.Converter):
         return reason
 
 
+class BannedMember(commands.Converter):
+    """Checks if a member is a banned member."""
+
+    async def convert(self, ctx, argument):
+        member_id = int(argument, base=10)
+        try:
+            return await ctx.guild.fetch_ban(discord.Object(id=member_id))
+        except discord.NotFound:
+            raise commands.BadArgument('This member is not banned.') from None
+
+
 class Moderation(commands.Cog):
     """Moderation related commands."""
 
@@ -69,7 +80,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member: discord.User, days: int = 1, *, reason=None):
+    async def ban(self, ctx, member: discord.User, *, reason=None):
         """
         Bans a member from the server.
 
@@ -120,9 +131,15 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
-    async def unban(self, ctx, member):
+    async def unban(self, ctx, member: BannedMember, reason: ActionReason = None):
+        """Unbans a banned member from the server."""
 
-        await ctx.guild.unban(member)
+        if reason is None:
+            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+
+        await ctx.guild.unban(member, reason=reason)
+        await ctx.send(f'\N{OK HAND SIGN} Unbanned {member}.')
+
 
 
 def setup(bot):
