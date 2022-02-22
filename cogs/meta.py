@@ -2,7 +2,7 @@ import discord
 from discord import Embed
 from discord.ext import commands
 from cogs.utils import constants, embed_template
-
+from cogs.utils.formats import LengthLimiter
 
 class Rules(commands.Cog):
     def __init__(self, bot):
@@ -108,7 +108,7 @@ class Meta(commands.Cog):
 
     @profile.command()
     @commands.guild_only()
-    async def about(self, ctx, *, about):
+    async def about(self, ctx, *, about: LengthLimiter):
         """Edit your About Me profile."""
 
         query = """UPDATE users 
