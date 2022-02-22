@@ -4,6 +4,11 @@ from discord.ext import commands
 from cogs.utils import constants, embed_template
 from cogs.utils.formats import LengthLimiter
 
+
+# class NoDmsEnabled(commands.CommandError):
+#     def __init__(self):
+#         super().__init__('This person has disabled DMs.')
+
 class Rules(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -35,22 +40,10 @@ class Rules(commands.Cog):
 
 
 class Meta(commands.Cog):
+    """Utilities relating to the server or a user."""
+
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.command()
-    @commands.guild_only()
-    async def avatar(self, ctx, member: discord.Member = None):
-        if member is None:
-            member = ctx.author
-
-        embed = discord.Embed(color=discord.Color.blurple())
-        embed.set_image(url=member.avatar.url)
-        embed.set_author(
-            name=f"{member.display_name}'s avatar:", icon_url=member.avatar.url
-        )
-
-        await ctx.send(embed=embed)
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
@@ -106,10 +99,33 @@ class Meta(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @profile.command(hidden=True)
+    @commands.guild_only()
+    async def instagram(self, ctx):
+        """Verify your Instagram account with oauth. (Temporary implementation)"""
+
+        try:
+            await ctx.author.send(f'We will verify your Instagram account with oauth. '
+                                  f'https://oauth.net/about/introduction/'
+                                  f'https://photoshoppark.herokuapp.com/instagram-auth')
+        except discord.Forbidden:
+            raise commands.NoPrivateMessage(f'I could not DM you. '
+                                            f'Please consider temporarily enabling DMs for this server '
+                                            f'then retrying verification.') from None
+        # query = """UPDATE users
+        #            SET about = (?)
+        #            WHERE user_id = (?)
+        #         """
+        #
+        # await self.bot.db.execute(query, (about, ctx.author.id,))
+        # await self.bot.db.commit()
+        #
+        # await ctx.send("Updated your About Me.")
+
     @profile.command()
     @commands.guild_only()
     async def about(self, ctx, *, about: LengthLimiter):
-        """Edit your About Me section of your profile."""
+        """Edit the About Me section of your profile."""
 
         query = """UPDATE users 
                    SET about = (?)
