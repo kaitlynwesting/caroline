@@ -82,7 +82,7 @@ mod_roles = [
 
 # Server channels
 welcome = 780559523634479136
-rules = 777237462904209429
+rules = 908042224531554387
 
 announcements = 777207889277616189
 changelog = 807043380021559326
@@ -108,21 +108,30 @@ logs = 777207889424941118
 rule0 = f"We expect all members of our community to understand and abide by our rules, " \
         f"which can be found in the <#{rules}> channel."
 
-rule1 = f"Follow the [Discord Community Guidelines](https://discord.com/guidelines) " \
-        f"and [Terms of Service](https://discord.com/terms)."
+rule1 = f"Be kind. Behave maturely and respectfully towards other members of the community."
 
-rule2 = f"Behave maturely and respectfully towards other members of the community."
+rule2 = f"Keep conversations, media, and your own user profile SFW at all times. Stay away from contentious topics " \
+        f"such as politics. "
 
-rule3 = f"Listen to and respect staff members and their directions."
+rule3 = f"Do not request or provide help with projects which may be deemed illicit, breach terms of services, " \
+        f"malicious, or inappropriate. "
 
-rule4 = f"This is an English-speaking server. Please speak English to the best of your ability."
+rule4 = f"Do not request or provide help for ongoing tests or exams. When helping with homework, help people learn " \
+        f"how to do the assignment without doing it for them. "
 
-rule5 = f"Do not request, provide help with, or post content that may be considered illicit, " \
-        f"malicious, or inappropriate (NSFW). Do not request or provide solutions to ongoing tests or assignments, " \
-        f"although general guidance and advice is allowed."
+rule5 = f"Use the right channels for your topic. Only DM someone if you have notified them, and they have agreed " \
+        f"beforehand. "
 
-rule6 = f"No spamming, advertising, or requesting work. \n" \
-        f"This also includes posting personal YouTube, Twitch, Instagram, or similar profiles purely " \
-        f"for the purpose of self-promotion."
+rule6 = f"Listen to and respect staff members and their directions, even if you disagree with something. Do not " \
+        f"message a moderator to complain or you may be subject to further action. "
 
-rule7 = f"Use the channels for their intended purposes. Only DM someone if they have agreed beforehand."
+rule7 = f"The primary language of the server is English. Please speak English to the best of your ability."
+
+rule8 = f"No advertising or self-promotion without explicit approval. Post artwork you want to display as direct " \
+        f"files and not as social media handles or external links. "
+
+rule9 = f"**No requests or offers of work, paid or unpaid, will be permitted within the server.**"
+
+rule10 = f"All users must comply with the Discord Terms of Service and Community Guidelines.\n" \
+         f"> ToS: https://discord.com/new/terms \n" \
+         f"> CG: https://discord.com/new/guidelines"
