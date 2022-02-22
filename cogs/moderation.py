@@ -24,10 +24,8 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
-    async def mute(self, ctx, member: discord.Member, time="7d", *, reason=None):
-        """
-        Mutes a member for a specified amount of time.
-        """
+    async def mute(self, ctx, members: commands.Greedy[discord.Member], *, reason=None):
+        """Mutes a members for a specified amount of time."""
 
         if reason is None:
             reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
@@ -36,25 +34,15 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
     async def unmute(self, ctx, member: discord.Member):
-        """
-        Unmutes a currently muted member.
-        """
+        """Unmutes a currently muted member."""
 
         return
 
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
-    async def kick(
-            self,
-            ctx,
-            member: discord.Member,
-            *,
-            reason: ActionReason=None,
-    ):
-        """
-        Kicks a member from the server.
-        """
+    async def kick(self, ctx, member: discord.Member, *, reason: ActionReason = None):
+        """Kicks a member from the server."""
 
         if reason is None:
             reason = f"Action done by {ctx.author} (ID: {ctx.author.id})"
@@ -62,17 +50,10 @@ class Moderation(commands.Cog):
         await ctx.guild.kick(member, reason=reason)
         await ctx.send("\N{OK HAND SIGN}")
 
+    @commands.command()
     @commands.guild_only()
-    @commands.command(aliases=["b"])
-    @commands.has_permissions(kick_members=True)
-    async def ban(
-            self,
-            ctx,
-            member: discord.User,
-            *,
-            delete_message_days: int = 1,
-            reason=None,
-    ):
+    @commands.has_permissions(ban_members=True)
+    async def ban(self, ctx, member: discord.User, days: int = 1, *, reason=None):
         """
         Bans a member from the server.
 
@@ -83,7 +64,7 @@ class Moderation(commands.Cog):
         if reason is None:
             reason = f"Action done by {ctx.author} (ID: {ctx.author.id})"
 
-        await ctx.guild.ban(member, delete_message_days, reason=reason)
+        await ctx.guild.ban(member, delete_message_days=days, reason=reason)
         await ctx.send("\N{OK HAND SIGN}")
 
     @commands.command()
@@ -92,10 +73,9 @@ class Moderation(commands.Cog):
     async def multiban(
             self, ctx, members: commands.Greedy[discord.User], *, reason=None
     ):
-        """Bans multiple members from the server.
+        """
+        Bans multiple members from the server.
         This only works through banning via ID.
-        In order for this to work, the bot must have Ban Member permissions.
-        To use this command you must have Ban Members permission.
         """
 
         if reason is None:
@@ -106,8 +86,7 @@ class Moderation(commands.Cog):
             return await ctx.send("Missing members to ban.")
 
         confirm = await ctx.prompt(
-            f"This will ban **{(total_members):member}**. Are you sure?",
-            reacquire=False,
+            f"This will ban **{total_members}**. Are you sure?"
         )
         if not confirm:
             return await ctx.send("Aborting.")
