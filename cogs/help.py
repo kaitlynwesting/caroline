@@ -46,7 +46,8 @@ class MyHelp(commands.HelpCommand):
 
                 embed.add_field(name=f"{name} Category [{amount_commands}]", value=description)
 
-        embed.description = f"{len(self.context.bot.commands)} commands | {usable} usable"
+        embed.description = f"Hello! Welcome to the help page.\n" \
+                            f"{len(self.context.bot.commands)} commands | {usable} usable"
 
         await self.send(embed=embed)
 

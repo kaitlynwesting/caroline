@@ -21,14 +21,10 @@ class Misc(commands.Cog):
         self.bot = bot
 
     @commands.command(hidden=True)
-    @commands.has_permissions(manage_server=True)
+    @commands.has_permissions(manage_guild=True)
     async def embed(self, ctx, *, flags: EmbedFlags):
         """
         A utility to create embeds via command.
-
-        :param ctx:
-        :param flags:
-        :return:
         """
 
         if type(flags.colour) == str:
