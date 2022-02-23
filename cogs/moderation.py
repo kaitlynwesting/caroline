@@ -91,7 +91,7 @@ class Moderation(commands.Cog):
         if reason is None:
             reason = f"Action done by {ctx.author} (ID: {ctx.author.id})"
 
-        await ctx.guild.ban(member, delete_message_days=days, reason=reason)
+        await ctx.guild.ban(member, delete_message_days=1, reason=reason)
         await ctx.send("\N{OK HAND SIGN}")
 
     @commands.command()
