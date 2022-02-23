@@ -108,12 +108,13 @@ class Meta(commands.Cog):
     async def about(self, ctx, *, about: LengthLimiter):
         """Edit the About Me section of your profile."""
 
-        query = """UPDATE users 
-                   SET about = (?)
-                   WHERE user_id = (?)
+        query = """INSERT INTO users (user_id, about)
+                   VALUES (?, ?) 
+                   ON CONFLICT (user_id)
+                   DO UPDATE SET about = excluded.about
                 """
 
-        await self.bot.db.execute(query, (about, ctx.author.id,))
+        await self.bot.db.execute(query, (ctx.author.id, about,))
         await self.bot.db.commit()
 
         await ctx.send("Updated About Me in your server profile.")
