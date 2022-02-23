@@ -137,7 +137,7 @@ class Meta(commands.Cog):
                                   f'**Use the following link to sign in: **'
                                   f'https://photoshoppark.herokuapp.com/instagram-auth \n'
                                   f'**A detailed introduction to oauth: **'
-                                  f'Introduction to oauth: https://oauth.net/about/introduction/')
+                                  f'https://oauth.net/about/introduction/')
         except discord.Forbidden:
             raise NoDmsEnabled from None
 
