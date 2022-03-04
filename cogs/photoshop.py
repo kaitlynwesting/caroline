@@ -1,6 +1,8 @@
 import aiohttp
 import discord
+from bs4 import BeautifulSoup as soup
 from discord.ext import commands
+from random import randint
 
 
 class Photoshop(commands.Cog):
@@ -19,7 +21,7 @@ class Photoshop(commands.Cog):
             "sec-ch-ua": '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
             "sec-ch-ua-mobile": "?0",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/92.0.4515.159 Safari/537.36",
+                          "Chrome/92.0.4515.159 Safari/537.36",
             "x-api-key": "helpxcomprod",
             "content-type": "application/vnd.adobe.search-request+json",
             "Accept": "*/*",
@@ -51,9 +53,9 @@ class Photoshop(commands.Cog):
 
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                "https://adobesearch-uss-enterprise.adobe.io/universal-search-enterprise/search",
-                headers=headers,
-                data=data,
+                    "https://adobesearch-uss-enterprise.adobe.io/universal-search-enterprise/search",
+                    headers=headers,
+                    data=data,
             ) as response:
                 dumped = await response.json()
 
@@ -85,6 +87,28 @@ class Photoshop(commands.Cog):
         )
 
         await ctx.send(embed=embed)
+
+    @commands.command()
+    async def poster(self, ctx):
+        """Displays a vintage movie poster from jozefsquare.com."""
+
+        def fetch(html_data):
+            parsed = soup(html_data, "lxml")
+            return parsed
+
+        async with ctx.typing():
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                        f'https://www.jozefsquare.com/shop/poster-shop/vintage-movie-posters/page/{randint(1,90)}') as response:
+
+                    html = await response.text()
+                    parsed = await self.bot.loop.run_in_executor(None, fetch, html)
+
+                    results = parsed.find_all("img", class_="attachment-woocommerce_thumbnail")
+                    result = results[randint(0, len(results)-1)]
+
+        await ctx.send(result["alt"])
+        await ctx.send(result["src"])
 
 
 def setup(bot):
