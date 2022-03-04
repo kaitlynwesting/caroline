@@ -17,7 +17,7 @@ class MyHelp(commands.HelpCommand):
         super().__init__(  # create our class with some aliases and cooldown
             command_attrs={
                 "help": "The help command for the bot",
-                "cooldown": commands.CooldownMapping.from_cooldown(1, 3.0, commands.BucketType.member),
+                "cooldown": commands.CooldownMapping.from_cooldown(1, 1.0, commands.BucketType.member),
                 "aliases": ['commands']
             }
         )
