@@ -3,7 +3,7 @@ import discord
 import traceback
 from discord.ext import commands, menus
 from datetime import datetime, timedelta
-from cogs.utils import constants, decorators, helpers
+from cogs.utils import constants, decorators, formats
 
 
 async def get_embed_list(data_list):
@@ -76,7 +76,7 @@ class Events(commands.Cog):
             return
 
         await ctx.send(f"For **Season {season}**, {member.display_name} has "
-                       f"collected {votes_qty} vote{helpers.plural(votes_qty)}.")
+                       f"collected {votes_qty} vote{formats.plural(votes_qty)}.")
 
     @votes.command(aliases=['top', 'rank'])
     @commands.guild_only()
