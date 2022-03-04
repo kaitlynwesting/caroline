@@ -7,7 +7,9 @@ from cogs.dropdowns import DropdownView
 from cogs.help import MyHelp
 from cogs.utils.buttons import Context
 
+
 initial_extensions = (
+    "cogs.admin",
     "cogs.misc",
     "cogs.moderation",
     "cogs.photoshop",
@@ -15,7 +17,7 @@ initial_extensions = (
     "cogs.handler",
 )
 
-testing_extensions = ("cogs.dropdowns",)
+testing_extensions = ("cogs.photoshop", "cogs.handler")
 
 intents = discord.Intents(
     messages=True, guilds=True, reactions=True, members=True, presences=True
@@ -95,7 +97,7 @@ class Caroline(commands.Bot):
         #     status=discord.Status.dnd
         # )
 
-        for extension in initial_extensions:
+        for extension in testing_extensions:
             try:
                 print(str(extension))
                 bot.load_extension(extension)
