@@ -1,10 +1,24 @@
-import discord
 import aiohttp
+import discord
+import random
+import string
 from asyncio import TimeoutError
+from bs4 import BeautifulSoup as soup
 from discord import Embed
 from discord.ext import commands
 from cogs.utils import constants
 from cogs.utils.formats import LengthLimiter
+
+
+def fetch(html_data):
+    parsed = soup(html_data, "lxml")
+    return parsed
+
+
+def generate_code():
+    """Generates a 8 character verification code."""
+    code = f"psp{''.join(random.choice(string.digits) for i in range(5))}"
+    return code
 
 
 class NoDmsEnabled(commands.CommandError):
@@ -95,11 +109,22 @@ class Meta(commands.Cog):
                                  })
 
         # Optional: social accounts
-        if rows[0][3] is not None:  # instagram column
-            embed.add_field(
-                name=f"Verified social accounts",
-                value=f"Instagram: [@{rows[0][3]}](https://www.instagram.com/{rows[0][3]})\n",
-                inline=False)
+        if all(i is None for i in rows[0][3:5]):  # this check the social media columns
+            return await ctx.send(embed=embed)
+
+        desc = ""
+        mapping = {rows[0][3]: f"Instagram: [@{rows[0][3]}](https://www.instagram.com/{rows[0][3]})",
+                   rows[0][4]: f"Behance: [@{rows[0][4]}](https://www.behance.net/{rows[0][4]})"}
+
+        for i in rows[0][3:5]:
+            if i is not None:
+                desc = f"{desc}{mapping[i]}\n"
+
+        embed.add_field(
+            name=f"Verified social accounts",
+            value=desc,
+            # value=f"Instagram: [@{rows[0][3]}](https://www.instagram.com/{rows[0][3]})\n",
+            inline=False)
 
         await ctx.send(embed=embed)
 
@@ -121,12 +146,11 @@ class Meta(commands.Cog):
 
     @profile.command(aliases=['ig'])
     async def instagram(self, ctx):
-        """
-        Verify your Instagram account with oauth. (Temporary implementation)
-        """
+        """Verify your Instagram account with oauth. (Temporary implementation)"""
 
         # Optimistically, we would have a Django website also connected to the same db on the same server;
         # too much room for user error by outsourcing work to the human
+        # Try to not DM in the future
 
         try:
             dms = await ctx.author.create_dm()  # use this DM ctx object
@@ -149,6 +173,9 @@ class Meta(commands.Cog):
         except TimeoutError:
             return await dms.send('You took long to verify. Aborting.')
 
+        if cat.content == f'{ctx.prefix}abort':
+            return await ctx.send('Aborting.')
+
         cat = cat.content.split('.')
 
         try:
@@ -159,7 +186,6 @@ class Meta(commands.Cog):
                         return await dms.send('```That was unsuccessful.```')
 
                     info = await response.json()
-                    print(info)
 
                     query = """UPDATE users 
                                SET instagram_username = (?)
@@ -169,10 +195,61 @@ class Meta(commands.Cog):
                     await self.bot.db.execute(query, (info['username'], ctx.author.id,))
                     await self.bot.db.commit()
 
-                    await ctx.send("Updated Instagram in your server profile.")
+                    await ctx.send("Verified Instagram in your server profile.")
 
         except IndexError:
             await dms.send('```Bad format. Make sure to copy the entire code.```')
+
+    @profile.command()
+    async def behance(self, ctx):
+        """Verify your Behance account."""
+
+        code = generate_code()
+
+        await ctx.send(f'Please paste the following verification code anywhere in the About Me section of your '
+                       f'Behance profile. When you are done, send your Behance username here.\n'
+                       f'Your code: `{code}`')
+
+        def check(msg):
+            return msg.author == ctx.author and msg.channel == ctx.channel
+
+        try:
+            reply = await self.bot.wait_for('message', timeout=300.0, check=check)
+            username = reply.content
+        except TimeoutError:
+            return await ctx.send('You took long to verify. Aborting.')
+
+        if username == f'{ctx.prefix}abort':
+            return await ctx.send('Aborting.')
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                    f'https://www.behance.net/{username}') as response:
+                html = await response.text()
+                parsed = await self.bot.loop.run_in_executor(None, fetch, html)
+
+                results = parsed.find('div', class_='UserInfo-bio-OZA')
+
+                # Not sure about this errorhandler
+                # Or wait until python 3.10 update to use AttributeError name?
+                if results is None:
+                    return await ctx.send("This Behance profile does not exist. Aborting.")
+
+        bio = results.span.text
+
+        if code in bio:
+
+            query = """UPDATE users 
+                       SET behance_username = (?)
+                       WHERE user_id = (?)
+                    """
+
+            await self.bot.db.execute(query, (username, ctx.author.id,))
+            await self.bot.db.commit()
+
+            return await ctx.send("Verified Behance in your server profile.")
+        else:
+            return await ctx.send("Could not find the verification code in your Behance's About Me. Aborting.")
 
 
 def setup(bot):
