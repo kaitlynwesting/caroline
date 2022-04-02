@@ -3,7 +3,6 @@ import discord
 from discord.ext import commands
 from typing import Optional
 
-
 class Context(commands.Context):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -190,7 +189,7 @@ class PaginationView(discord.ui.View):
                 embed=self.embed_list[self.current], view=self
             )
         except asyncio.TimeoutError:
-            await interaction.followup.send("Took too long. Goodbye.", ephemeral=True)
+            await interaction.followup.send("You took too long. Aborting.", ephemeral=True)
 
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
     async def next(self, button: discord.ui.Button, interaction: discord.Interaction):
