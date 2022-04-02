@@ -3,6 +3,7 @@ import discord
 from bs4 import BeautifulSoup as soup
 from discord.ext import commands
 from random import randint
+from settings import unsplash_client_id
 
 
 class Photoshop(commands.Cog):
@@ -89,6 +90,7 @@ class Photoshop(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.guild_only()
     async def poster(self, ctx):
         """Displays a vintage movie poster from jozefsquare.com."""
 
@@ -99,17 +101,33 @@ class Photoshop(commands.Cog):
         async with ctx.typing():
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                        f'https://www.jozefsquare.com/shop/poster-shop/vintage-movie-posters/page/{randint(1,90)}') as response:
-
+                        f'https://www.jozefsquare.com/shop/poster-shop/vintage-movie-posters/page/{randint(1, 90)}') as response:
                     html = await response.text()
                     parsed = await self.bot.loop.run_in_executor(None, fetch, html)
 
                     results = parsed.find_all("img", class_="attachment-woocommerce_thumbnail")
-                    result = results[randint(0, len(results)-1)]
+                    result = results[randint(0, len(results) - 1)]
 
         await ctx.send(result["alt"])
         await ctx.send(result["src"])
 
+    @commands.command()
+    @commands.guild_only()
+    async def unsplash(self, ctx):
+        """Gets an image from Unsplash. Heavily rated limited."""
 
-def setup(bot):
-    bot.add_cog(Photoshop(bot))
+        headers = {'Authorization': f'Client-ID {unsplash_client_id}'}
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://api.unsplash.com/photos/random', headers=headers) as response:
+                r = await response.json()
+
+        embed = discord.Embed.from_dict({'title': f"Unsplash",
+                                         'image': {'url': r['urls']['full']},
+                                         'color': discord.Color.og_blurple().value
+                                         })
+
+        await ctx.send(embed=embed)
+
+
+async def setup(bot):
+    await bot.add_cog(Photoshop(bot))

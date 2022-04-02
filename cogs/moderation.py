@@ -35,7 +35,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
-    async def mute(self, ctx, members: commands.Greedy[discord.Member], *, reason=None):
+    async def mute(self, ctx, members: commands.Greedy[discord.Member], *, reason: ActionReason = None):
         """Mutes a list of members."""
 
         role = discord.Object(id=constants.muted)
@@ -80,7 +80,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member: discord.User, *, reason=None):
+    async def ban(self, ctx, member: discord.User, *, reason: ActionReason = None):
         """
         Bans a member from the server.
 
@@ -141,6 +141,5 @@ class Moderation(commands.Cog):
         await ctx.send(f'\N{OK HAND SIGN} Unbanned {member}.')
 
 
-
-def setup(bot):
-    bot.add_cog(Moderation(bot))
+async def setup(bot):
+    await bot.add_cog(Moderation(bot))

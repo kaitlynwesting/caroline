@@ -2,11 +2,10 @@ import asyncio
 import discord
 import time
 from aiosqlite import OperationalError, IntegrityError
-from discord.ext import commands, menus
+from discord.ext import commands
 from cogs.utils import constants
-from cogs.utils.buttons import PaginationView
+from cogs.utils.views import PaginationView
 from cogs.utils.decorators import staff_only, mod_only
-from cogs.utils.embed_template import error_embed
 
 
 async def get_embed_list(data_list):
@@ -210,30 +209,15 @@ class BadgesMeta(commands.Cog):
 
         # Bad inputs errors
         if isinstance(error, discord.errors.Forbidden):
-            await error_embed(ctx,
-                              f"Oups! 403 Forbidden",
-                              f"I tried to send a badge to you, but you had your DMs off.",
-                              f"```py\n{type(error).__name__}: {error}```",
-                              f'',
-                              constants.yellow)
+            pass
 
         # Bad inputs errors
         if isinstance(error, IntegrityError):
-            await error_embed(ctx,
-                              f"Oups! IntegrityError with !{ctx.command}",
-                              f"Bad input, not that serious",
-                              f"```py\n{type(error).__name__}: {error}```",
-                              f'',
-                              constants.yellow)
+            pass
 
         # Usually a locked database error
         elif isinstance(error, OperationalError):
-            await error_embed(ctx,
-                              f"Oups! OperationalError with !{ctx.command}",
-                              f"This is BAF and will directly affect anything to do with storing data",
-                              f"```py\n{type(error).__name__}: {error}```",
-                              f'An automated error report has been submitted... possibly',
-                              constants.red)
+            pass
         else:
             ctx.error_handled = False
 
@@ -395,6 +379,6 @@ class BadgesFilters(commands.Cog):
         await self.bot.db.commit()
 
 
-def setup(bot):
-    bot.add_cog(BadgesMeta(bot))
-    bot.add_cog(BadgesFilters(bot))
+async def setup(bot):
+    await bot.add_cog(BadgesMeta(bot))
+    await bot.add_cog(BadgesFilters(bot))

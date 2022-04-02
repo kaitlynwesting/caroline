@@ -17,29 +17,6 @@ async def get_embed_list(data_list):
     return embed_list
 
 
-class EmbedPageSource(menus.ListPageSource):
-    def __init__(self, bot, entries, *args, **kwargs):
-        self.bot = bot
-        self.entries = entries
-        super(EmbedPageSource, self).__init__(entries, *args, **kwargs)
-
-    async def format_page(self, menu, data):
-        description = ''
-        for entry in data:
-            server = self.bot.get_guild(constants.server_id)
-            member = server.get_member(entry[1])
-            description = f"{description}\n> **{entry[0]}**. {member.display_name} - {entry[2]}"
-
-        embed = discord.Embed.from_dict({'title': f'Seasonal Leaderboard - Season {data[0][-1]}',
-                                         'description': f'{description}',
-                                         'footer': {'text': f'Page {menu.current_page + 1} out of '
-                                                            f'{self.get_max_pages()}'},
-                                         'color': constants.blurple
-                                         })
-
-        return embed
-
-
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -50,11 +27,6 @@ class Events(commands.Cog):
     async def votes(self, ctx, member: discord.Member = None, season: int = None):
         """
         Check your event votes, or someone else's votes.
-
-        :param ctx: commands.Context
-        :param member: discord.Member
-        :param season: int
-        :return:
         """
 
         if member is None:

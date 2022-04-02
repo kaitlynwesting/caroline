@@ -4,7 +4,7 @@ from discord import Embed
 import discord
 import traceback
 from cogs.utils import constants
-from cogs.utils.buttons import PaginationView
+from cogs.utils.views import PaginationView
 
 
 class EmbedFlags(commands.FlagConverter, prefix='--', delimiter=' '):
@@ -152,5 +152,6 @@ class Misc(commands.Cog):
 
     # await ctx.send(embed=embed)
 
-def setup(bot):
-    bot.add_cog(Misc(bot))
+
+async def setup(bot):
+    await bot.add_cog(Misc(bot))

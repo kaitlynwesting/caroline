@@ -252,5 +252,9 @@ class Meta(commands.Cog):
             return await ctx.send("Could not find the verification code in your Behance's About Me. Aborting.")
 
 
-def setup(bot):
-    bot.add_cog(Meta(bot))
+    class Reputation(commands.Cog):
+        pass
+
+
+async def setup(bot):
+    await bot.add_cog(Meta(bot))
