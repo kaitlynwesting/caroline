@@ -5,60 +5,11 @@ from discord.ext import commands
 import settings
 from cogs.dropdowns import DropdownView
 from cogs.help import MyHelp
-from cogs.utils.buttons import Context
-
-
-initial_extensions = (
-    "cogs.admin",
-    "cogs.misc",
-    "cogs.moderation",
-    "cogs.photoshop",
-    "cogs.meta",
-    "cogs.handler",
-)
-
-testing_extensions = ("cogs.photoshop", "cogs.handler")
+from cogs.utils.views import Context
 
 intents = discord.Intents(
-    messages=True, guilds=True, reactions=True, members=True, presences=True
+    messages=True, message_content=True, guilds=True, reactions=True, members=True, presences=True
 )
-
-# bot = commands.Bot(
-#     command_prefix=commands.when_mentioned_or(settings.prefix),
-#     intents=intents
-# )
-
-print(f"discord.py, version {discord.__version__}")
-
-
-# @bot.event
-# async def on_connect():
-#     bot.db = await aiosqlite.connect('data/guild.db')
-#     bot.season_number = int((await(
-#         await bot.db.execute("""SELECT value FROM config
-#                                 WHERE name = (?)""", ('season_number',))).fetchone())[0])
-
-
-# @bot.event
-# async def on_ready():
-#     print(f"Logged in. \n"
-#           f"Name: {bot.user.name} \n"
-#           f"Guilds: {str(len(bot.guilds))} \n"
-#           f"-----")
-#
-#     await bot.change_presence(
-#         activity=discord.Activity(
-#             type=discord.ActivityType.listening,
-#             name=settings.nowplaying)
-#     )
-#
-#     for extension in testing_extensions:
-#         try:
-#             print(str(extension))
-#             bot.load_extension(extension)
-#         except Exception:
-#             print(f"Failed to load extension '{extension}'\n"
-#                   f"{traceback.format_exc()}")
 
 
 class Caroline(commands.Bot):
@@ -71,6 +22,14 @@ class Caroline(commands.Bot):
             status=discord.Status.idle
         )
         self.persistent_views_added = False
+        self.initial_extensions = [
+            "cogs.admin",
+            "cogs.misc",
+            "cogs.moderation",
+            "cogs.photoshop",
+            "cogs.meta",
+            "cogs.handler",
+        ]
 
     async def get_context(self, message, *, cls=Context):
         return await super().get_context(message, cls=cls)
@@ -84,23 +43,20 @@ class Caroline(commands.Bot):
             self.persistent_views_added = True
 
         print(
-            f"Logged in. \n"
+            f"-----\n"
+            f"Logged in using discord.py {discord.__version__}. \n"
             f"Name: {bot.user.name} \n"
             f"Guilds: {str(len(bot.guilds))} \n"
             f"-----"
         )
 
-        # await bot.change_presence(
-        #     activity=discord.Activity(
-        #     type=discord.ActivityType.listening,
-        #     name="exactly 1 server"),
-        #     status=discord.Status.dnd
-        # )
+    async def setup_hook(self):
+        print(f"Attempting to load {len(self.initial_extensions)} cogs...\n-----")
 
-        for extension in testing_extensions:
+        for extension in self.initial_extensions:
             try:
+                await bot.load_extension(extension)
                 print(str(extension))
-                bot.load_extension(extension)
             except Exception:
                 print(
                     f"Failed to load extension '{extension}'\n"
