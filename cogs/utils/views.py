@@ -150,7 +150,7 @@ class PaginationView(discord.ui.View):
             self.last.disabled = True
 
     @discord.ui.button(label="<<", style=discord.ButtonStyle.secondary, disabled=True)
-    async def first(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def first(self, interaction: discord.Interaction, button: discord.ui.Button, ):
         self.update_buttons(button)
         await interaction.response.edit_message(
             embed=self.embed_list[self.current], view=self
@@ -158,7 +158,7 @@ class PaginationView(discord.ui.View):
 
     @discord.ui.button(label="Back", style=discord.ButtonStyle.blurple, disabled=True)
     async def previous(
-            self, button: discord.ui.Button, interaction: discord.Interaction
+            self, interaction: discord.Interaction, button: discord.ui.Button,
     ):
         self.update_buttons(button)
         await interaction.response.edit_message(
@@ -166,7 +166,7 @@ class PaginationView(discord.ui.View):
         )
 
     @discord.ui.button(label="Skip to", style=discord.ButtonStyle.primary)
-    async def skipto(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def skipto(self, interaction: discord.Interaction, button: discord.ui.Button,):
 
         channel = self.message.channel
         author_id = interaction.user and interaction.user.id
@@ -192,21 +192,21 @@ class PaginationView(discord.ui.View):
             await interaction.followup.send("You took too long. Aborting.", ephemeral=True)
 
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
-    async def next(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def next(self, interaction: discord.Interaction, button: discord.ui.Button, ):
         self.update_buttons(button)
         await interaction.response.edit_message(
             embed=self.embed_list[self.current], view=self
         )
 
     @discord.ui.button(label=">>", style=discord.ButtonStyle.secondary)
-    async def last(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def last(self, interaction: discord.Interaction, button: discord.ui.Button,):
         self.update_buttons(button)
         await interaction.response.edit_message(
             embed=self.embed_list[self.current], view=self
         )
 
     @discord.ui.button(label="Quit", style=discord.ButtonStyle.red)
-    async def quit(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def quit(self, interaction: discord.Interaction, button: discord.ui.Button, ):
         self.clear_items()
         await interaction.response.edit_message(
             embed=self.embed_list[self.current], view=self
