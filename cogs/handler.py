@@ -1,7 +1,6 @@
-import sys
-import traceback
-from discord.ext import commands
+import sys, traceback
 
+from discord.ext import commands
 
 class Handler(commands.Cog):
 

@@ -1,8 +1,7 @@
-import discord
-import datetime
-import contextlib
-from discord.ext import commands
+import datetime, contextlib
 
+import discord
+from discord.ext import commands
 
 class HelpEmbed(discord.Embed):  # Our embed with some preset attributes to avoid setting it multiple times
     def __init__(self, **kwargs):

@@ -1,6 +1,8 @@
 from discord.ext import commands
 from discord import Embed
+
 from pymongo import MongoClient
+
 from cogs.utils import constants
 
 cluster = MongoClient(

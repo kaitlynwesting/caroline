@@ -1,14 +1,15 @@
-import aiohttp
-import discord
-import random
-import string
+import aiohttp, random, string
+
 from asyncio import TimeoutError
+
 from bs4 import BeautifulSoup as soup
+
+import discord
 from discord import Embed
 from discord.ext import commands
+
 from cogs.utils import constants
 from cogs.utils.formats import LengthLimiter
-
 
 def fetch(html_data):
     parsed = soup(html_data, "lxml")

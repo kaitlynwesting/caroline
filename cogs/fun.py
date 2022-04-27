@@ -1,4 +1,8 @@
-import discord, requests, linecache, cogs.utils.constants
+import requests, linecache
+
+from cogs.utils.constants import blurple
+
+import discord
 from discord.ext import commands
 
 class Fun(commands.Cog):
@@ -23,7 +27,7 @@ class Fun(commands.Cog):
 
         embed = discord.Embed.from_dict({'title': f'Question #{questionNumber}',
                                      'description': questionText,
-                                     'color': cogs.utils.constants.blurple
+                                     'color': blurple
                                      })
 
         await ctx.send(embed=embed)

@@ -1,10 +1,11 @@
-import asyncio
-import discord
-import traceback
-from discord.ext import commands, menus
-from datetime import datetime, timedelta
+import asyncio, traceback
+
 from cogs.utils import constants, decorators, formats
 
+from datetime import datetime, timedelta
+
+import discord
+from discord.ext import commands, menus
 
 async def get_embed_list(data_list):
     embed_list = [discord.Embed.from_dict({'title': f'Seasonal Leaderboard - Season {data[0][-1]}',
