@@ -21,6 +21,13 @@ def generate_code():
     return code
 
 
+def custom_cooldown(message):
+    if message.author.display_name == "x":
+        return None  # no cooldown
+    else:
+        return commands.Cooldown(1, 1)  # 1 per second
+
+
 class NoDmsEnabled(commands.CommandError):
     def __init__(self):
         super().__init__('I could not DM you. Please consider enabling DMs temporarily for this server and retrying.')
@@ -252,9 +259,40 @@ class Meta(commands.Cog):
             return await ctx.send("Could not find the verification code in your Behance's About Me. Aborting.")
 
 
-    class Reputation(commands.Cog):
-        pass
+class Reputation(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+        self.cd_mapping = commands.CooldownMapping.from_cooldown(2, 10, commands.BucketType.member)  # 2 per 10 seconds
+
+    @commands.Cog.listener('on_message')
+    async def message_send(self, message):
+        """General message reputation boost"""
+        ctx = await self.bot.get_context(message)
+
+        if message.author.bot:
+            return
+
+        if message.guild is None:
+            return
+
+        if message.channel.id not in [836338340730634271]:  # ignored channels
+            return
+
+        bucket = self.cd_mapping.get_bucket(message)
+        retry_after = bucket.update_rate_limit()
+
+        if retry_after:
+            pass
+        else:
+            await self.bot.db.execute("""INSERT INTO badges_users_stats (user_id, messages_sent)
+                                                VALUES (?, ?)
+                                                ON CONFLICT(user_id)
+                                                DO UPDATE SET messages_sent = messages_sent + 1""",
+                                      (int(message.author.id), 1,))
+            await message.channel.send("Added reputation!")
 
 
 async def setup(bot):
     await bot.add_cog(Meta(bot))
+    await bot.add_cog(Reputation(bot))

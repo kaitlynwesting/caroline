@@ -1,4 +1,3 @@
-import aiohttp
 import discord
 from discord.ext import commands
 
@@ -8,6 +7,12 @@ class Admin(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    async def say(self, ctx, channel: discord.TextChannel, *, content: str):
+        await channel.send(content)
 
     @commands.command()
     @commands.guild_only()

@@ -58,7 +58,7 @@ class BadgesMeta(commands.Cog):
 
     @badge.command()
     @commands.guild_only()
-    @staff_only()
+    # @staff_only()
     async def all(self, ctx):
         """
         Preview all currently available badges.
@@ -80,12 +80,6 @@ class BadgesMeta(commands.Cog):
         """
         Manually give a badge to yourself, or to someone else.
         Do not pass an argument to the give_mode parameter!
-
-        :param ctx: commands.Context
-        :param badge_id: int
-        :param member: discord.Member
-        :param give_mode: Any
-        :return:
         """
         if member is None:
             member = ctx.author
@@ -248,10 +242,10 @@ class BadgesFilters(commands.Cog):
         if message.guild is None:
             return
 
-        await self.bot.db.execute("""INSERT INTO badges_users_stats (user_id, messages_sent, wants_notifications)
-                                    VALUES (?, ?, ?)
+        await self.bot.db.execute("""INSERT INTO badges_users_stats (user_id, messages_sent)
+                                    VALUES (?, ?)
                                     ON CONFLICT(user_id)
-                                    DO UPDATE SET messages_sent = messages_sent + 1""", (int(message.author.id), 1, 1,))
+                                    DO UPDATE SET messages_sent = messages_sent + 1""", (int(message.author.id), 1,))
 
         messages_sent_qty = (await(
             await self.bot.db.execute("""SELECT messages_sent FROM badges_users_stats
