@@ -11,7 +11,6 @@ intents = discord.Intents(
     messages=True, message_content=True, guilds=True, reactions=True, members=True, presences=True
 )
 
-
 class Caroline(commands.Bot):
     def __init__(self):
         super().__init__(
