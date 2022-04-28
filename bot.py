@@ -1,16 +1,15 @@
-import aiosqlite
+import aiosqlite, settings, traceback
+
 import discord
-import traceback
 from discord.ext import commands
-import settings
+
 from cogs.dropdowns import DropdownView
-from cogs.help import MyHelp
 from cogs.utils.views import Context
+from cogs.help import MyHelp
 
 intents = discord.Intents(
     messages=True, message_content=True, guilds=True, reactions=True, members=True, presences=True
 )
-
 
 class Caroline(commands.Bot):
     def __init__(self):
@@ -29,6 +28,7 @@ class Caroline(commands.Bot):
             "cogs.photoshop",
             "cogs.meta",
             "cogs.handler",
+            "cogs.fun"
         ]
 
     async def get_context(self, message, *, cls=Context):

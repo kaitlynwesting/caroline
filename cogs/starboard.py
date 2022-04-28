@@ -1,16 +1,7 @@
 from discord.ext import commands
 from discord import Embed
-from pymongo import MongoClient
+
 from cogs.utils import constants
-
-cluster = MongoClient(
-    "mongodb://cakeHeadChef:cakeHeadChef@buttercream-shard-00-00.ilbju.mongodb.net:27017,buttercream-shard-00-01."
-    "ilbju.mongodb.net:27017,buttercream-shard-00-02.ilbju.mongodb.net:27017/Discord?"
-    "ssl=true&replicaSet=atlas-65nepc-shard-0&authSource=admin&retryWrites=true&w=majority"
-)
-
-db = cluster["Discord"]
-collection = db["Stars"]
 
 class Starboard(commands.Cog):
     def __init__(self, bot):
@@ -25,14 +16,10 @@ class Starboard(commands.Cog):
         if context_channel.guild is None:
             return
 
-        star_result = collection.find_one({"_id": 1})
-        star_min = 5
-
         for react in context_message.reactions:
-            if react.emoji == '⭐' and react.count >= star_min:
+            if react.emoji == '⭐' and react.count >= constants.star_min:
 
-                # It is time to document the votes
-                result_count = collection.count_documents({"_id": int(react.message.id)})
+                # Is it a new star message?
 
                 starboard = self.bot.get_channel(constants.starboard)
 
@@ -66,17 +53,13 @@ class Starboard(commands.Cog):
                     return
                 else:
 
-                    result = collection.find_one({'_id': context_message.id})
+                    # Get message data
 
                     star_message = await starboard.fetch_message(result['star_id'])
                     await star_message.edit(content=f"**⭐{react.count}** from <#{react.message.channel.id}> | "
                                                     f"ID: {react.message.id}")
 
-                    collection.update_one(
-                        {"_id": react.message.id},
-                        {"$set": {f"stars": int(react.count)}},
-                        upsert=True
-                    )
+                    # Add star to message db
 
                     return
 
@@ -88,28 +71,20 @@ class Starboard(commands.Cog):
 
         for react in reaction.message.reactions:
             if react.emoji == '⭐':
+                
+                # Check if message is in starboard
 
-                result_count = collection.count_documents({"_id": int(react.message.id)})
-
-                starboard = self.bot.get_channel(constants.starboard)
-
-                if result_count != 0:
-
-                    result = collection.find_one({'_id': reaction.message.id})
-                    star_result = collection.find_one({"_id": 1})
-                    star_min = int(star_result["value"])
-
-                    star_message = await starboard.fetch_message(result['star_id'])
-                    await star_message.edit(content=f"**⭐{react.count}** from <#{reaction.message.channel.id}> | "
-                                                    f"ID: {reaction.message.id}")
-
-                    collection.update_one(
-                        {"_id": reaction.message.id},
-                        {"$set": {f"stars": int(react.count)}},
-                        upsert=True
-                    )
-
-                    return
+                if result_count > 0:
+                    # Get current star ammount
+                    
+                    if star_ammount > constants.star_min:
+                        # Remove message
+                        pass
+                
+                    # Remove star
+                    pass
+                
+                return
 
 
 def setup(bot):

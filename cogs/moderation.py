@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from cogs.utils import constants
 
+from cogs.utils import constants
 
 class ActionReason(commands.Converter):
     """Appends mod name and limits mod command reasons."""

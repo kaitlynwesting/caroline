@@ -1,8 +1,9 @@
-import asyncio
+import asyncio, traceback
+
+import discord
 from discord.ext import commands
 from discord import Embed
-import discord
-import traceback
+
 from cogs.utils import constants
 from cogs.utils.views import PaginationView
 

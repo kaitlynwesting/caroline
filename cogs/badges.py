@@ -1,12 +1,14 @@
-import asyncio
-import discord
 import time
+
+import asyncio
 from aiosqlite import OperationalError, IntegrityError
+
+import discord
 from discord.ext import commands
+
 from cogs.utils import constants
 from cogs.utils.views import PaginationView
 from cogs.utils.decorators import staff_only, mod_only
-
 
 async def get_embed_list(data_list):
     embed_list = [discord.Embed.from_dict({'title': f'{data[0]}',

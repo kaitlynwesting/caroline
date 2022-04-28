@@ -1,9 +1,14 @@
 import aiohttp
-import discord
-from bs4 import BeautifulSoup as soup
-from discord.ext import commands
-from random import randint
+
 from settings import unsplash_client_id
+
+from bs4 import BeautifulSoup as soup
+
+from random import randint
+
+import discord
+from discord.ext import commands
+
 
 
 class Photoshop(commands.Cog):

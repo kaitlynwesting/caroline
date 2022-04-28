@@ -1,6 +1,7 @@
+import aiohttp
+
 import discord
 from discord.ext import commands
-
 
 class Admin(commands.Cog):
     """A collection of admin-only commands."""

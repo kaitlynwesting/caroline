@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from cogs.utils import constants
 
+from cogs.utils import constants
 
 # Defines a custom Select containing colour options
 # that the user can choose. The callback function
