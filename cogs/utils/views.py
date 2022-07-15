@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from typing import Optional
 
+
 class Context(commands.Context):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -10,6 +11,7 @@ class Context(commands.Context):
     async def prompt(
             self,
             message: str,
+            embed: discord.Embed = None,
             *,
             timeout: float = 60.0,
             delete_after: bool = True,
@@ -20,6 +22,8 @@ class Context(commands.Context):
         -----------
         message: str
             The message to show along with the prompt.
+        embed: discord.Embed
+            An optional embed to include with the message.
         timeout: float
             How long to wait before returning.
         delete_after: bool
@@ -42,7 +46,7 @@ class Context(commands.Context):
             ctx=self,
             author_id=author_id,
         )
-        view.message = await self.send(message, view=view)
+        view.message = await self.send(message, embed=embed, view=view)
         await view.wait()
         return view.value
 
@@ -68,7 +72,7 @@ class ConfirmationView(discord.ui.View):
             await self.message.delete()
 
     @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
-    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.value = True
         await interaction.response.defer()
         if self.delete_after:
@@ -76,7 +80,7 @@ class ConfirmationView(discord.ui.View):
         self.stop()
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
-    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button, ):
         self.value = False
         await interaction.response.defer()
         if self.delete_after:
@@ -166,7 +170,7 @@ class PaginationView(discord.ui.View):
         )
 
     @discord.ui.button(label="Skip to", style=discord.ButtonStyle.primary)
-    async def skipto(self, interaction: discord.Interaction, button: discord.ui.Button,):
+    async def skipto(self, interaction: discord.Interaction, button: discord.ui.Button, ):
 
         channel = self.message.channel
         author_id = interaction.user and interaction.user.id
@@ -199,7 +203,7 @@ class PaginationView(discord.ui.View):
         )
 
     @discord.ui.button(label=">>", style=discord.ButtonStyle.secondary)
-    async def last(self, interaction: discord.Interaction, button: discord.ui.Button,):
+    async def last(self, interaction: discord.Interaction, button: discord.ui.Button, ):
         self.update_buttons(button)
         await interaction.response.edit_message(
             embed=self.embed_list[self.current], view=self
