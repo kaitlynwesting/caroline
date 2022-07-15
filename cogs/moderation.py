@@ -1,10 +1,10 @@
 import discord
 from discord.ext import commands
-from cogs.utils import constants
+from cogs.utils.parsers import format_timedelta
 
 
 class ActionReason(commands.Converter):
-    """Appends mod name and limits mod command reasons."""
+    """Appends mod name and character limits mod command reasons."""
 
     async def convert(self, ctx, argument):
         reason = f'{ctx.author} (ID: {ctx.author.id}): {argument}'
@@ -32,38 +32,95 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    class PurgeFlags(commands.FlagConverter, prefix='--', delimiter=' '):
+        amount: int = 100
+        channel: discord.TextChannel = None
+        chars: int = 0
+        contains: str = ""
+        target: discord.User = None
+
     @commands.command()
     @commands.guild_only()
+    @commands.has_permissions(manage_messages=True)
+    async def purge(self, ctx, *, flags: PurgeFlags):
+        """
+        A mini flag-based purger.
+
+        --amount: amount of messages to scan. Defaults to 100.
+        --channel: channel to purge. Defaults to current channel.
+        --chars: minimum characters in message for purging.
+        --contains: specific phrase in message.
+        --target: specific user's messages.
+        """
+
+        if flags.channel is None:
+            flags.channel = ctx.channel
+
+        if int(flags.amount) > 500:
+            return await ctx.send(f'Exceeds purge limit of 500 messages.')
+
+        confirm = await ctx.prompt(
+            f"This will scan {flags.amount} messages in {flags.channel}. Are you sure? "
+        )
+        if not confirm:
+            return await ctx.send("Aborting.")
+
+        await ctx.message.delete()
+
+        def check(message: discord.Message) -> bool:
+            if 0 < flags.chars > len(message.content):
+                return False
+
+            if flags.contains and flags.contains not in message.content:
+                return False
+
+            if flags.target:
+                return message.author == flags.target
+            return True
+
+        num = await flags.channel.purge(limit=flags.amount, check=check)
+
+        await ctx.send(f'Deleted the last {len(num)}/{flags.amount} messages.')
+
+    @commands.command(aliases=['timeout'])
+    @commands.guild_only()
     @commands.has_permissions(kick_members=True)
-    async def mute(self, ctx, members: commands.Greedy[discord.Member], *, reason: ActionReason = None):
-        """Mutes a list of members."""
+    async def mute(self, ctx, members: commands.Greedy[discord.Member], timespan: str, *, reason: ActionReason = None):
+        """Mutes a list of members using timeout feature."""
 
-        role = discord.Object(id=constants.muted)
-
-        total = len(members)
-
-        if total == 0:
-            return await ctx.send('Missing members to mute.')
+        total_members = len(members)
+        if total_members == 0:
+            return await ctx.send("Missing members to ban.")
 
         failed = 0
+
         for member in members:
             try:
-                await member.add_roles(role, reason=reason)
+                await member.timeout(format_timedelta(timespan), reason=reason)
             except discord.HTTPException:
                 failed += 1
 
-        if failed == 0:
-            await ctx.send('\N{THUMBS UP SIGN}')
-        else:
-            await ctx.send(f'Muted [{total - failed}/{total}] members.')
+        await ctx.send(f'\N{OK HAND SIGN} Muted {total_members - failed}/{total_members} members.')
 
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
-    async def unmute(self, ctx, member: discord.Member):
-        """Unmutes a currently muted member."""
+    async def unmute(self, ctx, members: commands.Greedy[discord.Member]):
+        """Unmutes a list of currently muted members."""
 
-        return
+        total_members = len(members)
+        if total_members == 0:
+            return await ctx.send("Missing members to ban.")
+
+        failed = 0
+
+        for member in members:
+            try:
+                await member.timeout(None)
+            except discord.HTTPException:
+                failed += 1
+
+        await ctx.send(f'\N{OK HAND SIGN} Unmuted {total_members - failed}/{total_members} members.')
 
     @commands.command()
     @commands.guild_only()
@@ -75,7 +132,7 @@ class Moderation(commands.Cog):
             reason = f"Action done by {ctx.author} (ID: {ctx.author.id})"
 
         await ctx.guild.kick(member, reason=reason)
-        await ctx.send("\N{OK HAND SIGN}")
+        await ctx.send(f"\N{OK HAND SIGN} Kicked {member}.")
 
     @commands.command()
     @commands.guild_only()
@@ -84,37 +141,36 @@ class Moderation(commands.Cog):
         """
         Bans a member from the server.
 
-        You can also ban from ID to ban regardless whether they're
-        in the server or not.
+        Can also ban from ID to ban regardless whether they're in the server or not.
         """
 
         if reason is None:
             reason = f"Action done by {ctx.author} (ID: {ctx.author.id})"
 
         await ctx.guild.ban(member, delete_message_days=1, reason=reason)
-        await ctx.send("\N{OK HAND SIGN}")
+        await ctx.send(f"\N{OK HAND SIGN} Banned {member}.")
 
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def multiban(
-            self, ctx, members: commands.Greedy[discord.User], *, reason=None
+            self, ctx, members: commands.Greedy[discord.User], *, reason: ActionReason = None
     ):
         """
         Bans multiple members from the server.
 
         This only works through banning via ID.
         """
+        total_members = len(members)
+
+        if total_members == 0:
+            return await ctx.send("Missing members to ban.")
 
         if reason is None:
             reason = f"Action done by {ctx.author} (ID: {ctx.author.id})"
 
-        total_members = len(members)
-        if total_members == 0:
-            return await ctx.send("Missing members to ban.")
-
         confirm = await ctx.prompt(
-            f"This will ban **{total_members}**. Are you sure?"
+            f"This will ban **{total_members}** members. Are you sure?"
         )
         if not confirm:
             return await ctx.send("Aborting.")
@@ -126,7 +182,7 @@ class Moderation(commands.Cog):
             except discord.HTTPException:
                 failed += 1
 
-        await ctx.send(f"Banned {total_members - failed}/{total_members} members.")
+        await ctx.send(f"\N{OK HAND SIGN} Banned {total_members - failed}/{total_members} members.")
 
     @commands.command()
     @commands.guild_only()

@@ -7,13 +7,15 @@ from datetime import datetime, timedelta, timezone
 # time_to_date: adds time input to current time for reading future date
 
 
-def time_to_int(
+def format_timedelta(
         time: str
-) -> int:
+) -> timedelta:
 
     time_to_seconds = {"s": 1, "m": 60, "h": 3600, "d": 86400}
 
-    return int(time[:-1]) * time_to_seconds[time[-1]]
+    seconds = int(time[:-1]) * time_to_seconds[time[-1]]
+
+    return timedelta(seconds=seconds)
 
 
 def time_to_string(
