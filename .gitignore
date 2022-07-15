@@ -6,6 +6,7 @@
 .vscode
 .idea
 .devcontainer
+caro-venv
 data
 wip
 
