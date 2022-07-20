@@ -35,6 +35,7 @@ class Moderation(commands.Cog):
     class PurgeFlags(commands.FlagConverter, prefix='--', delimiter=' '):
         amount: int = 100
         channel: discord.TextChannel = None
+        bot: int = 0
         chars: int = 0
         contains: str = ""
         target: discord.User = None
@@ -48,6 +49,7 @@ class Moderation(commands.Cog):
 
         --amount: amount of messages to scan. Defaults to 100.
         --channel: channel to purge. Defaults to current channel.
+        --bot: whether the user is a bot.
         --chars: minimum characters in message for purging.
         --contains: specific phrase in message.
         --target: specific user's messages.
@@ -68,6 +70,9 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
 
         def check(message: discord.Message) -> bool:
+            if int(flags.bot) != 0 and message.author.bot is False:
+                return False
+
             if 0 < flags.chars > len(message.content):
                 return False
 
@@ -80,7 +85,7 @@ class Moderation(commands.Cog):
 
         num = await flags.channel.purge(limit=flags.amount, check=check)
 
-        await ctx.send(f'Deleted the last {len(num)}/{flags.amount} messages.')
+        await ctx.send(f'\N{OK HAND SIGN} Deleted the last {len(num)}/{flags.amount} messages.')
 
     @commands.command(aliases=['timeout'])
     @commands.guild_only()
