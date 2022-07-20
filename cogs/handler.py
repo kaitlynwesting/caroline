@@ -9,6 +9,15 @@ class Handler(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
+    async def on_raw_message_delete(self, payload):
+        if payload.cached_message is not None:
+            if payload.cached_message.author.id != self.bot.id:
+                return
+
+        await self.bot.db.execute("""DELETE FROM dropdowns WHERE (message_id) = ?""", (payload.message_id,))
+        await self.bot.db.commit()
+
+    @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
 
         if getattr(ctx, 'error_handled', False):  # or just hasattr
