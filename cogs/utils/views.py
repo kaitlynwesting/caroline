@@ -2,6 +2,7 @@ import asyncio
 import discord
 from discord.ext import commands
 from typing import Optional
+from random import randint
 
 
 class Context(commands.Context):
@@ -86,6 +87,60 @@ class ConfirmationView(discord.ui.View):
         if self.delete_after:
             await interaction.delete_original_message()
         self.stop()
+
+
+class Dropdown(discord.ui.Select):
+    def __init__(self, roles, placeholder, min_roles, max_roles):
+
+        options = []
+        for i in roles:
+            options.append(discord.SelectOption(label=i[0], description=i[1], emoji=i[2]))
+
+        super().__init__(placeholder=placeholder, min_values=min_roles, max_values=max_roles, options=options,
+                         custom_id=f'persistent_view:dropdown')
+
+        self.roles: list = roles
+        self.placeholder: str = placeholder
+        self.min_roles: int = min_roles
+        self.max_roles: int = max_roles
+        self.persistent_views_added = False
+
+    async def callback(self, interaction: discord.Interaction):
+        role_mapping = {}
+
+        for i in self.roles:
+            role_mapping.update({i[0]: i[3]})
+
+        def without_keys(d, keys):
+            return {x: d[x] for x in d if x not in keys}
+
+        # This indicates that options were removed by the user
+        if not self.values:
+            for role in role_mapping:
+                role = interaction.guild.get_role(role_mapping[role])
+                await interaction.user.remove_roles(role)
+
+            return await interaction.response.send_message(f'All selectable roles were removed.', ephemeral=True)
+
+        # If at least one value remains selected
+        for value in self.values:
+            role = interaction.guild.get_role(role_mapping[value])
+            await interaction.user.add_roles(role)
+
+        for key in without_keys(role_mapping, set(self.values)):
+            role = interaction.guild.get_role(role_mapping[key])
+            await interaction.user.remove_roles(role)
+
+        await interaction.response.send_message(f"You are currently subscribed to "
+                                                f"**{', '.join(self.values)}**.", ephemeral=True)
+
+
+class DropdownView(discord.ui.View):
+    def __init__(self, roles, placeholder, minimum, maximum):
+        super().__init__(timeout=None)
+
+        # Adds the dropdown to our view object.
+        self.add_item(Dropdown(roles, placeholder, minimum, maximum))
 
 
 class PaginationView(discord.ui.View):
