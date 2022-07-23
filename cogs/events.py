@@ -1,26 +1,31 @@
-import asyncio
 import discord
-import traceback
-from discord.ext import commands, menus
+from discord.ext import commands
 from datetime import datetime, timedelta
-from cogs.utils import constants, decorators, formats
-
-
-async def get_embed_list(data_list):
-    embed_list = [discord.Embed.from_dict({'title': f'Seasonal Leaderboard - Season {data[0][-1]}',
-                                           'description': f'{description}',
-                                           'footer': {'text': f'Page {menu.current_page + 1} out of '
-                                                              f'{self.get_max_pages()}'},
-                                           'color': constants.blurple
-                                           }) for i, data in enumerate(data_list)]
-
-    return embed_list
+from cogs.utils import constants, checks
+from cogs.utils.views import PaginationView
 
 
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.season_number = bot.season_number
+        self.season_number = 2
+
+    async def get_embed_list(self, data_list):
+        descriptions = []
+
+        for num, entry in enumerate(data_list):
+            server = self.bot.get_guild(constants.server_id)
+            member = server.get_member(entry[1])
+            descriptions.append(f"**{entry[0]}**. {member.display_name} - {entry[2]} votes\n")
+
+        descriptions = [descriptions[x:x + 5] for x in range(0, len(descriptions), 5)]
+        embed_list = [discord.Embed.from_dict({'title': f'Seasonal Leaderboard - Season 2',
+                                               'description': f"{''.join(descriptions[i])}",
+                                               'footer': {'text': f'Badge {i + 1} out of {len(descriptions)}'},
+                                               'color': constants.blurple
+                                               }) for i, data in enumerate(descriptions)]
+
+        return embed_list
 
     @commands.guild_only()
     @commands.group(invoke_without_command=True)
@@ -44,28 +49,23 @@ class Events(commands.Cog):
                                       (member.id, season))).fetchone())[0]
 
         if not votes_qty:
-            await ctx.send(f"{member.display_name} hasn't participated in Season {season} events yet. No points!")
-            return
+            return await ctx.send(f"{member.display_name} hasn't participated in Season {season} events yet.")
 
         await ctx.send(f"For **Season {season}**, {member.display_name} has "
-                       f"collected {votes_qty} vote{formats.plural(votes_qty)}.")
+                       f"collected {votes_qty} votes.")
 
-    @votes.command(aliases=['top', 'rank'])
+    @votes.command(aliases=['top', 'rank'], hidden=True)
     @commands.guild_only()
     async def leaderboard(self, ctx, season: int = None):
         """
         Check the leaderboard of the current season.
-
-        :param ctx: commands.Context
-        :param season: int
-        :return:
         """
 
         if season is None:
             season = self.season_number
 
         ranking_info = await(
-            await self.bot.db.execute("""SELECT user_id, votes, season_number FROM event_votes
+            await self.bot.db.execute("""SELECT * FROM event_votes
                                         WHERE season_number = (?)
                                         ORDER BY votes DESC""", (season,))).fetchall()
 
@@ -74,30 +74,24 @@ class Events(commands.Cog):
         incr = 1
         positions_data = []
 
-        for user_id, value, season_number in ranking_info:
-            if value != prev:
+        for user_id, season_number, votes in ranking_info:
+            if votes != prev:
                 rank += incr
                 incr = 1
             else:
                 incr += 1
-            positions_data.append((rank, user_id, value, season))
-            prev = value
+            positions_data.append((rank, user_id, votes, season))
+            prev = votes
 
-        embed_list = await get_embed_list(positions_data)
-
+        embed_list = await self.get_embed_list(positions_data)
+        await PaginationView(embed_list=embed_list, ctx=ctx).start(ctx=ctx, notification_context=ctx)
 
     @votes.command()
     @commands.guild_only()
-    @decorators.mod_only()
+    @checks.mod_only()
     async def set(self, ctx, member: discord.Member, season: int, new_votes: int):
         """
         Manually set a member's season event votes.
-
-        :param ctx: commands.Context
-        :param member: discord.Member
-        :param season: int
-        :param new_votes: int
-        :return:
         """
 
         if member.bot:
@@ -113,74 +107,26 @@ class Events(commands.Cog):
         else:
             old_votes = old_votes[0]
 
-        embed = discord.Embed.from_dict({'title': 'Confirmation',
-                                         'description': f'You are about to update the event vote count for '
-                                                        f'{member.display_name} in Season {season}.',
-                                         'fields': [
-                                             {'inline': True,
-                                              'name': 'New value',
-                                              'value': f'{new_votes}'},
-                                             {'inline': True,
-                                              'name': 'Old value',
-                                              'value': f'{old_votes}'}
-                                         ],
-                                         'footer': {'text': 'React with 👍 to this message within the next 60s '
-                                                            'to confirm.'},
-                                         'color': constants.blurple
-                                         })
-        await ctx.send(embed=embed)
+        confirm = await ctx.prompt(
+            f"{member.display_name} in Season {season} will be {new_votes} instead of {old_votes}. Are you sure?"
+        )
+        if not confirm:
+            return await ctx.send("Aborting.")
 
-        def check(reaction, user):
-            return str(reaction.emoji) == '👍' and user == ctx.author
+        await self.bot.db.execute("""INSERT INTO event_votes
+                                    VALUES (?, ?, ?)
+                                    ON CONFLICT(user_id, season_number)
+                                    DO UPDATE SET votes = (?)""", (member.id, season, new_votes, new_votes,))
 
-        try:
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
-        except asyncio.TimeoutError:
-            await ctx.send('Cancelled because of timeout.')
-        else:
-            # Upsert update votes
-            await self.bot.db.execute("""INSERT INTO event_votes
-                                        VALUES (?, ?, ?)
-                                        ON CONFLICT(user_id, season_number)
-                                        DO UPDATE SET votes = (?)""", (member.id, season, new_votes, new_votes,))
+        await self.bot.db.commit()
 
-            await self.bot.db.commit()
-
-            await ctx.send('Update successful.')
-
-    @leaderboard.error
-    async def on_error(self, ctx, error):
-        ctx.error_handled = True
-
-        # Safely unwrap the CommandInvokeError
-        if isinstance(error, commands.CommandInvokeError):
-            error = error.original
-
-        # Out of bounds
-        if isinstance(error, IndexError):
-            embed = discord.Embed.from_dict({'title': f'Oups! IndexError with !{ctx.command}',
-                                             'fields': [
-                                                 {'inline': True,
-                                                  'name': 'Bad number',
-                                                  'value': f'Make sure to pick a valid season number. '
-                                                           f'The latest season available is {self.bot.season_number}'
-                                                           f'```py\n{type(error).__name__}: {error}```'}
-                                             ],
-                                             'footer': {'text': 'React with 👍 to this message within the next 60s '
-                                                                'to confirm.'},
-                                             'color': constants.blurple
-                                             })
-            await ctx.send(embed=embed)
-            var = traceback.format_exc()
-            await ctx.send(var[:2000])
-        else:
-            ctx.error_handled = False
+        await ctx.send('Update successful.')
 
 
 class EventVetting(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.vote_emoji = '⭐'
+        self.vote_emoji = '\N{WHITE MEDIUM STAR}'
 
     @commands.Cog.listener('on_message')
     async def submission_vetting(self, message):
@@ -217,12 +163,13 @@ class EventVetting(commands.Cog):
                 any(r in map(role_to_id, message.author.roles) for r in constants.staff_roles) is False and
                 message.attachments == []
         ):
-            await message.delete()
+
             reminder = await message.channel.send(
                 f"Hi, {message.author.mention}! This channel is for finished submissions only. "
                 f"If you have questions or would like feedback, ask in the <#{constants.lobby}>."
             )
-            await reminder.delete(delay=5.0)
+            await reminder.delete(delay=30.0)
+            await message.delete()
             return
 
         # If all other checks have passed, this indicates a genuine submission
@@ -358,7 +305,7 @@ class EventVetting(commands.Cog):
             return
 
         for react in payload.cached_message.reactions:
-            if react.emoji == '⭐':
+            if react.emoji == '\N{WHITE MEDIUM STAR}':
                 await self.bot.db.execute("""UPDATE event_votes
                                              SET votes = votes - (?)
                                              WHERE user_id = (?) AND season_number = (?)""",
@@ -368,6 +315,6 @@ class EventVetting(commands.Cog):
             return
 
 
-def setup(bot):
-    bot.add_cog(Events(bot))
-    bot.add_cog(EventVetting(bot))
+async def setup(bot):
+    await bot.add_cog(Events(bot))
+    await bot.add_cog(EventVetting(bot))
