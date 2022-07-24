@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-from datetime import datetime, timedelta
 from cogs.utils import constants, checks
 from cogs.utils.views import PaginationView
 
@@ -8,7 +7,6 @@ from cogs.utils.views import PaginationView
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.season_number = 2
 
     async def get_embed_list(self, data_list):
         descriptions = []
@@ -16,7 +14,7 @@ class Events(commands.Cog):
         for num, entry in enumerate(data_list):
             server = self.bot.get_guild(constants.server_id)
             member = server.get_member(entry[1])
-            descriptions.append(f"**{entry[0]}**. {member.display_name} - {entry[2]} votes\n")
+            descriptions.append(f"**{entry[0]}**. {member.mention} - {entry[2]} votes\n")
 
         descriptions = [descriptions[x:x + 5] for x in range(0, len(descriptions), 5)]
         embed_list = [discord.Embed.from_dict({'title': f'Seasonal Leaderboard - Season 2',
@@ -41,7 +39,7 @@ class Events(commands.Cog):
             return await ctx.send("I am a bot, what did you expect?")
 
         if season is None:
-            season = self.season_number
+            season = self.bot.season_number
 
         votes_qty = (await(
             await self.bot.db.execute("""SELECT votes FROM event_votes
@@ -62,7 +60,7 @@ class Events(commands.Cog):
         """
 
         if season is None:
-            season = self.season_number
+            season = self.bot.season_number
 
         ranking_info = await(
             await self.bot.db.execute("""SELECT * FROM event_votes
@@ -163,7 +161,6 @@ class EventVetting(commands.Cog):
                 any(r in map(role_to_id, message.author.roles) for r in constants.staff_roles) is False and
                 message.attachments == []
         ):
-
             reminder = await message.channel.send(
                 f"Hi, {message.author.mention}! This channel is for finished submissions only. "
                 f"If you have questions or would like feedback, ask in the <#{constants.lobby}>."
@@ -174,6 +171,14 @@ class EventVetting(commands.Cog):
 
         # If all other checks have passed, this indicates a genuine submission
         await ctx.message.add_reaction(self.vote_emoji)
+
+        # Update reputation
+        await self.bot.db.execute(f"""INSERT INTO users (user_id, reputation, weekly_reputation)
+                                    VALUES (?, ?, ?)
+                                    ON CONFLICT(user_id)
+                                    DO UPDATE SET reputation = reputation + excluded.reputation, 
+                                    weekly_reputation = weekly_reputation + excluded.weekly_reputation""",
+                                  (ctx.author.id, 50, 50))
 
         # Upsert member votes
         await self.bot.db.execute("""INSERT INTO event_votes
@@ -196,16 +201,10 @@ class EventVetting(commands.Cog):
         voted_times = 0
         ctx = await self.bot.get_context(message)
 
-        if payload.member.bot:
-            return
-
         if ctx.author.bot:
             return
 
         if ctx.channel.id not in [constants.events, constants.testing]:
-            return
-
-        if datetime.now() - ctx.message.created_at > timedelta(days=8):
             return
 
         if '[BEFORE]' in ctx.message.content:
@@ -218,51 +217,52 @@ class EventVetting(commands.Cog):
             return
 
         async for message in ctx.channel.history(limit=30):
-            if 'Challenge Number' in message.content:
+            if 'Challenge Number' not in message.content:
+                continue
 
-                # Looks at each reaction for each submission after event marker
-                async for submission in ctx.channel.history(after=message):
+            # Looks at each reaction for each submission after event marker
+            async for submission in ctx.channel.history(after=message):
 
-                    for reaction in submission.reactions:
+                for reaction in submission.reactions:
 
-                        async for user in reaction.users():
+                    async for user in reaction.users():
+                        print(user)
 
-                            if user.bot:
-                                pass
+                        if user.bot:
+                            continue
 
-                            if user == payload.member and str(reaction) == self.vote_emoji:
+                        if user == payload.member and str(reaction) == self.vote_emoji:
 
-                                voted_times += 1
+                            voted_times += 1
 
-                                if voted_times > 1:
-                                    await ctx.message.remove_reaction(reaction, user)
-                                    reminder_message = await ctx.channel.send(f"**No voting more than once, "
-                                                                              f"{user.mention}!** If you wish to "
-                                                                              f"vote for a different person, remove "
-                                                                              f"your previous vote first.")
-                                    await reminder_message.delete(delay=5.0)
-                                    return
-
-                            # So they didn't vote twice. Maybe they voted for themselves, though
-                            if user == ctx.author and user == submission.author:
+                            if voted_times > 1:
                                 await ctx.message.remove_reaction(reaction, user)
-                                reminder_message = await ctx.send(f"**Shame, {user.mention}, you tried to vote "
-                                                                  f"for yourself!** Self voting is not allowed.")
-                                await reminder_message.delete(delay=5.0)
-
+                                reminder_message = await ctx.channel.send(f"**No voting more than once, "
+                                                                          f"{user.mention}!** If you wish to "
+                                                                          f"vote for a different person, remove "
+                                                                          f"your previous vote first.")
+                                await reminder_message.delete(delay=30.0)
                                 return
 
-                await self.bot.db.execute("""INSERT INTO event_votes
-                                            VALUES (?, ?, ?)
-                                            ON CONFLICT(user_id, season_number)
-                                            DO UPDATE SET votes = votes + 1""",
-                                          (ctx.author.id, self.bot.season_number, 1,))
+                        # So they didn't vote twice. Maybe they voted for themselves, though
+                        if user == ctx.author and user == submission.author:
+                            await ctx.message.remove_reaction(reaction, user)
+                            reminder_message = await ctx.send(f"**Shame, {user.mention}, you tried to vote "
+                                                              f"for yourself!** Self voting is not allowed.")
+                            return await reminder_message.delete(delay=5.0)
 
-                await self.bot.db.commit()
-                return
+            # If all checks have passed
+            await self.bot.db.execute("""INSERT INTO event_votes
+                                        VALUES (?, ?, ?)
+                                        ON CONFLICT(user_id, season_number)
+                                        DO UPDATE SET votes = votes + 1""",
+                                      (ctx.author.id, self.bot.season_number, 1,))
+
+            await self.bot.db.commit()
+            return
 
     @commands.Cog.listener('on_raw_reaction_remove')
-    async def vote_removal(self, payload):
+    async def vote_deletion(self, payload):
 
         if payload.guild_id is None:
             return
@@ -272,19 +272,13 @@ class EventVetting(commands.Cog):
         context_emoji = str(payload.emoji)
         ctx = await self.bot.get_context(message)
 
-        if ctx.channel.id not in [constants.events, constants.testing]:
-            return
-
-        if datetime.now() - ctx.message.created_at > timedelta(days=8):
-            return
-
         if context_emoji != self.vote_emoji:
             return
 
         await self.bot.db.execute("""UPDATE event_votes
                                      SET votes = votes - 1
                                      WHERE user_id = (?) AND season_number = (?)""",
-                                  (ctx.author.id, self.bot.season_number,))
+                                  (message.author.id, self.bot.season_number,))
 
         await self.bot.db.commit()
         return
@@ -303,6 +297,14 @@ class EventVetting(commands.Cog):
 
         if not payload.cached_message.reactions:
             return
+
+        # Update reputation
+        await self.bot.db.execute(f"""INSERT INTO users (user_id, reputation, weekly_reputation)
+                                        VALUES (?, ?, ?)
+                                        ON CONFLICT(user_id)
+                                        DO UPDATE SET reputation = reputation - excluded.reputation, 
+                                        weekly_reputation = weekly_reputation - excluded.weekly_reputation""",
+                                  (payload.cached_message.author.id, 50, 50))
 
         for react in payload.cached_message.reactions:
             if react.emoji == '\N{WHITE MEDIUM STAR}':
