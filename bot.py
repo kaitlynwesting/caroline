@@ -23,6 +23,7 @@ class Caroline(commands.Bot):
         )
         self.db = None
         self.id = 785298572047417374
+        self.season_number = 3
         self.persistent_views_added = False
         self.initial_extensions = [
             "cogs.admin",
@@ -30,6 +31,7 @@ class Caroline(commands.Bot):
             "cogs.photoshop",
             "cogs.meta",
             "cogs.handler",
+            "cogs.events"
         ]
 
     async def get_context(self, message, *, cls=Context):
