@@ -18,6 +18,12 @@ class Handler(commands.Cog):
         await self.bot.db.commit()
 
     @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        await self.bot.db.execute("""DELETE FROM event_votes WHERE user_id = (?)""", (member.id,))
+        await self.bot.db.execute("""DELETE FROM users WHERE user_id = (?)""", (member.id,))
+        await self.bot.db.commit()
+
+    @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
 
         if getattr(ctx, 'error_handled', False):  # or just hasattr
