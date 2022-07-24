@@ -37,10 +37,16 @@ class Admin(commands.Cog):
         return embed
 
     @commands.command(hidden=True)
-    @commands.has_permissions(manage_guild=True)
+    @commands.has_permissions(administrator=True)
     async def embed(self, ctx, *, flags: EmbedFlags):
         """
-        A utility to create embeds via command.
+        A flag-based embed generator.
+
+        --title
+        --description
+        --image
+        --footer
+        --colour: hex colour code
         """
 
         if flags.channel is None:
@@ -70,7 +76,14 @@ class Admin(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def dropdown(self, ctx, channel: discord.TextChannel, role_num: int, min_roles: int, max_roles: int, *,
                        placeholder):
-        """ A command to interactively create a dropdown. """
+        """
+        An interactive dropdown creator.
+
+        --name: label of the role to be displayed.
+        --description: description of the role.
+        --emoji: emoji of the role.
+        --role: the role's ID.
+        """
 
         max_id = (await(await self.bot.db.execute("""SELECT MAX(dropdown_num) FROM dropdowns""")).fetchone())[0]
         if max_id is None:
@@ -120,11 +133,10 @@ class Admin(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    async def say(self, ctx, channel: discord.TextChannel, *, content: str):
+    async def say(self, ctx, channel: discord.TextChannel, *, content):
         await channel.send(content)
 
-    @commands.command()
-    @commands.guild_only()
+    @commands.group(invoke_without_command=True)
     @commands.has_permissions(administrator=True)
     async def sql(self, ctx, *, query: str):
         """Executes some sql. (fetch)"""
@@ -136,6 +148,22 @@ class Admin(commands.Cog):
 
         # rows = await self.bot.db.execute("""SELECT * FROM users WHERE user_id = ?""", (ctx.member.id,))
         # rows = await rows.fetchall()
+
+    @sql.group(invoke_without_command=True)
+    @commands.has_permissions(administrator=True)
+    async def run(self, ctx, *, query: str):
+        """Executes some sql. (runs stuff)"""
+
+        await self.bot.db.execute(query)
+
+        confirm = await ctx.prompt(
+            f"Do you want to execute this query? \n"
+            f"```{query}```",
+        )
+        if not confirm:
+            return await ctx.send("Aborting.")
+
+        await self.bot.db.commit()
 
 
 async def setup(bot):
