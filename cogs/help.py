@@ -1,10 +1,9 @@
-import discord
-import datetime
 import contextlib
+import discord
 from discord.ext import commands
 
 
-class HelpEmbed(discord.Embed):  # Our embed with some preset attributes to avoid setting it multiple times
+class HelpEmbed(discord.Embed):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         text = "Use help [command] or help [category] for more information | <> required | [] optional"
@@ -12,9 +11,9 @@ class HelpEmbed(discord.Embed):  # Our embed with some preset attributes to avoi
         self.color = discord.Color.og_blurple()
 
 
-class MyHelp(commands.HelpCommand):
+class CaroHelp(commands.HelpCommand):
     def __init__(self):
-        super().__init__(  # create our class with some aliases and cooldown
+        super().__init__(
             command_attrs={
                 "help": "The help command for the bot",
                 "cooldown": commands.CooldownMapping.from_cooldown(1, 1.0, commands.BucketType.member),
@@ -27,7 +26,6 @@ class MyHelp(commands.HelpCommand):
         await self.get_destination().send(**kwargs)
 
     async def send_bot_help(self, mapping):
-        """triggers when a `<prefix>help` is called"""
         ctx = self.context
         embed = HelpEmbed(title=f"{ctx.me.display_name} Help")
         usable = 0
@@ -69,7 +67,7 @@ class MyHelp(commands.HelpCommand):
         embed.add_field(name="Usable", value=can_run)
 
         if command._buckets and (
-        cooldown := command._buckets._cooldown):  # use of internals to get the cooldown of the command
+                cooldown := command._buckets._cooldown):  # use of internals to get the cooldown of the command
             embed.add_field(
                 name="Cooldown",
                 value=f"{cooldown.rate} per {cooldown.per:.0f} seconds",
@@ -95,4 +93,3 @@ class MyHelp(commands.HelpCommand):
         """triggers when a `<prefix>help <cog>` is called"""
         title = cog.qualified_name or "No"
         await self.send_help_embed(f'{title} Category', cog.description, cog.get_commands())
-

@@ -2,6 +2,10 @@ from discord.ext import commands
 from cogs.utils import constants
 
 
+def reply_check(ctx, message):
+    return ctx.author.id == message.author.id and ctx.channel.id == message.channel.id
+
+
 def staff_only():
     def predicate(ctx):
         helper = ctx.guild.get_role(constants.helper)

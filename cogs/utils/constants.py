@@ -44,18 +44,6 @@ allowed_filetypes = ['bmp',
                      'webm',
                      'psd']
 
-# Welcome words
-welcome_keywords = [', welcome',
-                    '. welcome',
-                    '! welcome',
-                    '> welcome',
-                    'hi welcome',
-                    'hey welcome',
-                    'greetings welcome',
-                    'big welcome',
-                    'warm welcome',
-                    'a welcome']
-
 # Server roles - subscriptions
 announcements_role = 787092272570171392
 weekly_events_role = 860240614041452544
@@ -95,6 +83,9 @@ lobby = 777207889277616191
 critique = 818878248670068766
 showcase = 777218263036985415
 bot_commands = 787090740517273680
+
+commissions_postings = 999853490950111373
+commissions_reviews = 999853537326546984
 
 alpha = 780519472444080158
 beta = 777207889277616192
