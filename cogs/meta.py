@@ -78,6 +78,8 @@ class Meta(commands.Cog):
         if member is None:
             member = ctx.author
 
+        verified = ctx.guild.get_role(constants.helper)
+
         query = """INSERT INTO users (user_id)
                    VALUES (?)
                    ON CONFLICT(user_id)
@@ -99,10 +101,14 @@ class Meta(commands.Cog):
             """SELECT AVG(stars), COUNT(completed) FROM commissions WHERE seller_id = (?)""", (member.id,))
         ratings = await ratings.fetchone()
 
-        if ratings[0] is not None:
-            stars = round(ratings[0], 2)
+        if verified in ctx.author.roles:
+
+            if ratings[0] is not None:
+                ratings[0] = round(ratings[0], 2)
+            else:
+                ratings[0] = None
         else:
-            stars = None
+            ratings = (None, 0)
 
         embed = Embed.from_dict({'title': f"{member.display_name}'s {ctx.guild.name} profile",
                                  'thumbnail': {'url': f'{member.avatar.url}'},
@@ -113,7 +119,7 @@ class Meta(commands.Cog):
                                       'inline': False},
                                      {'name': 'Server info',
                                       'value': f'Reputation: {rows[2]}\n'
-                                               f'Average Seller Rating: {stars}\n'
+                                               f'Average Seller Rating: {ratings[0]}\n'
                                                f'Completed Commissions: {ratings[1]}\n'
                                                f'Created at: {discord.utils.format_dt(member.created_at)}\n'
                                                f'Joined at: {discord.utils.format_dt(member.joined_at)}\n',
@@ -531,9 +537,17 @@ class Commissions(commands.Cog):
         embed.title = f"{embed.title} - REQUEST COMPLETED"
         await message.edit(embed=embed)
 
+        reputation_add = flags.stars * 10
+
         await self.bot.db.execute(f"""UPDATE commissions 
                                SET (seller_id, comments, stars, completed) = (?, ?, ?, ?)
                                WHERE order_id = (?)""", (ctx.author.id, flags.comments, flags.stars, 1, flags.order))
+        await self.bot.db.execute(f"""INSERT INTO users (user_id, reputation, weekly_reputation)
+                                    VALUES (?, ?, ?)
+                                    ON CONFLICT(user_id)
+                                    DO UPDATE SET reputation = reputation + excluded.reputation, 
+                                    weekly_reputation = weekly_reputation+ + excluded.weekly_reputation""",
+                                  (message.interaction.user.id, reputation_add, reputation_add,))
         await self.bot.db.commit()
 
     # @commands.command(aliases=['shistory'])
