@@ -3,6 +3,7 @@ bot_id = 785298572047417374
 kat_id = 669977303584866365
 enjoyer_id = 350093296049324032
 server_id = 777207888846389270
+modmail_id = 575252669443211264
 
 # Server colours
 red = 0xED4245
@@ -96,33 +97,39 @@ testing = 836338340730634271
 logs = 777207889424941118
 
 # Server constant texts, etc
-rule0 = f"We expect all members of our community to understand and abide by our rules, " \
-        f"which can be found in the <#{rules}> channel."
+rule0 = f"We expect all members of our community to understand and abide by our rules. "
 
-rule1 = f"Be kind. Behave maturely and respectfully towards other members of the community."
+rule1 = f"**Behave maturely and respectfully towards other members of the community.** Intolerant or offensive " \
+        f"language is grounds for a ban. Also don't be rude or annoying. This is typically judged at the discretion " \
+        f"of staff. "
 
-rule2 = f"Keep conversations, media, and your own user profile SFW at all times. Stay away from contentious topics " \
-        f"such as politics. "
+rule2 = f"**Keep conversations, media, and your own user profile (usernames, nicknames, avatars, statuses) " \
+        f"SFW at all times.** Stay away from contentious topics such as politics. "
 
-rule3 = f"Do not request or provide help with projects which may be deemed illicit, breach terms of services, " \
-        f"malicious, or inappropriate. "
+rule3 = f"**Do not request or provide help with tasks which may be deemed illicit, breach terms of services, " \
+        f"malicious, or inappropriate.** Requests for assistance with piracy, document forgery, watermark " \
+        f"removals, etc. will be deleted."
 
-rule4 = f"Do not request or provide help for ongoing tests or exams. When helping with homework, help people learn " \
-        f"how to do the assignment without doing it for them. "
+rule4 = f"**Do not request or provide help for ongoing tests or exams; if helping with homework, help people learn " \
+        f"how to do the assignment without doing it for them.** This also applies to helping in general; try to help " \
+        f"the learner understand the steps so they can replicate the process on their own. Don't simply give them " \
+        f"the finished document and \"spoonfeed\" them."
 
-rule5 = f"Use the right channels for your topic. Only DM someone if you have notified them, and they have agreed " \
-        f"beforehand. "
+rule5 = f"**Listen to and respect staff members and their directions, even if you disagree with something.** Do not " \
+        f"ping or message a moderator to complain or you may be subject to further action. To discuss moderator " \
+        f"actions, message <@{modmail_id}>."
 
-rule6 = f"Listen to and respect staff members and their directions, even if you disagree with something. Do not " \
-        f"message a moderator to complain or you may be subject to further action. "
+rule6 = f"**Please speak English to the best of your ability.** The primary language of the server is English. "
 
-rule7 = f"The primary language of the server is English. Please speak English to the best of your ability."
+rule7 = f"**No self-promotion or advertising without explicit approval.** Posting your YouTube, Twitch, Instagram, " \
+        f"or similar profiles purely for the purpose of asking for views/follows is forbidden. Posting your " \
+        f"portfolio for reviews and opinions is okay in <@{critique}."
 
-rule8 = f"No advertising or self-promotion without explicit approval. Post artwork you want to display as direct " \
-        f"files and not as social media handles or external links. "
+rule8 = f"**Should you decide to engage in commissions on this server, you acknowledge that all responsibility to " \
+        f"ensure that a commission is successful lies with you only.** Although the server provides a platform and " \
+        f"can give advice/tips on protecting yourself, we cannot be held accountable for any consequences resulting " \
+        f"from a commission."
 
-rule9 = f"No requests or offers of work, paid or unpaid, will be permitted within the server."
-
-rule10 = f"All users must comply with the Discord Terms of Service and Community Guidelines.\n" \
+rule9 = f"All users must comply with the Discord Terms of Service and Community Guidelines.\n" \
          f"> ToS: https://discord.com/new/terms \n" \
          f"> CG: https://discord.com/new/guidelines"
