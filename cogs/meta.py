@@ -78,7 +78,7 @@ class Meta(commands.Cog):
         if member is None:
             member = ctx.author
 
-        verified = ctx.guild.get_role(constants.helper)
+        verified = ctx.guild.get_role(constants.verified)
 
         query = """INSERT INTO users (user_id)
                    VALUES (?)
