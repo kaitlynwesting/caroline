@@ -95,6 +95,15 @@ class Meta(commands.Cog):
         rows = await self.bot.db.execute(query, (member.id,))
         rows = await rows.fetchone()
 
+        ratings = await self.bot.db.execute(
+            """SELECT AVG(stars), COUNT(completed) FROM commissions WHERE seller_id = (?)""", (member.id,))
+        ratings = await ratings.fetchone()
+
+        if ratings[0] is not None:
+            stars = round(ratings[0], 2)
+        else:
+            stars = None
+
         embed = Embed.from_dict({'title': f"{member.display_name}'s {ctx.guild.name} profile",
                                  'thumbnail': {'url': f'{member.avatar.url}'},
                                  'color': discord.Color.og_blurple().value,
@@ -104,8 +113,10 @@ class Meta(commands.Cog):
                                       'inline': False},
                                      {'name': 'Server info',
                                       'value': f'Reputation: {rows[2]}\n'
-                                               f'Created at: {member.created_at.strftime("%A, %B %d, %Y, at %H:%M")}\n'
-                                               f'Joined at: {member.joined_at.strftime("%A, %B %d, %Y, at %H:%M")}\n',
+                                               f'Average Seller Rating: {stars}\n'
+                                               f'Completed Commissions: {ratings[1]}\n'
+                                               f'Created at: {discord.utils.format_dt(member.created_at)}\n'
+                                               f'Joined at: {discord.utils.format_dt(member.joined_at)}\n',
                                       'inline': False}
                                  ],
                                  # 'footer': {'text': 'Use help profile to see how to edit your profile'},
@@ -525,13 +536,9 @@ class Commissions(commands.Cog):
                                WHERE order_id = (?)""", (ctx.author.id, flags.comments, flags.stars, 1, flags.order))
         await self.bot.db.commit()
 
-    # @order.error
-    # async def on_error(self, ctx, error):
-    #     ctx.error_handled = True
-    #
-    #     # Safely unwrap the CommandInvokeError
-    #     if isinstance(error, commands.CommandInvokeError):
-    #         error = error.original
+    # @commands.command(aliases=['shistory'])
+    # @commands.guild_only()
+    # async def sellhistory(self, ctx, member: discord.Member):
 
 
 async def setup(bot):
