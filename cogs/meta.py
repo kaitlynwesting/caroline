@@ -121,8 +121,8 @@ class Meta(commands.Cog):
                                       'value': f'Reputation: {rows[2]}\n'
                                                f'Average Seller Rating: {ratings[0]}\n'
                                                f'Completed Commissions: {ratings[1]}\n'
-                                               f'Created at: {discord.utils.format_dt(member.created_at)}\n'
-                                               f'Joined at: {discord.utils.format_dt(member.joined_at)}\n',
+                                               f'Created at: {discord.utils.format_dt(member.created_at, style="R")}\n'
+                                               f'Joined at: {discord.utils.format_dt(member.joined_at, style="R")}\n',
                                       'inline': False}
                                  ],
                                  # 'footer': {'text': 'Use help profile to see how to edit your profile'},
